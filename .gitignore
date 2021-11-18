@@ -1,2 +1,24 @@
 .idea/
 venv/
+
+# dependencies
+/react-ui/node_modules
+/react-ui/.pnp
+/react-ui/.pnp.js
+
+# testing
+/react-ui/coverage
+
+# production
+/react-ui/build
+
+# misc
+/react-ui/.DS_Store
+/react-ui/.env.local
+/react-ui/.env.development.local
+/react-ui/.env.test.local
+/react-ui/.env.production.local
+
+/react-ui/npm-debug.log*
+/react-ui/yarn-debug.log*
+/react-ui/yarn-error.log*

@@ -22,3 +22,8 @@ venv/
 /react-ui/npm-debug.log*
 /react-ui/yarn-debug.log*
 /react-ui/yarn-error.log*
+
+__pycache__/
+samy/__pycache__/*
+
+db.sqlite3

@@ -1,2 +1,11 @@
-.leaflet-container {height: 90vh}
+#map { height: 100vh; }
 
+div.circle {
+    background-color: rgba(215, 60, 33, 0.68);
+    border-color: red;
+    border-radius: 30px;
+    border-style: solid;
+    border-width: 0px;
+    width:30px;
+    height:30px;
+}

@@ -1,5 +1,8 @@
-import 'leaflet/dist/leaflet.css';
 import L, {circle, LatLng, Marker} from 'leaflet';
+import './App.css';
+
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faMapMarkerAlt, faCirclePlus} from '@fortawesome/free-solid-svg-icons'
 
 // @ts-ignore
 import icon from 'leaflet/dist/images/marker-icon.png';
@@ -7,11 +10,20 @@ import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 // @ts-ignore
 import crossLocation from './crosshair-svgrepo-com.svg'
-import {Ref, useEffect, useRef} from "react";
+import {Ref, useEffect, useRef, useState} from "react";
 import React from 'react';
 import {joinDots} from "./DotsGrouping";
 
+import Button from 'react-bootstrap/Button';
+import Modal from "react-bootstrap/Modal";
+import Container from 'react-bootstrap/Container'
+import Row from 'react-bootstrap/Row'
+
+import ReactDom from "react-dom";
+import ModalNew from "./ModalNew";
+
 let DefaultIcon = L.divIcon({className: 'circle', iconSize: [50, 50]});
+let HereDot = L.divIcon({className: 'circle-here', iconSize: [15, 15]});
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
@@ -42,16 +54,7 @@ function MapWithMenu() {
 
     const n_events_by_marker = useRef([1, 1, 1, 1, 1]);
 
-    function handleLocation() {
-        navigator.geolocation.getCurrentPosition(function (position) {
-                alert('Location is ' + position.coords.latitude + position.coords.longitude);
-            },
-
-            function () {
-                alert('not able to get a location');
-            }
-        )
-    }
+    const you_are_here_dot = useRef(new Marker(new LatLng(0, 0)));
 
     function onMapClick(e: { latlng: L.LatLngExpression; }) {
 
@@ -106,6 +109,29 @@ function MapWithMenu() {
 
     }
 
+    function updateLocation() {
+
+        if ("geolocation" in navigator) {
+            /* geolocation is available */
+
+            navigator.geolocation.getCurrentPosition(function (position) {
+                console.log('lat: ' + position.coords.latitude + ' long : ' + position.coords.longitude)
+                you_are_here_dot.current = L.marker(
+                    new LatLng(position.coords.latitude, position.coords.longitude),
+                    {icon: HereDot})
+                    // @ts-ignore
+                    .addTo(map.current);
+            });
+
+            map.current?.locate({setView: true, maxZoom: 18});
+        } else {
+            /* geolocation is NOT available */
+            alert('Not able to geolocate you.')
+        }
+
+
+    }
+
     useEffect(
         () => {
 
@@ -117,22 +143,45 @@ function MapWithMenu() {
 
             updateMarkers();
 
-            map.current.on('click', onMapClick);
+            //map.current.on('click', onMapClick);
             map.current.on('zoom', onMapZoom);
             map.current.on('move', onMapZoom)
 
-            map.current.locate({setView: true, maxZoom: 13});
+            return function () {
+                map.current?.remove();
+            }
         },
         []
     );
 
+    useEffect(
+        () => {
+
+        }
+    )
+
+    const [showNew, setShowNew] = useState(false);
+    const handleCloseNew = () => setShowNew(false);
+    const handleShowNew = () => setShowNew(true);
 
     return (
         <>
+
+            <ModalNew show={showNew} setShow={setShowNew} handleClose={handleCloseNew} handleShow={handleShowNew}/>
+
             <div id='map'>
+                <div className="leaflet-bottom leaflet-left">
+                    <div className="background-leaflet-buttons">
+                        <FontAwesomeIcon icon={faMapMarkerAlt} className="here-icon" onClick={updateLocation}
+                                         fixedWidth/>
+                        <br/>
+                        <FontAwesomeIcon icon={faCirclePlus} className="new-icon" onClick={handleShowNew} fixedWidth/>
+                    </div>
+                </div>
             </div>
         </>
     );
 }
+
 
 export default MapWithMenu;

@@ -21,6 +21,9 @@ import Row from 'react-bootstrap/Row'
 
 import ReactDom from "react-dom";
 import ModalNew from "./ModalNew";
+import {useDispatch, useSelector} from "react-redux";
+import {useAppDispatch} from "./app/hooks";
+import {show} from "./app/Report";
 
 let DefaultIcon = L.divIcon({className: 'circle', iconSize: [50, 50]});
 let HereDot = L.divIcon({className: 'circle-here', iconSize: [15, 15]});
@@ -160,14 +163,12 @@ function MapWithMenu() {
         }
     )
 
-    const [showNew, setShowNew] = useState(false);
-    const handleCloseNew = () => setShowNew(false);
-    const handleShowNew = () => setShowNew(true);
+    const dispatch = useAppDispatch()
 
     return (
         <>
 
-            <ModalNew show={showNew} setShow={setShowNew} handleClose={handleCloseNew} handleShow={handleShowNew}/>
+            <ModalNew />
 
             <div id='map'>
                 <div className="leaflet-bottom leaflet-left">
@@ -175,7 +176,7 @@ function MapWithMenu() {
                         <FontAwesomeIcon icon={faMapMarkerAlt} className="here-icon" onClick={updateLocation}
                                          fixedWidth/>
                         <br/>
-                        <FontAwesomeIcon icon={faCirclePlus} className="new-icon" onClick={handleShowNew} fixedWidth/>
+                        <FontAwesomeIcon icon={faCirclePlus} className="new-icon" onClick={() => {dispatch(show())}} fixedWidth/>
                     </div>
                 </div>
             </div>

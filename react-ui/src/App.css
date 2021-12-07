@@ -13,13 +13,14 @@ div.circle {
 }
 
 div.circle-here {
-    background-color: rgb(47, 120, 182);
-    border-color: #1542c7;
+    background-color: rgb(60, 140, 213);
+    border-color: #ffffff;
     border-radius: 30px;
     border-style: solid;
-    border-width: 2px;
-    width: 30px;
-    height: 30px;
+    border-width: 3px;
+    width: 35px;
+    height: 35px;
+    box-shadow: 0 0 0 40px rgba(105, 132, 196, 0.15);
 }
 
 .here-icon {
@@ -42,15 +43,26 @@ div.circle-here {
     pointer-events: auto;
 }
 
+.logout-button {
+    font-size: 35px;
+    color: rgb(47, 120, 182);
+    margin: 4px 4px 8px;
+    pointer-events: auto;
+    padding: 0;
+}
+
 .leaflet-container {
     line-height: 1;
 }
 
 .background-leaflet-buttons {
-    margin: 4px;
+    margin: 8px;
     border-radius: 20px;
+    border: solid #ffffff;
+    border-width: 4px;
+    box-shadow: -4px 4px 5px 0 rgba(3, 3, 3, 0.71);
 
-    background: linear-gradient(30deg, rgba(120, 231, 41, 0.4), rgba(7, 141, 26, 0.48));
+    background: linear-gradient(0deg, rgb(41, 231, 202), rgb(245, 169, 20));
     background-size: 200% 200%;
 
     -webkit-animation: backgound-leaflet-buttons-animation 30s ease infinite;

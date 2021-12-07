@@ -3,29 +3,30 @@ import Button from "react-bootstrap/Button";
 import {useAppDispatch, useAppSelector} from "./app/hooks";
 import {hide, show} from "./app/Report";
 
+function ModalNewReport() {
 
-function ModalNew() {
-
-
+    // show/hide modal
     const showNewReport = useAppSelector((state) => state.showNewReport.value)
     const dispatch = useAppDispatch()
 
     return (
         <Modal show={showNewReport} onHide={() => dispatch(hide())}>
             <Modal.Header closeButton>
-                <Modal.Title>Modal heading</Modal.Title>
+                <Modal.Title>Nouveau signalement</Modal.Title>
             </Modal.Header>
-            <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+            <Modal.Body>
+
+            </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={() => dispatch(hide())}>
-                    Close
+                    Fermer
                 </Button>
                 <Button variant="primary" onClick={() => dispatch(show())}>
-                    Save Changes
+                    Signaler
                 </Button>
             </Modal.Footer>
         </Modal>
     );
 }
 
-export default ModalNew;
+export default ModalNewReport;

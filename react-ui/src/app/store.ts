@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
 import showNewReportReducer from './Report'
+import isLoggedReducer from './Login'
 
 const store = configureStore({
   reducer: {
     showNewReport: showNewReportReducer,
+    isLogged: isLoggedReducer
   },
 })
 

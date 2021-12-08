@@ -1,4 +1,4 @@
-import {DomUtil, LatLng, LatLngBounds} from "leaflet";
+import {LatLng, LatLngBounds} from "leaflet";
 
 
 export function joinDots(list_dots: Array<LatLng>, boundary: LatLngBounds, max_dots: number): [Array<LatLng>, Array<number>] {

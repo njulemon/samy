@@ -6,9 +6,6 @@ import './custom.scss';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-// translations
-import './i18n';
-
 import store from './app/store'
 import {Provider} from 'react-redux'
 

@@ -118,6 +118,10 @@ function MapWithMenu() {
         if ("geolocation" in navigator) {
             /* geolocation is available */
 
+            /* delete previous marker */
+            map.current?.removeLayer(you_are_here_dot.current)
+
+            /* add new marker */
             navigator.geolocation.getCurrentPosition(function (position) {
                 console.log('lat: ' + position.coords.latitude + ' long : ' + position.coords.longitude)
                 you_are_here_dot.current = L.marker(

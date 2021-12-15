@@ -51,6 +51,10 @@ div.circle-here {
     padding: 0;
 }
 
+.form-button {
+    pointer-events: auto;
+}
+
 .leaflet-container {
     line-height: 1;
 }
@@ -117,4 +121,17 @@ div.circle-here {
     100% {
         background-position: 71% 0%
     }
+}
+
+.login-vertical-center {
+    margin-top: 100px;
+
+}
+
+body {
+    background-image: var(--bs-gradient);
+}
+
+.fill-height {
+    min-height: 100vh;
 }

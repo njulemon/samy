@@ -4,14 +4,14 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from api.forms import CustomUserCreationForm, CustomUserChangeForm
-from api.models import CustomUser
+from api.models import CustomUser, Report
 
 
 class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
     model = CustomUser
-    list_display = ('email', 'is_staff', 'is_active',)
+    list_display = ('email', 'is_staff', 'is_active', 'date_joined')
     list_filter = ('email', 'is_staff', 'is_active',)
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
@@ -28,3 +28,4 @@ class CustomUserAdmin(UserAdmin):
 
 
 admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(Report)

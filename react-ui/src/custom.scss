@@ -1,5 +1,155 @@
 // Override default variables before the import
-$gradient: linear-gradient(-10deg, rgb(41, 137, 32), rgba(110, 187, 23, 0.32));
+
+$primary: rgb(63, 134, 24);
+$secondary: rgb(146, 146, 146);
+$success: rgb(57, 144, 65);
+$info: rgb(64, 209, 224);
+$warning: rgb(234, 210, 53);
+$danger: rgb(226, 5, 5);
+$light: rgb(248, 248, 248);
+$dark: rgb(0, 0, 0);
+
+$gradient: linear-gradient(-10deg, $primary, rgba(110, 187, 23, 0.32));
+$input-bg: rgb(222, 248, 217);
 
 // Import Bootstrap and its default variables
 @import '~bootstrap/scss/bootstrap.scss';
+
+
+#map {
+    height: 100vh;
+}
+
+body {
+    background-image: var(--bs-gradient);
+}
+
+div.circle {
+    background-color: rgba(215, 60, 33, 0.68);
+    border-color: red;
+    border-radius: 30px;
+    border-style: solid;
+    border-width: 0px;
+    width: 30px;
+    height: 30px;
+}
+
+div.circle-here {
+    background-color: rgb(60, 140, 213);
+    border-color: #ffffff;
+    border-radius: 30px;
+    border-style: solid;
+    border-width: 3px;
+    width: 35px;
+    height: 35px;
+    box-shadow: 0 0 0 40px rgba(105, 132, 196, 0.15);
+}
+
+.here-icon {
+    font-size: 35px;
+    color: rgb(47, 120, 182);
+    margin: 8px 4px 4px;
+    pointer-events: auto;
+    padding: 0;
+}
+
+.new-icon {
+    font-size: 35px;
+    color: rgb(47, 120, 182);
+    margin: 4px 4px 8px;
+    pointer-events: auto;
+    padding: 0;
+}
+
+.modal-button {
+    pointer-events: auto;
+}
+
+.logout-button {
+    font-size: 35px;
+    color: rgb(47, 120, 182);
+    margin: 4px 4px 8px;
+    pointer-events: auto;
+    padding: 0;
+}
+
+.form-button {
+    pointer-events: auto;
+}
+
+.leaflet-container {
+    line-height: 1;
+}
+
+.background-leaflet-buttons {
+    margin: 8px;
+    border-radius: 20px;
+    border: solid #ffffff;
+    border-width: 4px;
+    box-shadow: -4px 4px 5px 0 rgba(3, 3, 3, 0.71);
+
+    background: linear-gradient(0deg, rgb(41, 231, 202), rgb(245, 169, 20));
+    background-size: 200% 200%;
+
+    -webkit-animation: backgound-leaflet-buttons-animation 30s ease infinite;
+    -moz-animation: backgound-leaflet-buttons-animation 30s ease infinite;
+    -o-animation: backgound-leaflet-buttons-animation 30s ease infinite;
+    animation: backgound-leaflet-buttons-animation 30s ease infinite;
+}
+
+@-webkit-keyframes backgound-leaflet-buttons-animation {
+    0% {
+        background-position: 71% 0%
+    }
+    50% {
+        background-position: 30% 100%
+    }
+    100% {
+        background-position: 71% 0%
+    }
+}
+
+@-moz-keyframes backgound-leaflet-buttons-animation {
+    0% {
+        background-position: 71% 0%
+    }
+    50% {
+        background-position: 30% 100%
+    }
+    100% {
+        background-position: 71% 0%
+    }
+}
+
+@-o-keyframes backgound-leaflet-buttons-animation {
+    0% {
+        background-position: 71% 0%
+    }
+    50% {
+        background-position: 30% 100%
+    }
+    100% {
+        background-position: 71% 0%
+    }
+}
+
+@keyframes backgound-leaflet-buttons-animation {
+    0% {
+        background-position: 71% 0%
+    }
+    50% {
+        background-position: 30% 100%
+    }
+    100% {
+        background-position: 71% 0%
+    }
+}
+
+.login-vertical-center {
+    margin-top: 100px;
+
+}
+
+.fill-height {
+    min-height: 100vh;
+}

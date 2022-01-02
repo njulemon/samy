@@ -1,23 +1,25 @@
 import {useAppDispatch, useAppSelector} from "./app/hooks";
 import {Formik, Form, Field} from "formik";
-import {urlServer} from "./def/Definitions";
+import {uriGetUser, uriLogin, urlServer} from "./def/Definitions";
 import {PostCsrf} from "./api/Csrf";
-import {denyAccess, giveAccess} from "./app/Login";
+import {checkAccessAndGetUser, denyAccess, giveAccess, setUser} from "./app/States";
 import * as Yup from 'yup';
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import hasAccess, {logout} from "./api/Access";
+import axios from "axios";
 
 function Login() {
 
 
     const dispatch = useAppDispatch()
-    const isLogged = useAppSelector((state) => state.isLogged.value)
+    const isLogged = useAppSelector((state) => state.states.isLogged)
 
     const [errorLogin, setErrorLogin] = useState('')
 
-    const url = urlServer + '/api/login/'
+    const url = urlServer + uriLogin
 
-    const validateForm = (values: any) => {
-        const errors: { [name: string]: string } = {};
+    const validateForm = (values) => {
+        const errors = {};
         if (!values.username) {
             errors.username = 'Veuillez introduire votre adresse e-mail';
         } else if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(values.username)) {
@@ -28,7 +30,35 @@ function Login() {
             errors.password = 'Veuillez indiquer votre mot de passe';
         }
         return errors;
-    };
+    }
+
+    const submitForm = (values) => {
+        const data = {
+            'username': values.username,
+            'password': values.password
+        }
+
+        PostCsrf(urlServer + uriLogin, data)
+            .then(
+                (gotAccess) => {
+                    if (gotAccess) {
+                        setErrorLogin('')
+                        dispatch(giveAccess())
+                    } else {
+                        setErrorLogin('Accès refusé')
+                        logout().then(() => dispatch(denyAccess()))
+                    }
+                }
+            )
+            .catch((reason) => setErrorLogin('Accès refusé'))
+    }
+
+    useEffect(
+        () => {
+            dispatch(checkAccessAndGetUser())
+        },
+        []
+    )
 
     // @ts-ignore
     return (
@@ -37,8 +67,8 @@ function Login() {
                 <div className="row login-vertical-center">
                     <div className="col"></div>
                     <div className="col-xxl-3 col-xl-4 col-lg-5 col-md-6 col-sm-8 col-xs-10">
-                        <div className="card">
-                            <div className="card-body">
+                        <div className="card shadow-lg rounded-lg bg-transparent">
+                            <div className="card-body bg-transparent">
                                 <div className="container-fluid">
                                     <div className="row">
                                         <div className="col">
@@ -48,28 +78,11 @@ function Login() {
                                                     password: '',
                                                 }}
                                                 onSubmit={(values, {setSubmitting}) => {
-                                                    const data = {
-                                                        'username': values.username,
-                                                        'password': values.password
-                                                    }
-
-                                                    PostCsrf(url, data)
-                                                        .then(
-                                                            (gotAccess) => {
-                                                                if (gotAccess) {
-                                                                    setErrorLogin('')
-                                                                    dispatch(giveAccess())
-                                                                } else {
-                                                                    setErrorLogin('Accès refusé')
-                                                                    dispatch(denyAccess())
-                                                                }
-                                                            }
-                                                        )
-                                                        .catch((reason) => setErrorLogin('Accès refusé'))
+                                                    submitForm(values)
                                                 }}
                                                 validate={validateForm}>
 
-                                                {(formik: any, isSubmitting: any) => (
+                                                {(formik, isSubmitting) => (
                                                     <Form>
                                                         <div className="mb-3">
                                                             <div className="form-label">Adresse e-mail</div>
@@ -105,7 +118,8 @@ function Login() {
                                                         {errorLogin !== '' ?
                                                             (<div className="mb-3">
                                                                 <div className="form-label is-invalid"></div>
-                                                                <div className="invalid-feedback is-invalid">{errorLogin}</div>
+                                                                <div
+                                                                    className="invalid-feedback is-invalid">{errorLogin}</div>
                                                             </div>)
                                                             :
                                                             null}

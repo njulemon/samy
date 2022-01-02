@@ -31,3 +31,27 @@ class Report(models.Model):
     user_type = models.IntegerField(choices=ReportUserType.get_model_choices())
     category_1 = models.IntegerField(choices=ReportCategory1.get_model_choices())
     category_2 = models.IntegerField(choices=ReportCategory2.get_model_choices())
+    latitude = models.FloatField(default=0.0)
+    longitude = models.FloatField(default=0.0)
+    timestamp_creation = models.DateTimeField(auto_now_add=True)
+    # creator of the report. If user delete the account this field is set to null.
+    creator = models.ForeignKey(
+        to=CustomUser,
+        on_delete=models.SET_NULL,
+        null=True
+    )
+
+
+class Votes(models.Model):
+    user = models.ForeignKey(
+        to=CustomUser,
+        on_delete=models.CASCADE
+    )
+    gravity = models.IntegerField(choices=[(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5)], null=True)
+    report = models.ForeignKey(
+        to=Report,
+        on_delete=models.CASCADE
+    )
+
+    class Meta:
+        unique_together = ('user', 'report',)

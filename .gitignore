@@ -27,3 +27,6 @@ __pycache__/
 samy/__pycache__/*
 
 db.sqlite3
+
+# Apple
+.DS_Store

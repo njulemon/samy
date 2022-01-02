@@ -8,14 +8,16 @@ import {faMapMarkerAlt, faCirclePlus, faSignOutAlt} from '@fortawesome/free-soli
 import icon from 'leaflet/dist/images/marker-icon.png';
 // @ts-ignore
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-import {useEffect, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 import React from 'react';
 import {joinDots} from "./DotsGrouping";
 
 import ModalNewReport from "./ModalNewReport";
-import {useAppDispatch} from "./app/hooks";
-import {show} from "./app/Report";
-import {denyAccess, giveAccess} from "./app/Login";
+import {useAppDispatch, useAppSelector} from "./app/hooks";
+import {showReportModal, denyAccess, giveAccess, setCoordinates, showEventModal} from "./app/States";
+import {getReport} from "./api/Report";
+import {logout} from "./api/Access";
+import ModalEventDetail from "./ModalEventDetail";
 
 let DefaultIcon = L.divIcon({className: 'circle', iconSize: [50, 50]});
 let HereDot = L.divIcon({className: 'circle-here', iconSize: [20, 20]});
@@ -25,52 +27,79 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 function MapWithMenu() {
 
-    const map = useRef<L.Map | null>(null);
-    const size_x_meter = useRef<number>(100000);
-    const size_y_meter = useRef<number>(100000);
+    // initial map parameters
+    const map = useRef(null);
+    const size_x_meter = useRef(100000);
+    const size_y_meter = useRef(100000);
 
-    const max_dots: number = 3
+    const [idEvent, setIdEvent] = useState(null)
 
-    // all the points extracted from the API.
-    const list_init_markers_coord = useRef(
-        [
-            new LatLng(50.85, 4.348),
-            new LatLng(50.87, 4.348),
-            new LatLng(50.87, 4.349),
-            new LatLng(50.87, 4.350),
-            new LatLng(50.87, 4.370)
-        ])
+    // report dots display rule
+    const max_dots = 500
 
-    const new_marker = useRef<Marker | null>(null)
+    // coordinates of the reports and content (for tooltip)
+    const list_init_markers_coord = useRef([])
+    const list_init_report_content = useRef([])
 
-    // current marker we want to display
+    // marker for new reports
+    const new_report_marker = useRef(null)
+
+    // report markers reduced (to not have high density of dots).
     const list_markers_coord = useRef(list_init_markers_coord.current);
 
     // list of the marker to keep in memory to delete -> update the map.
     const list_markers = useRef([]);
+    const n_events_by_marker = useRef([]);
 
-    const n_events_by_marker = useRef([1, 1, 1, 1, 1]);
-
+    // dot showing current location
     const you_are_here_dot = useRef(new Marker(new LatLng(0, 0)));
 
+    // allow access to global states (eg 'isLogged')
     const dispatch = useAppDispatch()
 
-    function onMapClick(e: { latlng: L.LatLngExpression; }) {
+    //modal event is displayed ?
+    const eventModal = useAppSelector((state) => state.states.modales.modal_event_detail)
+
+    // download all the reports and keep them in memory.
+    function downloadReportAndDisplay() {
+        getReport()
+            .then(
+                (response) => {
+                    if (response.status === 200) {
+                        list_init_markers_coord.current.splice(0, list_init_markers_coord.current.length)
+                        list_init_report_content.current.splice(0, list_init_report_content.current.length)
+                        response.data.forEach(
+                            (report) => list_init_markers_coord.current.push(
+                                new LatLng(report.latitude, report.longitude
+                                ))
+                        )
+                        response.data.forEach(
+                            (report) => {
+                                list_init_report_content.current.push(report)
+                            }
+                        )
+                        updateMarkers()
+                    }
+                }
+            )
+            .catch()
+    }
+
+    function onMapClick(e) {
 
         if (map.current) {
             L.popup()
                 .setLatLng(e.latlng)
                 .setContent('dist h : ' + size_x_meter.current + ' dist v = ' + size_y_meter.current)
                 .openOn(map.current);
-            //alert("You clicked the map at " + e.latlng);
         }
-
     }
 
     function onMapZoom() {
         updateMarkers();
     }
 
+    // this method is called each time we change the area displayed.
     function updateMarkers() {
 
         console.log("updateMarkers")
@@ -92,15 +121,18 @@ function MapWithMenu() {
             // create new one.
             if (map.current) {
                 list_markers_coord.current.forEach(
-                    (coord: LatLng, index: number) => {
+                    (coord, index) => {
+
+                        const tooltip_text = n_events_by_marker.current[index] === 1 ?
+                            list_init_report_content.current[index]
+                            : n_events_by_marker.current[index].toString() + ' évènements'
+
                         list_markers.current.push(
                             // @ts-ignore
-                            L.marker(coord).addTo(map.current)
-                                //.bindPopup(list_explanations.current[index])
-                                .bindTooltip(n_events_by_marker.current[index].toString())
-                        );
+                            L.marker(coord).addTo(map.current).on('click', () => {setIdEvent(list_init_report_content.current[index].id)}))
                     }
                 );
+
             }
 
             console.log(list_markers_coord.current.length)
@@ -110,10 +142,8 @@ function MapWithMenu() {
 
     }
 
+    // Update location of the user when clicking on the find me icon.
     function updateLocation() {
-        // Update location of the user when clicking on the find me icon.
-
-        console.log("updateLocation")
 
         if ("geolocation" in navigator) {
             /* geolocation is available */
@@ -140,33 +170,39 @@ function MapWithMenu() {
 
     }
 
-    function addNewMarker() {
+    function addNewReportMarker() {
 
         console.log("addNewMarker")
         if (map.current) {
             let center = map.current.getCenter()
-            if (new_marker.current) {
-                map.current?.removeLayer(new_marker.current)
+            if (new_report_marker.current) {
+                map.current?.removeLayer(new_report_marker.current)
             }
-            new_marker.current = L.marker(center, {icon: newMarkerIcon, draggable: true}).addTo(map.current)
-            new_marker.current.on('click', () => {
-                dispatch(show())
+            new_report_marker.current = L.marker(center, {icon: newMarkerIcon, draggable: true}).addTo(map.current)
+            new_report_marker.current.on('click', () => {
+                dispatch(showReportModal())
+                dispatch(setCoordinates(
+                    {
+                        latitude: new_report_marker.current?.getLatLng().lat,
+                        longitude: new_report_marker.current?.getLatLng().lng
+                    }
+                ))
             })
         }
     }
 
+    // init
     useEffect(
         () => {
-            console.log("useEffect []")
             map.current = L.map('map', {attributionControl: false}).setView([50.85, 4.348], 13);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | made by N. Julémont'
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | by N. Julémont'
             }).addTo(map.current);
 
             L.control.attribution({position: 'bottomleft'}).addTo(map.current);
 
-            updateMarkers();
+            downloadReportAndDisplay()
 
             map.current.on('zoom', onMapZoom);
             map.current.on('move', onMapZoom)
@@ -178,30 +214,52 @@ function MapWithMenu() {
         []
     );
 
+    // when id of event is changed (clicked)
+    useEffect(
+        () => {
+            if (idEvent){
+                dispatch(showEventModal())
+            }
+        },
+        [idEvent]
+    )
+
+    // reset id if modal is closed
+    useEffect(
+        () => {
+            if (!eventModal){
+                setIdEvent(null)
+            }
+
+        },
+        [eventModal]
+    )
+
     return (
         <>
-            <ModalNewReport/>
+            <ModalEventDetail id_report={idEvent} key={"modal-event-detail-" + idEvent} />
+            <ModalNewReport />
             <div>
                 <div id='map'>
                     <div className="leaflet-top leaflet-right">
                         <FontAwesomeIcon icon={faSignOutAlt} className="logout-button"
                                          onClick={() => {
-                                             dispatch(denyAccess())
-                                         }} fixedWidth/>
+                                             logout().then(() => dispatch(denyAccess()))
+                                         }} fixedWidth />
                     </div>
                     <div className="leaflet-bottom leaflet-right">
                         <div className="background-leaflet-buttons">
                             <FontAwesomeIcon icon={faMapMarkerAlt} className="here-icon" onClick={updateLocation}
                                              fixedWidth/>
                             <br/>
-                            <FontAwesomeIcon icon={faCirclePlus} className="new-icon" onClick={addNewMarker}
-                                             fixedWidth/>
+                            <FontAwesomeIcon icon={faCirclePlus} className="new-icon" onClick={addNewReportMarker}
+                                             fixedWidth />
                         </div>
                     </div>
                 </div>
             </div>
         </>
-    );
+    )
 }
 
 

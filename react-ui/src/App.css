@@ -2,6 +2,10 @@
     height: 100vh;
 }
 
+body {
+    background-image: var(--bs-gradient);
+}
+
 div.circle {
     background-color: rgba(215, 60, 33, 0.68);
     border-color: red;
@@ -126,10 +130,6 @@ div.circle-here {
 .login-vertical-center {
     margin-top: 100px;
 
-}
-
-body {
-    background-image: var(--bs-gradient);
 }
 
 .fill-height {

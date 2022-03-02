@@ -15,7 +15,8 @@ router.register(r'csrf', views.csrf, 'csrf')
 router.register(r'get-user', views.get_user, 'get-user')
 router.register(r'translation', views.TranslationViewSet, 'translation')
 router.register(r'votes', views.VoteViewSetReport, 'votes')
-
+router.register(r'user', views.UserViewSet, 'user')
+router.register(r'key-validation', views.KeyValidationView, 'key-validation')
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [

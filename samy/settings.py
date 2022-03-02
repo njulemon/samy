@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -22,10 +22,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-*#a0yy99@&g@y6#mya70dmf+y6-$d39ku_#g0yfmr8l7ak(ba3'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+try:
+    os.environ['DEV']
+    DEBUG = True
+except KeyError:
+    DEBUG = False
+
 CSRF_COOKIE_HTTPONLY = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.0.55']
+try:
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.0.55', os.environ['HOST']]
+except:
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.0.55']
+
+DJANGO_SUPERUSER_USERNAME = os.environ['DJANGO_SUPERUSER_USERNAME']
+DJANGO_SUPERUSER_PASSWORD = os.environ['DJANGO_SUPERUSER_PASSWORD']
 
 # Application definition
 
@@ -147,3 +158,16 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+TEMPLATED_EMAIL_BACKEND = 'templated_email.backends.vanilla_django.TemplateBackend'
+
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587  # TLS
+EMAIL_USE_TLS = True
+EMAIL_TIMEOUT = 10
+try:
+    EMAIL_HOST_USER = os.environ['SMTP_USERNAME']
+    EMAIL_HOST_PASSWORD = os.environ['SMTP_PASSWORD']
+except KeyError:
+    raise EnvironmentError('Email variables are not defined.')
+

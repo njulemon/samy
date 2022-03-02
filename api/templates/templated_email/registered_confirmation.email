@@ -1,0 +1,18 @@
+{% block subject %}[Samy-app] Validation de l'adresse e-mail{% endblock %}
+{% block html %}
+    <p>
+        Bonjour {{ first_name }},
+    </p>
+
+    <p>
+        Bienvenue sur Samy, l'application des cyclistes quotidiens <a href="https://samy-app.be">Samy-app</a>
+    </p>
+
+    <p>
+        Vous venez de vous enregister avec l'adresse {{ email }}.
+        <br />
+        Merci de cliquer <a href={{ link_key }}>ici</a> pour confirmer votre adresse e-mail.
+    </p>
+
+
+{% endblock %}

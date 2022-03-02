@@ -1,0 +1,12 @@
+react-ui/node_modules
+react-ui/src
+react-ui/public
+venv
+.dockerignore
+.dockerignore.swp
+.gitignore
+.git
+db.sqlite3
+Dockerfile
+
+

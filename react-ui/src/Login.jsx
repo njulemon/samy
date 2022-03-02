@@ -1,28 +1,24 @@
-import {useAppDispatch, useAppSelector} from "./app/hooks";
+import {useAppDispatch} from "./app/hooks";
 import {Formik, Form, Field} from "formik";
-import {uriGetUser, uriLogin, urlServer} from "./def/Definitions";
+import {uriLogin, urlServer} from "./def/Definitions";
 import {PostCsrf} from "./api/Csrf";
-import {checkAccessAndGetUser, denyAccess, giveAccess, setUser} from "./app/States";
-import * as Yup from 'yup';
+import {checkAccessAndGetUser, denyAccess, giveAccess} from "./app/States";
 import {useEffect, useState} from "react";
-import hasAccess, {logout} from "./api/Access";
-import axios from "axios";
+import {logout} from "./api/Access";
+import RegisterModal from "./RegisterModal";
 
 function Login() {
 
 
     const dispatch = useAppDispatch()
-    const isLogged = useAppSelector((state) => state.states.isLogged)
 
     const [errorLogin, setErrorLogin] = useState('')
-
-    const url = urlServer + uriLogin
 
     const validateForm = (values) => {
         const errors = {};
         if (!values.username) {
             errors.username = 'Veuillez introduire votre adresse e-mail';
-        } else if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(values.username)) {
+        } else if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(values.username)) {
             errors.username = 'Adresse e-mail invalide';
         }
 
@@ -43,7 +39,7 @@ function Login() {
                 (gotAccess) => {
                     if (gotAccess) {
                         setErrorLogin('')
-                        dispatch(giveAccess())
+                        dispatch(checkAccessAndGetUser())
                     } else {
                         setErrorLogin('Accès refusé')
                         logout().then(() => dispatch(denyAccess()))
@@ -52,6 +48,9 @@ function Login() {
             )
             .catch((reason) => setErrorLogin('Accès refusé'))
     }
+
+    // modal to register.
+    const [showModal, setShowModal] = useState(false)
 
     useEffect(
         () => {
@@ -63,6 +62,7 @@ function Login() {
     // @ts-ignore
     return (
         <>
+            <RegisterModal setShowModal={setShowModal} showModal={showModal}/>
             <div className=" container-fluid fill-height">
                 <div className="row login-vertical-center">
                     <div className="col"></div>
@@ -136,7 +136,7 @@ function Login() {
                                             <a href="#"> Mot de passe oublié ?</a>
                                         </div>
                                         <div className="col col-xs-6 text-right">
-                                            <a href='#'>S'enregistrer</a>
+                                            <a onClick={() => setShowModal(true)} href="#">S'enregistrer</a>
                                         </div>
                                     </div>
                                 </div>

@@ -2,7 +2,7 @@ import {getReportForm, postReport} from "./api/Report";
 import {Form, Formik, useFormikContext} from "formik";
 import {useEffect, useState} from "react";
 import {useAppDispatch, useAppSelector} from "./app/hooks";
-import {clear, setFields, setTouched} from "./app/States";
+import {clear, reload, setFields, setTouched} from "./app/States";
 import FormReportField from "./FormReportField";
 import {hideReportModal} from "./app/States";
 
@@ -10,12 +10,11 @@ const FormStore = () => {
 
     // Form store (store actual choice of the user - closing/reopening the modal)
     const dispatch = useAppDispatch()
-    const formStore = useAppSelector((state) => state.states.form_report)
 
     // needed for form validation
     const formik = useFormikContext();
 
-    // manage event from the form (choices saved in the store).
+    // manage event from the form (choices are saved in the store).
     useEffect(() => {
         dispatch(setFields(formik.values))
     }, [formik.values]);
@@ -116,6 +115,7 @@ function FormReport() {
                                 setErrorForm('')
                                 dispatch(hideReportModal())
                                 dispatch(clear())
+                                dispatch(reload())
                             } else {
                                 setErrorForm('Le signalement n\'a pas pu être enregistré')
                             }

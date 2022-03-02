@@ -1,4 +1,4 @@
-import L, {LatLng, Marker, Point} from 'leaflet';
+import L, {LatLng, LatLngBounds, Marker, Point} from 'leaflet';
 import './App.css';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -102,8 +102,6 @@ function MapWithMenu() {
     // this method is called each time we change the area displayed.
     function updateMarkers() {
 
-        console.log("updateMarkers")
-
         if (map.current) {
             // update size of the map variables each time user redefine the map size.
             size_x_meter.current = map.current.distance(map.current.getBounds().getNorthEast(), map.current.getBounds().getNorthWest());
@@ -132,14 +130,8 @@ function MapWithMenu() {
                             L.marker(coord).addTo(map.current).on('click', () => {setIdEvent(list_init_report_content.current[index].id)}))
                     }
                 );
-
             }
-
-            console.log(list_markers_coord.current.length)
-
         }
-
-
     }
 
     // Update location of the user when clicking on the find me icon.
@@ -194,7 +186,23 @@ function MapWithMenu() {
     // init
     useEffect(
         () => {
-            map.current = L.map('map', {attributionControl: false}).setView([50.85, 4.348], 13);
+
+            map.current = L.map('map', {attributionControl: false})
+
+            // check if local storage already containts info on the map.
+            if(localStorage.getItem('map-zoom')){
+
+                const zoom = parseInt(localStorage.getItem("map-zoom"))
+                const center_lat = parseFloat(localStorage.getItem("map-center-lat"))
+                const center_lng = parseFloat(localStorage.getItem("map-center-lng"))
+
+                const bounds = L.LatLngBounds()
+                map.current.setView([center_lat, center_lng], zoom);
+            }else{
+                map.current.setView([50.85, 4.348], 13);
+            }
+
+
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | by N. Julémont'
@@ -208,6 +216,11 @@ function MapWithMenu() {
             map.current.on('move', onMapZoom)
 
             return function () {
+                const zoom = map.current.getZoom()
+                const bounds = map.current.getBounds()
+                localStorage.setItem("map-zoom", zoom.toString())
+                localStorage.setItem("map-center-lat", bounds.getCenter().lat)
+                localStorage.setItem("map-center-lng", bounds.getCenter().lng)
                 map.current?.remove();
             }
         },

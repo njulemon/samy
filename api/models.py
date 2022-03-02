@@ -18,7 +18,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(_('last name'), max_length=100)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['password', 'first_name', 'last_name']
 
     objects = CustomUserManager()
 
@@ -27,7 +27,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
 class Report(models.Model):
-
     user_type = models.IntegerField(choices=ReportUserType.get_model_choices())
     category_1 = models.IntegerField(choices=ReportCategory1.get_model_choices())
     category_2 = models.IntegerField(choices=ReportCategory2.get_model_choices())
@@ -37,8 +36,7 @@ class Report(models.Model):
     # creator of the report. If user delete the account this field is set to null.
     creator = models.ForeignKey(
         to=CustomUser,
-        on_delete=models.SET_NULL,
-        null=True
+        on_delete=models.CASCADE
     )
 
 
@@ -47,7 +45,7 @@ class Votes(models.Model):
         to=CustomUser,
         on_delete=models.CASCADE
     )
-    gravity = models.IntegerField(choices=[(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5)], null=True)
+    gravity = models.IntegerField(choices=[(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5)])
     report = models.ForeignKey(
         to=Report,
         on_delete=models.CASCADE
@@ -55,3 +53,12 @@ class Votes(models.Model):
 
     class Meta:
         unique_together = ('user', 'report',)
+
+
+class AuthorizedMail(models.Model):
+    email = models.EmailField(unique=True)
+
+
+class KeyValidator(models.Model):
+    account = models.ForeignKey(to=CustomUser, on_delete=models.CASCADE)
+    key = models.CharField(max_length=100)

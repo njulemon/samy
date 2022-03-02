@@ -17,6 +17,8 @@ export const stateSlice = createSlice({
 
         isLogged: false,
 
+        reload: false,
+
         form_report: {
             values: {
                 user_type: 'NONE_USER_TYPE',
@@ -88,6 +90,12 @@ export const stateSlice = createSlice({
             state.modales.note_mine = action.payload.note_mine
             state.modales.n_votes = action.payload.n_votes
             state.modales.note_mine_id = action.payload.note_mine_id
+        },
+        reload: (state) => {
+            state.reload = true
+        },
+        setReloadIsDone: (state) => {
+            state.reload = false
         }
     }
 })
@@ -105,7 +113,9 @@ export const {
     clear,
     setTranslation,
     setUser,
-    setNotes
+    setNotes,
+    reload,
+    setReloadIsDone
 } = stateSlice.actions
 
 // ---------------------------------------------//
@@ -151,8 +161,7 @@ const getUserVoteInfo = function (data, user) {
     const ownVote = data.filter((vote) => vote.user === user.id)
     if (Object.keys(ownVote).length === 1) {
         return {note_mine: ownVote[0].gravity, note_mine_id: ownVote[0].id}
-    }
-    else{
+    } else {
         return {note_mine: null, note_mine_id: null}
     }
 }

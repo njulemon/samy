@@ -15,6 +15,7 @@ function ModalEventDetail({id_report}) {
 
     const showEventDetail = useAppSelector((state) => state.states.modales.modal_event_detail)
     const [error, setError] = useState(null)
+    const [starDisabled, setStarDisabled] = useState(true)
 
     const [reportDataDescription, setReportDataDescription] = useState(null)
 
@@ -27,9 +28,6 @@ function ModalEventDetail({id_report}) {
     const notes_other = useAppSelector((state) => state.states.modales.notes_other)
     const n_votes = useAppSelector((state) => state.states.modales.n_votes)
     const note_mine_id = useAppSelector((state) => state.states.modales.note_mine_id)
-
-    // const [notesOther, setNotesOther] = useState({gravity: 0})
-    // const [notesMine, setNotesMine] = useState(null)
 
     useEffect(
         () => {
@@ -44,6 +42,10 @@ function ModalEventDetail({id_report}) {
     )
 
     const handlerVoteGravity = function (new_score) {
+
+        // disable stars (no multiple votes)
+        setStarDisabled(true)
+
         // put (update)
         if (note_mine) {
             PatchCsrf(
@@ -53,8 +55,11 @@ function ModalEventDetail({id_report}) {
                 }
             )
                 .then(() => dispatch(updateNotes(id_report)))
+                .then(() => setStarDisabled(false))
+                .then(() => setError(null))
                 .catch((error) => setError(error.toString()))
         }
+
         // post (new)
         else {
             PostCsrf(
@@ -66,6 +71,8 @@ function ModalEventDetail({id_report}) {
                 }
             )
                 .then(() => dispatch(updateNotes(id_report)))
+                .then(() => setStarDisabled(false))
+                .then(() => setError(null))
                 .catch((error) => setError(error.toString()))
         }
     }
@@ -75,54 +82,55 @@ function ModalEventDetail({id_report}) {
             {
                 !reportDataDescription ? null :
                     <>
-                        <Modal show={showEventDetail} onHide={() => dispatch(hideEventModal())}>
-                            <Modal.Header closeButton>
-                                <Modal.Title>
-                                    <div className="container-fluid">
-                                        <div className="row">
-                                            <div className="col">
-                                                {reportDataDescription.user_type === "PEDESTRIAN" ?
-                                                    <FontAwesomeIcon icon={faWalking} transform="grow-5"/>
-                                                    :
-                                                    <FontAwesomeIcon icon={faBiking}/>}
-                                            </div>
-                                            {capitalize(translation[reportDataDescription.category_1])}
-                                        </div>
-                                    </div>
-                                </Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-                                <div>{error}</div>
+                    <Modal show={showEventDetail} onHide={() => dispatch(hideEventModal())}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>
                                 <div className="container-fluid">
                                     <div className="row">
                                         <div className="col">
-                                            {capitalize(translation[reportDataDescription.category_2])}
+                                            {reportDataDescription.user_type === "PEDESTRIAN" ?
+                                                <FontAwesomeIcon icon={faWalking} transform="grow-5"/>
+                                                :
+                                                <FontAwesomeIcon icon={faBiking}/>}
                                         </div>
-
+                                        {capitalize(translation[reportDataDescription.category_1])}
                                     </div>
                                 </div>
-                                <div className="container-fluid">
-                                    <hr/>
-                                    <div className="row">
-                                        <div className="col">
-                                            Gravité :
-                                            <Rating key={"rating-star-" + note_mine ? note_mine : "null"}
+                            </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <div>{error}</div>
+                            <div className="container-fluid">
+                                <div className="row">
+                                    <div className="col">
+                                        {capitalize(translation[reportDataDescription.category_2])}
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div className="container-fluid">
+                                <hr/>
+                                <div className="row">
+                                    <div className="col">
+                                        Gravité :
+                                        <Rating key={"rating-star-" + note_mine ? note_mine : "null"}
                                                 name="simple-controlled"
                                                 value={note_mine}
                                                 onChange={(event, newValue) => {
                                                     handlerVoteGravity(newValue);
                                                 }}
-                                            />
-                                        </div>
-                                        <div className="col">
-                                            <h6>Total des votes ({n_votes})</h6>
-                                            {notes_other !== -1 ? "Gravité : " + notes_other : null}
-                                        </div>
-                                    </div>
+                                                diabled={starDisabled}
+                                    />
                                 </div>
-                            </Modal.Body>
-                        </Modal>
-                    </>
+                                <div className="col">
+                                    <h6>Moyenne des votes ({n_votes})</h6>
+                                    {notes_other !== -1 ? "Gravité : " + notes_other : null}
+                                </div>
+                            </div>
+                        </div>
+                    </Modal.Body>
+                    </Modal>
+                </>
             }
         </>
     )

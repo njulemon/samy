@@ -1,27 +1,53 @@
+import rest_framework.mixins
 from django.contrib.auth import authenticate, login as django_internal_login, logout
-from django.http import JsonResponse, HttpResponse, HttpResponseForbidden
-from django.shortcuts import render
+from django.contrib.auth.hashers import make_password
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+from django.http import HttpResponse
+
 from django.views.decorators.csrf import csrf_protect
-from rest_framework import viewsets, permissions, status, generics
-from rest_framework.authentication import SessionAuthentication
+from rest_framework import viewsets, permissions, status, generics, views
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.decorators import api_view, parser_classes, permission_classes, authentication_classes, action
+from rest_framework.exceptions import NotFound
+from rest_framework.mixins import CreateModelMixin, ListModelMixin
 from rest_framework.parsers import JSONParser
 from django.middleware.csrf import get_token
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, BasePermission, IsAdminUser
 from rest_framework.response import Response
+from templated_email import send_templated_mail
 
+from api import Tools
 from api.enum import ReportUserType, map_category_1, map_category_2
 from api.fr import report_form_fr, basic_terms
-from api.models import Report, Votes
-from api.serializers import ReportSerializer, VotesSerializer, UserSerializer
+from api.models import Report, Votes, CustomUser, KeyValidator
+from api.serializers import ReportSerializer, VotesSerializer, UserSerializer, NewUserSerializer
+
+
+class ActionBasedPermission(AllowAny):
+    """
+    Grant or deny access to a view, based on a mapping in view.action_permissions
+    """
+
+    def has_permission(self, request, view):
+        for klass, actions in getattr(view, 'action_permissions', {}).items():
+            if view.action in actions:
+                return klass().has_permission(request, view)
+        return False
 
 
 class VoteViewSetReport(viewsets.ModelViewSet):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
     queryset = Votes.objects.all()
     serializer_class = VotesSerializer
 
+    permission_classes = (ActionBasedPermission,)
+    authentication_classes = [SessionAuthentication]
+
+    action_permissions = {
+        IsAuthenticated: ['create', 'retrieve', 'partial_update', 'update'],
+        IsAdminUser: ['list', 'destroy']
+    }
+
+    # retrieve has been hacked in order to return the list of votes for a report id.
     def retrieve(self, request, pk=None, *args, **kwargs):
         queryset = Votes.objects.filter(report_id=pk)
         serializer = VotesSerializer(queryset, many=True)
@@ -57,6 +83,10 @@ class VoteViewSetUser(viewsets.ViewSet):
 
 
 class TranslationViewSet(viewsets.ViewSet):
+    """
+    Allow you to get translation dic.
+
+    """
 
     @action(detail=False)
     def fr(self, request):
@@ -71,13 +101,18 @@ class TranslationViewSet(viewsets.ViewSet):
 
 class ReportViewSet(viewsets.ModelViewSet):
     """
-    This viewset automatically provides `list` and `retrieve` actions for reports.
+    Allowed usage : `list` all report, `get` one report, `create` report, `delete` report.
     """
 
     queryset = Report.objects.all()
     serializer_class = ReportSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = (ActionBasedPermission,)
     authentication_classes = [SessionAuthentication]
+
+    action_permissions = {
+        IsAuthenticated: ['list', 'create', 'retrieve'],
+        IsAdminUser: ['update', 'partial_update', 'destroy']
+    }
 
     # to get csrf token
     @action(methods=['get'], detail=False)
@@ -87,7 +122,7 @@ class ReportViewSet(viewsets.ModelViewSet):
         return Response({'csrf_token': csrf_token})
 
     # to post
-    def create(self, request):
+    def create(self, request, *args, **kwargs):
         request.data["creator"] = request.user.email
         serializer = ReportSerializer(data=request.data)
         if serializer.is_valid():
@@ -124,6 +159,81 @@ class ReportFormTree(viewsets.ViewSet):
 
 # ----------------------------------------------------------------------------------------------------------------------
 
+class UserViewSet(viewsets.GenericViewSet, CreateModelMixin):
+    queryset = CustomUser.objects.all()
+    serializer_class = NewUserSerializer
+    permission_classes = (AllowAny,)
+    authentication_classes = [BasicAuthentication]
+
+    def create(self, request, *args, **kwargs):
+
+        ser = NewUserSerializer(data=request.data)
+
+        if request.is_secure():
+            protocol = 'https'
+        else:
+            protocol = 'http'
+
+        if ser.is_valid():
+
+            user = CustomUser.objects.create(
+                first_name=ser.validated_data['first_name'],
+                last_name=ser.validated_data['last_name'],
+                email=ser.validated_data['email'],
+                password=make_password(ser.validated_data['password']),
+                is_staff=False,
+                is_superuser=False,
+                is_active=False
+            )
+
+            key_register = Tools.key_generate(64)
+
+            KeyValidator.objects.create(account=user, key=key_register)
+
+            send_templated_mail(
+                template_name='registered_confirmation',
+                from_email='nicolas.julemont@gmail.com',
+                recipient_list=[ser.validated_data['email']],
+                context={
+                    'first_name': user.first_name,
+                    'link_key': f'{protocol}://{self.request.get_host()}/api/key-validation/{user.pk}?key={key_register}&format=json',
+                    'email': user.email
+                })
+
+            return Response(NewUserSerializer(user).data)
+        else:
+            return Response(ser.errors)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+class KeyValidationView(viewsets.GenericViewSet, rest_framework.mixins.RetrieveModelMixin, ListModelMixin):
+    """
+    The 'list' does not send back anything.
+    Signature is /key-validation/{user.pk}?key={validation-key} to activate user.
+    """
+
+    def list(self, request, *args, **kwargs):
+        return Response('')
+
+    def retrieve(self, request, *args, **kwargs):
+
+        key = self.request.query_params.get('key', None)
+        if key is not None:
+            try:
+                user = KeyValidator.objects.get(key=key).account
+                if user.pk != int(kwargs['pk']):
+                    return Response('The user pk was not provided.')
+            except (ObjectDoesNotExist, MultipleObjectsReturned, KeyError):
+                return Response('The user/key combination does not exist.')
+            else:
+                user.is_active = True
+                user.save()
+                return Response('Your account is now active.')
+        else:
+            return Response('You did not provide any key.')
+
+
+# ----------------------------------------------------------------------------------------------------------------------
 @api_view(['POST', 'GET'])
 @parser_classes([JSONParser])
 @csrf_protect
@@ -157,7 +267,6 @@ def login_(request):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-
 @api_view(['GET'])
 def logout_view(request):
     logout(request)
@@ -165,7 +274,6 @@ def logout_view(request):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def has_access(request):
@@ -173,8 +281,6 @@ def has_access(request):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user(request):

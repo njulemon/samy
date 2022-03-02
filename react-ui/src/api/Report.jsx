@@ -1,5 +1,5 @@
 import axios from "axios";
-import {uriReport, uriReportCsrf, uriReportForm, urlServer} from "../def/Definitions";
+import {uriCSRF, uriReport, uriReportForm, urlServer} from "../def/Definitions";
 
 export function getReport() {
     return axios.get(
@@ -10,9 +10,9 @@ export function getReport() {
     )
 }
 
-export function postReport(data: any) {
+export function postReport(data) {
     return axios.get(
-        urlServer + uriReportCsrf,
+        urlServer + uriCSRF,
         {
             withCredentials: true
         }

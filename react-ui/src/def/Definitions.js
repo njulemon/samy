@@ -9,5 +9,10 @@ export const uriGetUser = '/api/get-user/'
 export const uriVotes = '/api/votes/'
 export const uriCSRF = '/api/csrf/'
 export const uriNewUser = '/api/user/'
+export const uriRequestNewPassword = '/api/reset-password-send-mail/'
+export const uriNewPassword = '/api/reset-password/'
+export const uriPicture = '/api/report-image/'
 
 export const uriReportForm = '/api/report-form/'
+
+export const urlMedia = 'http://localhost:8000/media/'

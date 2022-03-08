@@ -78,7 +78,13 @@ function MapWithMenu() {
                                 list_init_report_content.current.push(report)
                             }
                         )
-                        updateMarkers()
+                        try {
+                            updateMarkers()
+                        }
+                        catch (e) {
+                            console.log(e)
+                        }
+
                     }
                 }
             )
@@ -196,7 +202,6 @@ function MapWithMenu() {
                 const center_lat = parseFloat(localStorage.getItem("map-center-lat"))
                 const center_lng = parseFloat(localStorage.getItem("map-center-lng"))
 
-                const bounds = L.LatLngBounds()
                 map.current.setView([center_lat, center_lng], zoom);
             }else{
                 map.current.setView([50.85, 4.348], 13);

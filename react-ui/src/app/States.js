@@ -171,7 +171,9 @@ const processVotes = function (data) {
         // reduce does not work with one element
         if (Object.keys(data).length === 1)
             return data[0].gravity
-        return data.reduce((a, b) => a.gravity + b.gravity) / Object.keys(data).length
+        else {
+            return (data.reduce((sum, elem) => sum + elem.gravity, 0) / Object.keys(data).length).toFixed(1)
+        }
     } else {
         return -1
     }

@@ -1,12 +1,21 @@
 from django.contrib.auth.hashers import make_password
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
+from django.db import IntegrityError
 from django.db.transaction import atomic
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from templated_email import send_templated_mail
 
 from api import Tools
 from api.enum import ReportUserType, ReportCategory1, ReportCategory2
-from api.models import Report, CustomUser, Votes, KeyValidator
+from api.models import Report, CustomUser, Votes, KeyValidator, RestPassword, ReportImage
+
+
+class ReportImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReportImage
+        fields = '__all__'
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -38,11 +47,174 @@ class ReportSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
+
         return Report.objects.create(
             user_type=ReportUserType.get_enum(validated_data["get_user_type_display"]).value,
             category_1=ReportCategory1.get_enum(validated_data["get_category_1_display"]).value,
             category_2=ReportCategory2.get_enum(validated_data["get_category_2_display"]).value,
             creator=CustomUser.objects.get(email=validated_data["creator"]["email"]),
             latitude=validated_data["latitude"],
-            longitude=validated_data["longitude"]
+            longitude=validated_data["longitude"],
+            image=validated_data['image']
         )
+
+
+class RestPasswordSerializer(serializers.Serializer):
+    """
+    Provides a way to post the email when requesting to reset the password and create in the DB a
+    pair (account, key) that should be sent to the user in order to reset the password.
+    """
+
+    email = serializers.EmailField()
+    key = serializers.CharField(max_length=100, required=False)
+
+    def update(self, instance, validated_data):
+        raise NotImplementedError
+
+    def validate(self, attrs):
+
+        account = attrs.get('account')
+
+        if not account:
+            raise ValidationError('account with email provided does not exist')
+
+        return attrs
+
+    def to_internal_value(self, data):
+
+        email = data.get('email')
+        key = Tools.key_generate(64)
+
+        try:
+            account = CustomUser.objects.get(email=email)
+        except ObjectDoesNotExist:
+            account = None
+
+        return {
+            'account': account,
+            'key': key
+        }
+
+    def to_representation(self, instance):
+        return {
+            'email': instance.account.email
+        }
+
+    def create(self, validated_data):
+        obj, _ = RestPassword.objects.get_or_create(account=validated_data['account'])
+        obj.key = validated_data['key']
+        obj.save()
+        return obj
+
+
+class CreateResetPasswordSerializer(serializers.Serializer):
+    """
+    Provides a way to post the email when requesting to reset the password and create in the DB a
+    pair (account, key) that should be sent to the user in order to reset the password.
+    """
+
+    email = serializers.EmailField()
+    key = serializers.CharField(max_length=100, required=False)
+
+    def update(self, instance, validated_data):
+        raise NotImplementedError
+
+    def validate(self, attrs):
+
+        account = attrs.get('account')
+
+        if not account:
+            raise ValidationError('account with email provided does not exist')
+
+        return attrs
+
+    def to_internal_value(self, data):
+
+        email = data.get('email')
+        key = Tools.key_generate(64)
+
+        try:
+            account = CustomUser.objects.get(email=email)
+        except ObjectDoesNotExist:
+            account = None
+
+        return {
+            'account': account,
+            'key': key
+        }
+
+    def to_representation(self, instance):
+        return {
+            'email': instance.account.email
+        }
+
+    def create(self, validated_data):
+        obj, _ = RestPassword.objects.get_or_create(account=validated_data['account'])
+        obj.key = validated_data['key']
+        obj.save()
+        return obj
+
+
+class UserPasswordSerializer(serializers.Serializer):
+    """
+    Provides a way to post the email when requesting to reset the password and create in the DB a
+    pair (account, key) that should be sent to the user in order to reset the password.
+    """
+
+    password = serializers.CharField(max_length=20)
+    key = serializers.CharField(max_length=100, required=False)
+
+    def validate(self, attrs):
+
+        password = attrs.get('password')
+        key = attrs.get('key')
+
+        if not password:
+            raise ValidationError('password not provided')
+
+        if not key:
+            raise ValidationError('key not provided')
+
+        try:
+            account = self.instance
+            key_obj = RestPassword.objects.get(account=account)
+        except ObjectDoesNotExist:
+            raise ValidationError('Account or key does not exist in the DB.')
+
+        if key != key_obj.key:
+            raise ValidationError('Key is not valid')
+
+        return attrs
+
+    def to_internal_value(self, data):
+
+        key = data.get('key')
+        password = data.get('password')
+
+        return {
+            'key': key,
+            'password': password
+        }
+
+    def to_representation(self, instance):
+        return {
+            'pk_user': instance.pk
+        }
+
+    def update(self, instance, validated_data):
+        password = make_password(validated_data['password'])
+        key = validated_data['key']
+        try:
+            key_obj = RestPassword.objects.get(account=instance)
+            if key_obj.key != key:
+                raise ObjectDoesNotExist
+            instance.password = password
+            instance.save()
+        except ObjectDoesNotExist:
+            # do not update
+            pass
+
+        return instance
+
+    def create(self, validated_data):
+        raise NotImplementedError

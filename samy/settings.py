@@ -25,6 +25,11 @@ SECRET_KEY = 'django-insecure-*#a0yy99@&g@y6#mya70dmf+y6-$d39ku_#g0yfmr8l7ak(ba3
 try:
     os.environ['DEV']
     DEBUG = True
+    MEDIA_ROOT = '/Users/nicolas.julemont/Documents/CODE/samy/api/static/api/media'
+    MEDIA_URL = 'media/'
+    STATIC_ROOT = '/Users/nicolas.julemont/Documents/CODE/samy/api/static/api'
+    STATIC_URL = 'static/'
+    # STATICFILES_DIRS = ['/media/']
 except KeyError:
     DEBUG = False
 
@@ -107,6 +112,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'samy.wsgi.application'
+
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases

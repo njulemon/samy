@@ -135,3 +135,13 @@ div.circle-here {
 .fill-height {
     min-height: 100vh;
 }
+
+.image-uploaded {
+    width: 200px;
+}
+
+.image-report {
+    width: 200px;
+    border-radius: 5px;
+
+}

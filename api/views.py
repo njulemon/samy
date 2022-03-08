@@ -9,8 +9,8 @@ from rest_framework import viewsets, permissions, status, generics, views
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.decorators import api_view, parser_classes, permission_classes, authentication_classes, action
 from rest_framework.exceptions import NotFound
-from rest_framework.mixins import CreateModelMixin, ListModelMixin
-from rest_framework.parsers import JSONParser
+from rest_framework.mixins import CreateModelMixin, ListModelMixin, UpdateModelMixin
+from rest_framework.parsers import JSONParser, MultiPartParser
 from django.middleware.csrf import get_token
 from rest_framework.permissions import AllowAny, IsAuthenticated, BasePermission, IsAdminUser
 from rest_framework.response import Response
@@ -19,8 +19,9 @@ from templated_email import send_templated_mail
 from api import Tools
 from api.enum import ReportUserType, map_category_1, map_category_2
 from api.fr import report_form_fr, basic_terms
-from api.models import Report, Votes, CustomUser, KeyValidator
-from api.serializers import ReportSerializer, VotesSerializer, UserSerializer, NewUserSerializer
+from api.models import Report, Votes, CustomUser, KeyValidator, RestPassword, ReportImage
+from api.serializers import ReportSerializer, VotesSerializer, UserSerializer, NewUserSerializer, \
+    CreateResetPasswordSerializer, UserPasswordSerializer, ReportImageSerializer
 
 
 class ActionBasedPermission(AllowAny):
@@ -234,6 +235,70 @@ class KeyValidationView(viewsets.GenericViewSet, rest_framework.mixins.RetrieveM
 
 
 # ----------------------------------------------------------------------------------------------------------------------
+class PasswordForgotRequestView(viewsets.GenericViewSet, CreateModelMixin, ListModelMixin):
+    """
+    The 'list' does not send back anything.
+    Use this method to request a password reset.
+    """
+    serializer_class = CreateResetPasswordSerializer
+    queryset = RestPassword.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        return Response('')
+
+    def create(self, request, *args, **kwargs):
+        ser = CreateResetPasswordSerializer(data=request.data)
+        if ser.is_valid():
+            key_object = ser.save()
+            first_name = key_object.account.first_name
+            pk_user = key_object.account.pk
+            email = key_object.account.email
+            key = key_object.key
+            protocol = 'https' if request.is_secure() else 'http'
+            send_templated_mail(
+                template_name='reset_password',
+                from_email='nicolas.julemont@gmail.com',
+                recipient_list=[ser.validated_data['account'].email],
+                context={
+                    'first_name': first_name,
+                    'link_key': f'{protocol}://{self.request.get_host()}/R/no-redirection/reset-password/{pk_user}/{key}',
+                    'email': email
+                })
+            return Response(ser.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+class RestPasswordView(viewsets.GenericViewSet, UpdateModelMixin, ListModelMixin):
+    """
+    The 'list' does not send back anything.
+    Use this method to request a password reset with this URL : /api/reset-password/{pk-account}
+    """
+    serializer_class = UserPasswordSerializer
+    queryset = CustomUser.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        return Response('')
+
+    def update(self, request, *args, **kwargs):
+        try:
+            instance = CustomUser.objects.get(pk=kwargs['pk'])
+        except KeyError:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        ser = UserPasswordSerializer(data=request.data, instance=instance)
+        if ser.is_valid():
+            user = ser.save()
+            if user is not None:
+                return Response(ser.data, status=status.HTTP_200_OK)
+            else:
+                return Response(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
 @api_view(['POST', 'GET'])
 @parser_classes([JSONParser])
 @csrf_protect
@@ -293,3 +358,10 @@ def csrf(request):
     csrf_token = get_token(request)  # provided by Middleware csrf
     # send csrf middle ware token
     return Response({'csrf_token': csrf_token})
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+class ReportImageView(viewsets.ModelViewSet):
+    queryset = ReportImage.objects.all()
+    serializer_class = ReportImageSerializer
+    parser_classes = [MultiPartParser]

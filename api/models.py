@@ -26,6 +26,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 
+class ReportImage(models.Model):
+    image = models.ImageField()
+
+
 class Report(models.Model):
     user_type = models.IntegerField(choices=ReportUserType.get_model_choices())
     category_1 = models.IntegerField(choices=ReportCategory1.get_model_choices())
@@ -37,6 +41,13 @@ class Report(models.Model):
     creator = models.ForeignKey(
         to=CustomUser,
         on_delete=models.CASCADE
+    )
+    image = models.ForeignKey(
+        to=ReportImage,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        default=None
     )
 
 
@@ -61,4 +72,9 @@ class AuthorizedMail(models.Model):
 
 class KeyValidator(models.Model):
     account = models.ForeignKey(to=CustomUser, on_delete=models.CASCADE)
+    key = models.CharField(max_length=100)
+
+
+class RestPassword(models.Model):
+    account = models.OneToOneField(to=CustomUser, on_delete=models.CASCADE)
     key = models.CharField(max_length=100)

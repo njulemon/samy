@@ -30,3 +30,6 @@ db.sqlite3
 
 # Apple
 .DS_Store
+
+# static files
+/api/static

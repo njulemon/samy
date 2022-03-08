@@ -6,6 +6,7 @@ import {checkAccessAndGetUser, denyAccess, giveAccess} from "./app/States";
 import {useEffect, useState} from "react";
 import {logout} from "./api/Access";
 import RegisterModal from "./RegisterModal";
+import ModalResetPassword from "./ModalResetPassword";
 
 function Login() {
 
@@ -50,7 +51,10 @@ function Login() {
     }
 
     // modal to register.
-    const [showModal, setShowModal] = useState(false)
+    const [showRegisterModal, setShowRegisterModal] = useState(false)
+
+    // modal to reset password.
+    const [showResetPasswordModal, setShowResetPasswordModal] = useState(false)
 
     useEffect(
         () => {
@@ -62,7 +66,8 @@ function Login() {
     // @ts-ignore
     return (
         <>
-            <RegisterModal setShowModal={setShowModal} showModal={showModal}/>
+            <RegisterModal setShowModal={setShowRegisterModal} showModal={showRegisterModal} />
+            <ModalResetPassword setShowModal={setShowResetPasswordModal} showModal={showResetPasswordModal} />
             <div className=" container-fluid fill-height">
                 <div className="row login-vertical-center">
                     <div className="col"></div>
@@ -133,10 +138,10 @@ function Login() {
                                     <div className="row">
 
                                         <div className='col col-xs-6 text-left'>
-                                            <a href="#"> Mot de passe oublié ?</a>
+                                            <a onClick={() => setShowResetPasswordModal(true)} href="#"> Mot de passe oublié ?</a>
                                         </div>
                                         <div className="col col-xs-6 text-right">
-                                            <a onClick={() => setShowModal(true)} href="#">S'enregistrer</a>
+                                            <a onClick={() => setShowRegisterModal(true)} href="#">S'enregistrer</a>
                                         </div>
                                     </div>
                                 </div>

@@ -1,10 +1,12 @@
 import {getReportForm, postReport} from "./api/Report";
-import {Form, Formik, useFormikContext} from "formik";
+import {Field, Form, Formik, useFormikContext} from "formik";
 import {useEffect, useState} from "react";
 import {useAppDispatch, useAppSelector} from "./app/hooks";
 import {clear, reload, setFields, setTouched} from "./app/States";
 import FormReportField from "./FormReportField";
 import {hideReportModal} from "./app/States";
+import {capitalize} from "./Tools/String";
+import FieldImageAutoUpload from "./FieldImageAutoUpload";
 
 const FormStore = () => {
 
@@ -33,6 +35,8 @@ function FormReport() {
     const [userOption, setUserOption] = useState(["CYCLIST"]);
     const [cat1, setCat1] = useState([]);
     const [cat2, setCat2] = useState([]);
+
+    const [pk_picture, set_pk_picture] = useState(null)
 
     // LOCAL STATE (error form)
     const [errorForm, setErrorForm] = useState('')
@@ -93,80 +97,91 @@ function FormReport() {
     };
 
     return (
-        <Formik
-            initialValues={{
-                user_type: formStore.values.user_type,
-                category_1: formStore.values.category_1,
-                category_2: formStore.values.category_2
-            }}
-            onSubmit={(values, {setSubmitting}) => {
-                const data = {
-                    'user_type': values.user_type,
-                    'category_1': values.category_1,
-                    'category_2': values.category_2,
-                    'latitude': formStore.values.latitude,
-                    'longitude': formStore.values.longitude,
-                }
+        <>
+            <Formik
+                initialValues={{
+                    user_type: formStore.values.user_type,
+                    category_1: formStore.values.category_1,
+                    category_2: formStore.values.category_2
+                }}
+                onSubmit={(values, {setSubmitting}) => {
+                    const data = {
+                        'user_type': values.user_type,
+                        'category_1': values.category_1,
+                        'category_2': values.category_2,
+                        'latitude': formStore.values.latitude,
+                        'longitude': formStore.values.longitude,
+                        'image': pk_picture
+                    }
+                    console.log(values.image)
 
-                postReport(data)
-                    .then(
-                        (response) => {
-                            if (response.status === 200) {
-                                setErrorForm('')
-                                dispatch(hideReportModal())
-                                dispatch(clear())
-                                dispatch(reload())
-                            } else {
-                                setErrorForm('Le signalement n\'a pas pu être enregistré')
+                    postReport(data)
+                        .then(
+                            (response) => {
+                                if (response.status === 200) {
+                                    setErrorForm('')
+                                    dispatch(hideReportModal())
+                                    dispatch(clear())
+                                    dispatch(reload())
+                                } else {
+                                    setErrorForm('Le signalement n\'a pas pu être enregistré')
+                                }
                             }
+                        )
+                        .catch((reason) => setErrorForm('Le signalement n\'a pas pu être enregistré'))
+                }}
+                validate={validateForm}
+            >
+
+
+                {(formik, isSubmitting) => (
+                    <Form>
+                        <FormStore/>
+
+                        <FormReportField key="report-form-field-user-type"
+                                         formik={formik}
+                                         field_name='user_type'
+                                         list_options={userOption}
+                                         first_option="Catégorie d'usager ?"/>
+
+                        {formStore.values.user_type.includes("NONE") ? null :
+                            <FormReportField key="report-form-field-cat-1"
+                                             formik={formik}
+                                             field_name='category_1'
+                                             list_options={cat1}
+                                             first_option="Catégorie de problème ?"/>
                         }
-                    )
-                    .catch((reason) => setErrorForm('Le signalement n\'a pas pu être enregistré'))
-            }}
-            validate={validateForm}
-        >
+
+                        {formStore.values.user_type.includes("NONE") || formStore.values.category_1.includes("NONE") ? null :
+                            <FormReportField key="report-form-field-cat-2"
+                                             formik={formik}
+                                             field_name='category_2'
+                                             list_options={cat2}
+                                             first_option="Catégorie de problème ?"/>
+                        }
 
 
-            {(formik, isSubmitting) => (
-                <Form>
-                    <FormStore/>
+                        <FieldImageAutoUpload pk={pk_picture} setPk={set_pk_picture}/>
 
-                    <FormReportField key="report-form-field-user-type"
-                                     formik={formik}
-                                     field_name='user_type'
-                                     list_options={userOption}
-                                     first_option="Catégorie d'usager ?"/>
+                        {errorForm !== '' ?
+                            (<div className="mb-3">
+                                <div className="form-label is-invalid"></div>
+                                <div className="invalid-feedback is-invalid">{errorForm}</div>
+                            </div>)
+                            :
+                            null}
 
-                    {formStore.values.user_type.includes("NONE") ? null :
-                        <FormReportField key="report-form-field-cat-1"
-                                         formik={formik}
-                                         field_name='category_1'
-                                         list_options={cat1}
-                                         first_option="Catégorie de problème ?"/>
-                    }
+                        <div className="mb-3">
+                            <button className="btn btn-primary form-button" type="submit"
+                                    disabled={isSubmitting}>
+                                {isSubmitting ? "Merci de patienter..." : "Envoyer"}
+                            </button>
+                        </div>
 
-                    {formStore.values.user_type.includes("NONE") || formStore.values.category_1.includes("NONE") ? null :
-                        <FormReportField key="report-form-field-cat-2"
-                                         formik={formik}
-                                         field_name='category_2'
-                                         list_options={cat2}
-                                         first_option="Catégorie de problème ?"/>
-                    }
+                    </Form>)}
+            </Formik>
 
-                    <button className="btn btn-primary form-button" type="submit"
-                            disabled={isSubmitting}>
-                        {isSubmitting ? "Merci de patienter..." : "Envoyer"}
-                    </button>
-                    {errorForm !== '' ?
-                        (<div className="mb-3">
-                            <div className="form-label is-invalid"></div>
-                            <div className="invalid-feedback is-invalid">{errorForm}</div>
-                        </div>)
-                        :
-                        null}
-
-                </Form>)}
-        </Formik>
+        </>
     )
 }
 

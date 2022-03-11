@@ -55,7 +55,8 @@ class ReportSerializer(serializers.ModelSerializer):
             creator=CustomUser.objects.get(email=validated_data["creator"]["email"]),
             latitude=validated_data["latitude"],
             longitude=validated_data["longitude"],
-            image=validated_data['image']
+            image=validated_data['image'],
+            comment=validated_data['comment']
         )
 
 

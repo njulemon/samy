@@ -25,7 +25,9 @@ export const stateSlice = createSlice({
                 category_1: 'NONE_CAT_1',
                 category_2: 'NONE_CAT_2',
                 latitude: 0.0,
-                longitude: 0.0
+                longitude: 0.0,
+                picture_pk: null,
+                comment: null
             },
             touched: {
                 user_type: false,
@@ -66,6 +68,12 @@ export const stateSlice = createSlice({
         setCoordinates: (state, action) => {
             state.form_report.values.latitude = action.payload.latitude
             state.form_report.values.longitude = action.payload.longitude
+        },
+        setPicture: (state, action) => {
+            state.form_report.values.picture_pk = action.payload.picture_pk
+        },
+        setComment: (state, action) => {
+            state.form_report.values.comment = action.payload.comment
         },
         setTouched: (state, action) => {
             state.form_report.touched.user_type = action.payload.user_type
@@ -109,6 +117,8 @@ export const {
     denyAccess,
     setFields,
     setCoordinates,
+    setComment,
+    setPicture,
     setTouched,
     clear,
     setTranslation,

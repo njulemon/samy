@@ -1,5 +1,4 @@
 import {useLocation} from "react-router-dom";
-import FormResetPassword from "./FormResetPassword";
 import FormNewPassword from "./FormNewPassword";
 
 function ResetPassword() {

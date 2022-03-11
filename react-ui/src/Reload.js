@@ -1,4 +1,3 @@
-import {CircularProgress} from "@mui/material";
 import {useEffect} from "react";
 import {useAppDispatch} from "./app/hooks";
 import {setReloadIsDone} from "./app/States";
@@ -11,7 +10,7 @@ function Reload() {
         () => {
             setTimeout(() => dispatch(setReloadIsDone()), 3000)
         },
-        []
+        [dispatch]
     )
     return (
         <>

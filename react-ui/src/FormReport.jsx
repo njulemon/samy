@@ -1,11 +1,10 @@
 import {getReportForm, postReport} from "./api/Report";
-import {Field, Form, Formik, useFormikContext} from "formik";
+import {Form, Formik, useFormikContext, Field} from "formik";
 import {useEffect, useState} from "react";
 import {useAppDispatch, useAppSelector} from "./app/hooks";
-import {clear, reload, setFields, setTouched} from "./app/States";
+import {clear, reload, setComment, setFields, setTouched} from "./app/States";
 import FormReportField from "./FormReportField";
 import {hideReportModal} from "./app/States";
-import {capitalize} from "./Tools/String";
 import FieldImageAutoUpload from "./FieldImageAutoUpload";
 
 const FormStore = () => {
@@ -19,12 +18,19 @@ const FormStore = () => {
     // manage event from the form (choices are saved in the store).
     useEffect(() => {
         dispatch(setFields(formik.values))
-    }, [formik.values]);
+    }, [formik.values, dispatch])
 
     useEffect(() => {
             dispatch(setTouched(formik.touched))
-        }, [formik.touched]
-    );
+        }, [formik.touched, dispatch]
+    )
+
+    useEffect(() => {
+            dispatch(setComment(formik.values))
+        },
+        [formik.values.comment, dispatch]
+    )
+
     return null;
 };
 
@@ -93,6 +99,10 @@ function FormReport() {
             errors.category_2 = 'Veuillez choisir une description du problème';
         }
 
+        if (values.comment?.length > 2000) {
+            errors.comment = 'Veuillez entrer moins de 2000 caractères';
+        }
+
         return errors;
     };
 
@@ -111,9 +121,10 @@ function FormReport() {
                         'category_2': values.category_2,
                         'latitude': formStore.values.latitude,
                         'longitude': formStore.values.longitude,
-                        'image': pk_picture
+                        'image': pk_picture,
+                        'comment': values.comment
                     }
-                    console.log(values.image)
+                    console.log(data)
 
                     postReport(data)
                         .then(
@@ -160,6 +171,19 @@ function FormReport() {
                                              first_option="Catégorie de problème ?"/>
                         }
 
+                        <div className="mb-3">
+                            <Field key="report-form-field-comment"
+                                   className={(formik.touched.comment && formik.errors.comment) ? 'form-control is-invalid' : 'form-control'}
+                                   as="textarea" rows="4"
+                                   placeholder="Commentaire (optionnel)"
+                                   name="comment"
+                                   id="comment"
+                                   formik={formik}/>
+                            {formik.touched.comment && formik.errors.comment ? (
+                                <div
+                                    className="invalid-feedback">{formik.errors.comment}</div>
+                            ) : null}
+                        </div>
 
                         <FieldImageAutoUpload pk={pk_picture} setPk={set_pk_picture}/>
 

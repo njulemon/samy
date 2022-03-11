@@ -1,4 +1,4 @@
-import L, {LatLng, LatLngBounds, Marker, Point} from 'leaflet';
+import L, {LatLng, Marker, Point} from 'leaflet';
 import './App.css';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -14,12 +14,12 @@ import {joinDots} from "./DotsGrouping";
 
 import ModalNewReport from "./ModalNewReport";
 import {useAppDispatch, useAppSelector} from "./app/hooks";
-import {showReportModal, denyAccess, giveAccess, setCoordinates, showEventModal} from "./app/States";
+import {showReportModal, denyAccess, setCoordinates, showEventModal} from "./app/States";
 import {getReport} from "./api/Report";
 import {logout} from "./api/Access";
-import ModalEventDetail from "./ModalEventDetail";
+import ModalReportDetail from "./ModalReportDetail";
 
-let DefaultIcon = L.divIcon({className: 'circle', iconSize: [50, 50]});
+let DefaultIcon = L.divIcon({className: 'circle', iconSize: [20, 20]});
 let HereDot = L.divIcon({className: 'circle-here', iconSize: [20, 20]});
 const newMarkerIcon = L.icon({iconUrl: icon, shadowUrl: iconShadow, iconAnchor: new Point(12, 41)})
 
@@ -60,46 +60,6 @@ function MapWithMenu() {
     //modal event is displayed ?
     const eventModal = useAppSelector((state) => state.states.modales.modal_event_detail)
 
-    // download all the reports and keep them in memory.
-    function downloadReportAndDisplay() {
-        getReport()
-            .then(
-                (response) => {
-                    if (response.status === 200) {
-                        list_init_markers_coord.current.splice(0, list_init_markers_coord.current.length)
-                        list_init_report_content.current.splice(0, list_init_report_content.current.length)
-                        response.data.forEach(
-                            (report) => list_init_markers_coord.current.push(
-                                new LatLng(report.latitude, report.longitude
-                                ))
-                        )
-                        response.data.forEach(
-                            (report) => {
-                                list_init_report_content.current.push(report)
-                            }
-                        )
-                        try {
-                            updateMarkers()
-                        }
-                        catch (e) {
-                            console.log(e)
-                        }
-
-                    }
-                }
-            )
-            .catch()
-    }
-
-    function onMapClick(e) {
-
-        if (map.current) {
-            L.popup()
-                .setLatLng(e.latlng)
-                .setContent('dist h : ' + size_x_meter.current + ' dist v = ' + size_y_meter.current)
-                .openOn(map.current);
-        }
-    }
 
     function onMapZoom() {
         updateMarkers();
@@ -127,13 +87,11 @@ function MapWithMenu() {
                 list_markers_coord.current.forEach(
                     (coord, index) => {
 
-                        const tooltip_text = n_events_by_marker.current[index] === 1 ?
-                            list_init_report_content.current[index]
-                            : n_events_by_marker.current[index].toString() + ' évènements'
-
                         list_markers.current.push(
                             // @ts-ignore
-                            L.marker(coord).addTo(map.current).on('click', () => {setIdEvent(list_init_report_content.current[index].id)}))
+                            L.marker(coord).addTo(map.current).on('click', () => {
+                                setIdEvent(list_init_report_content.current[index].id)
+                            }))
                     }
                 );
             }
@@ -189,24 +147,54 @@ function MapWithMenu() {
         }
     }
 
+    // download all the reports and keep them in memory.
+    function downloadReportAndDisplay() {
+        getReport()
+            .then(
+                (response) => {
+                    if (response.status === 200) {
+                        list_init_markers_coord.current.splice(0, list_init_markers_coord.current.length)
+                        list_init_report_content.current.splice(0, list_init_report_content.current.length)
+                        response.data.forEach(
+                            (report) => list_init_markers_coord.current.push(
+                                new LatLng(report.latitude, report.longitude
+                                ))
+                        )
+                        response.data.forEach(
+                            (report) => {
+                                list_init_report_content.current.push(report)
+                            }
+                        )
+                        try {
+                            updateMarkers()
+                        } catch (e) {
+                            console.log(e)
+                        }
+
+                    }
+                }
+            )
+            .catch()
+    }
+
     // init
     useEffect(
         () => {
 
+
             map.current = L.map('map', {attributionControl: false})
 
             // check if local storage already containts info on the map.
-            if(localStorage.getItem('map-zoom')){
+            if (localStorage.getItem('map-zoom')) {
 
                 const zoom = parseInt(localStorage.getItem("map-zoom"))
                 const center_lat = parseFloat(localStorage.getItem("map-center-lat"))
                 const center_lng = parseFloat(localStorage.getItem("map-center-lng"))
 
                 map.current.setView([center_lat, center_lng], zoom);
-            }else{
+            } else {
                 map.current.setView([50.85, 4.348], 13);
             }
-
 
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -220,7 +208,7 @@ function MapWithMenu() {
             map.current.on('zoom', onMapZoom);
             map.current.on('move', onMapZoom)
 
-            return function () {
+            return () => {
                 const zoom = map.current.getZoom()
                 const bounds = map.current.getBounds()
                 localStorage.setItem("map-zoom", zoom.toString())
@@ -235,17 +223,17 @@ function MapWithMenu() {
     // when id of event is changed (clicked)
     useEffect(
         () => {
-            if (idEvent){
+            if (idEvent) {
                 dispatch(showEventModal())
             }
         },
-        [idEvent]
+        [idEvent, dispatch]
     )
 
     // reset id if modal is closed
     useEffect(
         () => {
-            if (!eventModal){
+            if (!eventModal) {
                 setIdEvent(null)
             }
 
@@ -255,15 +243,15 @@ function MapWithMenu() {
 
     return (
         <>
-            <ModalEventDetail id_report={idEvent} key={"modal-event-detail-" + idEvent} />
-            <ModalNewReport />
+            <ModalReportDetail id_report={idEvent} key={"modal-event-detail-" + idEvent}/>
+            <ModalNewReport/>
             <div>
                 <div id='map'>
                     <div className="leaflet-top leaflet-right">
                         <FontAwesomeIcon icon={faSignOutAlt} className="logout-button"
                                          onClick={() => {
                                              logout().then(() => dispatch(denyAccess()))
-                                         }} fixedWidth />
+                                         }} fixedWidth/>
                     </div>
                     <div className="leaflet-bottom leaflet-right">
                         <div className="background-leaflet-buttons">
@@ -271,7 +259,7 @@ function MapWithMenu() {
                                              fixedWidth/>
                             <br/>
                             <FontAwesomeIcon icon={faCirclePlus} className="new-icon" onClick={addNewReportMarker}
-                                             fixedWidth />
+                                             fixedWidth/>
                         </div>
                     </div>
                 </div>

@@ -49,6 +49,7 @@ class Report(models.Model):
         null=True,
         default=None
     )
+    comment = models.CharField(max_length=2000, blank=True, null=True)
 
 
 class Votes(models.Model):

@@ -1,7 +1,5 @@
-import {applyMiddleware, configureStore, createStore} from '@reduxjs/toolkit'
+import {configureStore} from '@reduxjs/toolkit'
 import statesReducer from './States'
-import {composeWithDevTools} from 'redux-devtools-extension'
-import thunkMiddleware from 'redux-thunk'
 
 const store = configureStore({
     reducer: {

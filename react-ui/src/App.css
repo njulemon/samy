@@ -12,8 +12,8 @@ div.circle {
     border-radius: 30px;
     border-style: solid;
     border-width: 0px;
-    width: 30px;
-    height: 30px;
+    width: 15px;
+    height: 15px;
 }
 
 div.circle-here {
@@ -143,5 +143,11 @@ div.circle-here {
 .image-report {
     width: 200px;
     border-radius: 5px;
+}
 
+.border-comment {
+    border-style: solid;
+    border-radius: 5px;
+    border-color: black;
+    border-width: thin;
 }

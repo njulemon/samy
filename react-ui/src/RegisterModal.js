@@ -1,6 +1,4 @@
 import Modal from "react-bootstrap/Modal";
-import FormReport from "./FormReport";
-import {useState} from "react";
 import RegisterForm from "./RegisterForm";
 
 

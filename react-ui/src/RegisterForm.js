@@ -1,9 +1,5 @@
 import {Field, Form, Formik} from "formik";
-import {postReport} from "./api/Report";
-import {clear, hideReportModal, reload} from "./app/States";
-import FormReportField from "./FormReportField";
 import {useState} from "react";
-import {capitalize} from "./Tools/String";
 import {postRegister} from "./api/Register";
 
 function RegisterForm() {

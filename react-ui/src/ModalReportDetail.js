@@ -3,20 +3,18 @@ import {hideEventModal, updateNotes} from "./app/States";
 import Modal from "react-bootstrap/Modal";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {uriVotes, uriReport, urlServer, urlMedia, uriPicture} from "./def/Definitions";
+import {uriVotes, uriReport, urlServer, uriPicture} from "./def/Definitions";
 import {faBiking, faWalking} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {capitalize} from "./Tools/String";
-import ReactStars from "react-rating-stars-component";
 import {PatchCsrf, PostCsrf} from "./api/Csrf";
 import {Rating} from "@mui/material";
-import {config} from "@fortawesome/fontawesome-svg-core";
 
-function ModalEventDetail({id_report}) {
+function ModalReportDetail({id_report}) {
 
     const showEventDetail = useAppSelector((state) => state.states.modales.modal_event_detail)
     const [error, setError] = useState(null)
-    const [starDisabled, setStarDisabled] = useState(true)
+    const [starDisabled, setStarDisabled] = useState(false)
 
     const [reportDataDescription, setReportDataDescription] = useState(null)
     const [pictureLink, setPictureLink] = useState(null)
@@ -42,7 +40,7 @@ function ModalEventDetail({id_report}) {
                     .catch((error) => setError(error.toString()))
             }
         },
-        [id_report]
+        [id_report, dispatch]
     )
 
     useEffect(
@@ -72,7 +70,10 @@ function ModalEventDetail({id_report}) {
                 .then(() => dispatch(updateNotes(id_report)))
                 .then(() => setStarDisabled(false))
                 .then(() => setError(null))
-                .catch((error) => setError(error.toString()))
+                .catch((error) => {
+                    setError(error.toString())
+                    setStarDisabled(false)
+                })
         }
 
         // post (new)
@@ -118,38 +119,55 @@ function ModalEventDetail({id_report}) {
                                 <div className="container-fluid">
                                     <div className="row">
                                         <div className="col">
-                                            {capitalize(translation[reportDataDescription.category_2])}
+                                            <h5>
+                                                {capitalize(translation[reportDataDescription.category_2])}
+                                            </h5>
                                         </div>
-
                                     </div>
+
                                     <div className="row">
-                                        <div className="col">
+                                        <div className="col-md-12 col-sm-12 mb-3 mt-3">
                                             {pictureLink ?
-                                                <div className="mb-3 mt-3">
-                                                    <img src={pictureLink} alt="picture" className="image-report"/>
+                                                <div className="">
+                                                    <img src={pictureLink} alt="Report"
+                                                         className="image-report shadow-sm rounded"/>
                                                 </div>
                                                 : null}
                                         </div>
+                                        <div className="col-md-12 col-sm-12 mb-3 mt-3">
+                                            {reportDataDescription?.comment ?
+                                                <div className="">
+                                                    <div className="shadow-sm h-100 rounded">
+                                                        <div className="p-2">
 
+                                                            <p>
+                                                                {reportDataDescription?.comment}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                : null
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="container-fluid">
                                     <hr/>
                                     <div className="row">
-                                        <div className="col">
-                                            Gravité :
+                                        <div className="col-6">
+                                            <div className="ms-1">Gravité du signalement</div>
                                             <Rating key={"rating-star-" + note_mine ? note_mine : "null"}
                                                     name="simple-controlled"
                                                     value={note_mine}
                                                     onChange={(event, newValue) => {
                                                         handlerVoteGravity(newValue);
                                                     }}
-                                                    diabled={starDisabled}
+                                                    disabled={starDisabled}
                                             />
                                         </div>
-                                        <div className="col">
-                                            <h6>Moyenne des votes ({n_votes})</h6>
-                                            {notes_other !== -1 ? "Gravité : " + notes_other : null}
+                                        <div className="col-6">
+                                            Nombre de votes : {n_votes} <br />
+                                            {notes_other !== -1 ? "Gravité moyenne : " + notes_other : null}
                                         </div>
                                     </div>
                                 </div>
@@ -161,4 +179,4 @@ function ModalEventDetail({id_report}) {
     )
 }
 
-export default ModalEventDetail
+export default ModalReportDetail

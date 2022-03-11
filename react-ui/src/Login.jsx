@@ -2,7 +2,7 @@ import {useAppDispatch} from "./app/hooks";
 import {Formik, Form, Field} from "formik";
 import {uriLogin, urlServer} from "./def/Definitions";
 import {PostCsrf} from "./api/Csrf";
-import {checkAccessAndGetUser, denyAccess, giveAccess} from "./app/States";
+import {checkAccessAndGetUser, denyAccess} from "./app/States";
 import {useEffect, useState} from "react";
 import {logout} from "./api/Access";
 import RegisterModal from "./RegisterModal";
@@ -60,7 +60,7 @@ function Login() {
         () => {
             dispatch(checkAccessAndGetUser())
         },
-        []
+        [dispatch]
     )
 
     // @ts-ignore
@@ -150,7 +150,6 @@ function Login() {
                     </div>
                     <div className="col"></div>
                 </div>
-                <div className="row"></div>
             </div>
         </>
     )

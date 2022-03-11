@@ -1,7 +1,5 @@
-import {Field, Form, Formik, useFormikContext} from "formik";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {postImage} from "./api/PostImage";
-import data from "bootstrap/js/src/dom/data";
 import {makeid} from "./Tools/KeyGenerator";
 import {urlMedia} from "./def/Definitions";
 
@@ -41,10 +39,10 @@ function FieldImageAutoUpload({pk, setPk}) {
         <>
             {pk !== null ?
                 <div className="mb-3">
-                <img className="image-uploaded" src={urlMedia + imageName} alt="Uploaded picture"/>
+                <img className="image-uploaded" src={urlMedia + imageName} alt="Uploaded"/>
                 </div>
                     :
-                <form>
+                <>
                     <div className="mb-3">
                         <input
                             id="image"
@@ -65,7 +63,7 @@ function FieldImageAutoUpload({pk, setPk}) {
                         </div>)
                         :
                         null}
-                </form>
+                </>
             }
 </>
 )

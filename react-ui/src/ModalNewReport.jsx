@@ -1,7 +1,6 @@
 import Modal from "react-bootstrap/Modal";
-import Button from "react-bootstrap/Button";
 import {useAppDispatch, useAppSelector} from "./app/hooks";
-import {hideReportModal, showReportModal} from "./app/States";
+import {hideReportModal} from "./app/States";
 import FormReport from "./FormReport";
 
 function ModalNewReport() {
@@ -17,7 +16,7 @@ function ModalNewReport() {
                 <Modal.Title>Nouveau signalement</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <FormReport></FormReport>
+                <FormReport />
             </Modal.Body>
         </Modal>
     )

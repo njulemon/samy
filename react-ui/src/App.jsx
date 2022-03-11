@@ -29,7 +29,7 @@ function App() {
             axios.get(
                 urlServer + uriTranslationFr
             ).then((response) => dispatch(setTranslation(response.data)))
-        },
+        }, // eslint-disable-next-line react-hooks/exhaustive-deps
         []
     )
 
@@ -37,7 +37,7 @@ function App() {
         () => {
             if (! location.pathname.includes('no-redirection'))
                 translation === {} ? navigate('/R/wait') : isLogged ? reload ? navigate('/R/reload') : navigate('/R/map') : navigate('/R/login')
-        },
+        }, // eslint-disable-next-line react-hooks/exhaustive-deps
         [translation, isLogged, reload]
     )
 

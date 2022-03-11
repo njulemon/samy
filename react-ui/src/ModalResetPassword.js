@@ -1,8 +1,5 @@
 import Modal from "react-bootstrap/Modal";
-import {hideReportModal} from "./app/States";
-import FormReport from "./FormReport";
 import FormResetPassword from "./FormResetPassword";
-import RegisterForm from "./RegisterForm";
 
 
 function ModalResetPassword({showModal, setShowModal}) {

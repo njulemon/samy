@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_protect
 from rest_framework import viewsets, permissions, status, generics, views
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.decorators import api_view, parser_classes, permission_classes, authentication_classes, action
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, UpdateModelMixin
 from rest_framework.parsers import JSONParser, MultiPartParser
 from django.middleware.csrf import get_token
@@ -17,23 +17,14 @@ from rest_framework.response import Response
 from templated_email import send_templated_mail
 
 from api import Tools
+from api.CustomPermissions import ActionBasedPermission, IsOwnerOrReadOnly
+from api.MultiSerializerViewSet import MultiSerializerViewSet
 from api.enum import ReportUserType, map_category_1, map_category_2
 from api.fr import report_form_fr, basic_terms
 from api.models import Report, Votes, CustomUser, KeyValidator, RestPassword, ReportImage
 from api.serializers import ReportSerializer, VotesSerializer, UserSerializer, NewUserSerializer, \
-    CreateResetPasswordSerializer, UserPasswordSerializer, ReportImageSerializer
-
-
-class ActionBasedPermission(AllowAny):
-    """
-    Grant or deny access to a view, based on a mapping in view.action_permissions
-    """
-
-    def has_permission(self, request, view):
-        for klass, actions in getattr(view, 'action_permissions', {}).items():
-            if view.action in actions:
-                return klass().has_permission(request, view)
-        return False
+    CreateResetPasswordSerializer, UserPasswordSerializer, ReportImageSerializer, ReportSerializerHyperLink, \
+    ReportImageSerializerNoUser
 
 
 class VoteViewSetReport(viewsets.ModelViewSet):
@@ -100,20 +91,25 @@ class TranslationViewSet(viewsets.ViewSet):
              'nl': 'not implemented yet'})
 
 
-class ReportViewSet(viewsets.ModelViewSet):
+class ReportViewSet(MultiSerializerViewSet):
     """
     Allowed usage : `list` all report, `get` one report, `create` report, `delete` report.
     """
 
     queryset = Report.objects.all()
     serializer_class = ReportSerializer
-    permission_classes = (ActionBasedPermission,)
-    authentication_classes = [SessionAuthentication]
-
-    action_permissions = {
-        IsAuthenticated: ['list', 'create', 'retrieve'],
-        IsAdminUser: ['update', 'partial_update', 'destroy']
+    serializers = {
+        'default': ReportSerializer,
+        'list': ReportSerializerHyperLink,
+        'create': ReportSerializer,
+        'retrieve': ReportSerializerHyperLink,
+        'update': ReportSerializer,
+        'partial_update': ReportSerializer,
+        'destroy': ReportSerializer
     }
+
+    permission_classes = (IsOwnerOrReadOnly,)
+    authentication_classes = [SessionAuthentication]
 
     # to get csrf token
     @action(methods=['get'], detail=False)
@@ -124,7 +120,7 @@ class ReportViewSet(viewsets.ModelViewSet):
 
     # to post
     def create(self, request, *args, **kwargs):
-        request.data["creator"] = request.user.email
+        request.data["owner"] = request.user.id
         serializer = ReportSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -361,7 +357,26 @@ def csrf(request):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
+
 class ReportImageView(viewsets.ModelViewSet):
     queryset = ReportImage.objects.all()
     serializer_class = ReportImageSerializer
     parser_classes = [MultiPartParser]
+
+    permission_classes = (IsOwnerOrReadOnly,)
+    authentication_classes = [SessionAuthentication]
+
+    def create(self, request, *args, **kwargs):
+
+        ser = ReportImageSerializerNoUser(data=request.data)
+
+        if ser.is_valid():
+            # we create a user based on authentication, not on data provided in the request.
+            new_image = ReportImage.objects.create(
+                image=ser.validated_data['image'],
+                owner=request.user
+            )
+            response = Response(ReportImageSerializer(instance=new_image).data)
+            return response
+        else:
+            return Response(ser.errors)

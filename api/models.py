@@ -28,6 +28,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 class ReportImage(models.Model):
     image = models.ImageField()
+    owner = models.ForeignKey(to=CustomUser, on_delete=models.CASCADE)
 
 
 class Report(models.Model):
@@ -38,7 +39,7 @@ class Report(models.Model):
     longitude = models.FloatField(default=0.0)
     timestamp_creation = models.DateTimeField(auto_now_add=True)
     # creator of the report. If user delete the account this field is set to null.
-    creator = models.ForeignKey(
+    owner = models.ForeignKey(
         to=CustomUser,
         on_delete=models.CASCADE
     )

@@ -46,7 +46,7 @@ function ModalReportDetail({id_report}) {
     useEffect(
         () => {
             if (reportDataDescription?.image) {
-                axios.get(urlServer + uriPicture + reportDataDescription.image)
+                axios.get(reportDataDescription.image)
                     .then((result) => setPictureLink(result?.data?.image))
             }
 
@@ -162,11 +162,10 @@ function ModalReportDetail({id_report}) {
                                                     onChange={(event, newValue) => {
                                                         handlerVoteGravity(newValue);
                                                     }}
-                                                    disabled={starDisabled}
-                                            />
+                                                    disabled={starDisabled} />
                                         </div>
                                         <div className="col-6">
-                                            Nombre de votes : {n_votes} <br />
+                                            Nombre de votes : {n_votes} <br/>
                                             {notes_other !== -1 ? "Gravité moyenne : " + notes_other : null}
                                         </div>
                                     </div>

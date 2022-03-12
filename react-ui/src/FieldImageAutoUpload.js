@@ -1,7 +1,9 @@
 import {useState} from "react";
-import {postImage} from "./api/PostImage";
+import {deleteImage, postImage} from "./api/PostImage";
 import {makeid} from "./Tools/KeyGenerator";
 import {urlMedia} from "./def/Definitions";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faTimes} from "@fortawesome/free-solid-svg-icons";
 
 
 function FieldImageAutoUpload({pk, setPk}) {
@@ -32,16 +34,33 @@ function FieldImageAutoUpload({pk, setPk}) {
             .catch((error => {
                 setErrorForm(error.data)
             }))
+    }
 
+    const handleFileDelete = (event) => {
+
+        deleteImage(pk)
+            .then((response) => {
+                setPk(null)
+                setImageName('')
+            })
+            .catch((error => {
+                setErrorForm(error.data)
+            }))
     }
 
     return (
         <>
             {pk !== null ?
-                <div className="mb-3">
-                <img className="image-uploaded" src={urlMedia + imageName} alt="Uploaded"/>
+                <div className="mb-3 image-report-cross-absolute">
+                    <img className="image-uploaded" src={urlMedia + imageName} alt="Uploaded"/>
+                    <FontAwesomeIcon
+                        icon={faTimes}
+                        className="image-report-cross"
+                        onClick={(event) => {
+                            handleFileDelete(event)
+                        }} fixedWidth/>
                 </div>
-                    :
+                :
                 <>
                     <div className="mb-3">
                         <input
@@ -65,8 +84,8 @@ function FieldImageAutoUpload({pk, setPk}) {
                         null}
                 </>
             }
-</>
-)
+        </>
+    )
 }
 
 export default FieldImageAutoUpload

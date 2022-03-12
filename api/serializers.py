@@ -1,21 +1,23 @@
 from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.mail import send_mail
-from django.db import IntegrityError
-from django.db.transaction import atomic
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from templated_email import send_templated_mail
 
 from api import Tools
 from api.enum import ReportUserType, ReportCategory1, ReportCategory2
-from api.models import Report, CustomUser, Votes, KeyValidator, RestPassword, ReportImage
+from api.models import Report, CustomUser, Votes, RestPassword, ReportImage
 
 
 class ReportImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReportImage
         fields = '__all__'
+
+
+class ReportImageSerializerNoUser(serializers.ModelSerializer):
+    class Meta:
+        model = ReportImage
+        fields = ['image']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -40,7 +42,7 @@ class ReportSerializer(serializers.ModelSerializer):
     user_type = serializers.CharField(source='get_user_type_display')
     category_1 = serializers.CharField(source='get_category_1_display')
     category_2 = serializers.CharField(source='get_category_2_display')
-    creator = serializers.EmailField(source='creator.email')
+    owner = serializers.IntegerField(source='owner.id')
 
     class Meta:
         model = Report
@@ -52,12 +54,25 @@ class ReportSerializer(serializers.ModelSerializer):
             user_type=ReportUserType.get_enum(validated_data["get_user_type_display"]).value,
             category_1=ReportCategory1.get_enum(validated_data["get_category_1_display"]).value,
             category_2=ReportCategory2.get_enum(validated_data["get_category_2_display"]).value,
-            creator=CustomUser.objects.get(email=validated_data["creator"]["email"]),
+            owner=CustomUser.objects.get(id=validated_data["owner"]["id"]),
             latitude=validated_data["latitude"],
             longitude=validated_data["longitude"],
             image=validated_data['image'],
-            comment=validated_data['comment']
+            comment=validated_data['comment'] if 'comment' in validated_data.keys() else None
         )
+
+
+class ReportSerializerHyperLink(serializers.HyperlinkedModelSerializer):
+    user_type = serializers.CharField(source='get_user_type_display')
+    category_1 = serializers.CharField(source='get_category_1_display')
+    category_2 = serializers.CharField(source='get_category_2_display')
+    owner = serializers.IntegerField(source='owner.id')
+    image = serializers.HyperlinkedRelatedField(view_name='report-image-detail', read_only=True)
+    id = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Report
+        fields = '__all__'
 
 
 class RestPasswordSerializer(serializers.Serializer):

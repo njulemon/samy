@@ -71,7 +71,7 @@ function RegisterForm() {
                         }
                     )
                     .catch((reason) => {
-                        setErrorForm('Une erreur s\'est produite')
+                        setErrorForm(reason?.response?.data?.error ?? 'Une erreur s\'est produite')
                         console.log(reason.toJSON());
                         for (let key in reason) {
                                     setFieldError(key, reason[key][0])
@@ -87,7 +87,7 @@ function RegisterForm() {
 
 
             {(formik, isSubmitting) => (
-                registeredDone ? <div> Votre compte a bien été créé. </div> :
+                registeredDone ? <div> Votre compte a bien été créé. Veuillez valider votre adresse e-mail en cliquant sur le lien inclu dans l'e-mail que vous avez reçu. </div> :
                 <Form>
                     <div className="mb-3">
 

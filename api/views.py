@@ -180,8 +180,8 @@ class UserViewSet(viewsets.GenericViewSet, CreateModelMixin):
                     break
             if not has_access:
                 error_message = {'error': f'You are not in the list of authorized users. '
-                                          f'Please contact admin {CustomUser.objects.filter(is_superuser=True)[0].email}'}
-                return Response(error_message)
+                                          f'Please contact admin by email {CustomUser.objects.filter(is_superuser=True)[0].email}'}
+                return Response(status=status.HTTP_401_UNAUTHORIZED, data=error_message)
 
             user = CustomUser.objects.create(
                 first_name=ser.validated_data['first_name'],

@@ -14,7 +14,13 @@ import {joinDots} from "./DotsGrouping";
 
 import ModalNewReport from "./ModalNewReport";
 import {useAppDispatch, useAppSelector} from "./app/hooks";
-import {showReportModal, denyAccess, setCoordinates, showEventModal} from "./app/States";
+import {
+    showNewReportModal,
+    denyAccess,
+    setCoordinatesNewReport,
+    showReportDetailModal,
+    setReloadIsDone
+} from "./app/States";
 import {getReport} from "./api/Report";
 import {logout} from "./api/Access";
 import ModalReportDetail from "./ModalReportDetail";
@@ -32,10 +38,14 @@ function MapWithMenu() {
     const size_x_meter = useRef(100000);
     const size_y_meter = useRef(100000);
 
-    const [idEvent, setIdEvent] = useState(null)
+    const [idReportDetail, setIdReportDetail] = useState(null)
+    const reload = useAppSelector((state) => state.states.reload)
 
-    // report dots display rule
-    const max_dots = 500
+    //modal event is displayed ?
+    const eventModal = useAppSelector((state) => state.states.modales.modal_event_detail)
+
+    // allow access to global states (eg 'isLogged')
+    const dispatch = useAppDispatch()
 
     // coordinates of the reports and content (for tooltip)
     const list_init_markers_coord = useRef([])
@@ -54,12 +64,8 @@ function MapWithMenu() {
     // dot showing current location
     const you_are_here_dot = useRef(new Marker(new LatLng(0, 0)));
 
-    // allow access to global states (eg 'isLogged')
-    const dispatch = useAppDispatch()
-
-    //modal event is displayed ?
-    const eventModal = useAppSelector((state) => state.states.modales.modal_event_detail)
-
+    // report dots display rule
+    const max_dots = 500
 
     function onMapZoom() {
         updateMarkers();
@@ -67,6 +73,8 @@ function MapWithMenu() {
 
     // this method is called each time we change the area displayed.
     function updateMarkers() {
+
+        setIdReportDetail(null)
 
         if (map.current) {
             // update size of the map variables each time user redefine the map size.
@@ -90,7 +98,8 @@ function MapWithMenu() {
                         list_markers.current.push(
                             // @ts-ignore
                             L.marker(coord).addTo(map.current).on('click', () => {
-                                setIdEvent(list_init_report_content.current[index].id)
+                                setIdReportDetail(null)  // we need to force change if we click again on the same record.
+                                setIdReportDetail(list_init_report_content.current[index].id)
                             }))
                     }
                 );
@@ -136,8 +145,8 @@ function MapWithMenu() {
             }
             new_report_marker.current = L.marker(center, {icon: newMarkerIcon, draggable: true}).addTo(map.current)
             new_report_marker.current.on('click', () => {
-                dispatch(showReportModal())
-                dispatch(setCoordinates(
+                dispatch(showNewReportModal())
+                dispatch(setCoordinatesNewReport(
                     {
                         latitude: new_report_marker.current?.getLatLng().lat,
                         longitude: new_report_marker.current?.getLatLng().lng
@@ -223,27 +232,28 @@ function MapWithMenu() {
     // when id of event is changed (clicked)
     useEffect(
         () => {
-            if (idEvent) {
-                dispatch(showEventModal())
+            if (idReportDetail) {
+                dispatch(showReportDetailModal())
             }
         },
-        [idEvent, dispatch]
+        [idReportDetail, dispatch]
     )
 
-    // reset id if modal is closed
     useEffect(
         () => {
-            if (!eventModal) {
-                setIdEvent(null)
-            }
-
+            downloadReportAndDisplay()
+            dispatch(setReloadIsDone())
         },
-        [eventModal]
+        [reload]
     )
 
     return (
         <>
-            <ModalReportDetail id_report={idEvent} key={"modal-event-detail-" + idEvent}/>
+            { idReportDetail ?
+                (<ModalReportDetail id_report={idReportDetail} key={"modal-event-detail-" + idReportDetail}/>)
+                :
+                null
+            }
             <ModalNewReport/>
             <div>
                 <div id='map'>

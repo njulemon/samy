@@ -1,5 +1,5 @@
 import {useAppDispatch, useAppSelector} from "./app/hooks";
-import {hideEventModal, updateNotes} from "./app/States";
+import {hideReportDetailModal, updateNotes} from "./app/States";
 import Modal from "react-bootstrap/Modal";
 import {useEffect, useState} from "react";
 import axios from "axios";
@@ -98,7 +98,7 @@ function ModalReportDetail({id_report}) {
             {
                 !reportDataDescription ? null :
                     <>
-                        <Modal show={showEventDetail} onHide={() => dispatch(hideEventModal())}>
+                        <Modal show={showEventDetail} onHide={() => dispatch(hideReportDetailModal())}>
                             <Modal.Header closeButton>
                                 <Modal.Title>
                                     <div className="container-fluid">

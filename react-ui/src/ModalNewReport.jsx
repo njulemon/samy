@@ -1,6 +1,6 @@
 import Modal from "react-bootstrap/Modal";
 import {useAppDispatch, useAppSelector} from "./app/hooks";
-import {hideReportModal} from "./app/States";
+import {hideNewReportModal} from "./app/States";
 import FormReport from "./FormReport";
 
 function ModalNewReport() {
@@ -11,7 +11,7 @@ function ModalNewReport() {
 
 
     return (
-        <Modal show={showNewReport} onHide={() => dispatch(hideReportModal())}>
+        <Modal show={showNewReport} onHide={() => dispatch(hideNewReportModal())}>
             <Modal.Header closeButton>
                 <Modal.Title>Nouveau signalement</Modal.Title>
             </Modal.Header>

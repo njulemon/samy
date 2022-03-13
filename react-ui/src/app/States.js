@@ -42,16 +42,16 @@ export const stateSlice = createSlice({
     },
 
     reducers: {
-        showReportModal: (state) => {
+        showNewReportModal: (state) => {
             state.modales.modal_new_report = true
         },
-        hideReportModal: (state) => {
+        hideNewReportModal: (state) => {
             state.modales.modal_new_report = false
         },
-        showEventModal: (state) => {
+        showReportDetailModal: (state) => {
             state.modales.modal_event_detail = true
         },
-        hideEventModal: (state) => {
+        hideReportDetailModal: (state) => {
             state.modales.modal_event_detail = false
         },
         giveAccess: (state) => {
@@ -60,48 +60,50 @@ export const stateSlice = createSlice({
         denyAccess: (state) => {
             state.isLogged = false
         },
-        setFields: (state, action) => {
+        setNewReportFields: (state, action) => {
             state.form_report.values.user_type = action.payload.user_type
             state.form_report.values.category_1 = action.payload.category_1
             state.form_report.values.category_2 = action.payload.category_2
         },
-        setCoordinates: (state, action) => {
+        setCoordinatesNewReport: (state, action) => {
             state.form_report.values.latitude = action.payload.latitude
             state.form_report.values.longitude = action.payload.longitude
         },
-        setPicture: (state, action) => {
+        setNewReportPicture: (state, action) => {
             state.form_report.values.picture_pk = action.payload.picture_pk
         },
-        setComment: (state, action) => {
+        setNewReportComment: (state, action) => {
             state.form_report.values.comment = action.payload.comment
         },
-        setTouched: (state, action) => {
+        setNewReportFormTouched: (state, action) => {
             state.form_report.touched.user_type = action.payload.user_type
             state.form_report.touched.category_1 = action.payload.category_1
             state.form_report.touched.category_2 = action.payload.category_2
         },
-        clear: (state) => {
+        clearNewReportForm: (state) => {
             state.form_report.values.user_type = 'NONE_USER_TYPE'
             state.form_report.values.category_1 = 'NONE_CAT_1'
             state.form_report.values.category_2 = 'NONE_CAT_2'
             state.form_report.values.latitude = 0.0
             state.form_report.values.longitude = 0.0
         },
-        setTranslation: (state, action) => {
+        setNewReportFormTranslation: (state, action) => {
             state.translation = action.payload
         },
         setUser: (state, action) => {
             state.user = action.payload
         },
-        setNotes: (state, action) => {
+        setReportDetailNotes: (state, action) => {
             state.modales.notes_other = action.payload.notes_other
             state.modales.note_mine = action.payload.note_mine
             state.modales.n_votes = action.payload.n_votes
             state.modales.note_mine_id = action.payload.note_mine_id
         },
+        // reload are use by the map to reload reports after a new one has been added.
         reload: (state) => {
             state.reload = true
         },
+        // after reloading, map set back reload to its original value. 
         setReloadIsDone: (state) => {
             state.reload = false
         }
@@ -109,21 +111,21 @@ export const stateSlice = createSlice({
 })
 
 export const {
-    showReportModal,
-    hideReportModal,
-    showEventModal,
-    hideEventModal,
+    showNewReportModal,
+    hideNewReportModal,
+    showReportDetailModal,
+    hideReportDetailModal,
     giveAccess,
     denyAccess,
-    setFields,
-    setCoordinates,
-    setComment,
-    setPicture,
-    setTouched,
-    clear,
-    setTranslation,
+    setNewReportFields,
+    setCoordinatesNewReport,
+    setNewReportComment,
+    setNewReportPicture,
+    setNewReportFormTouched,
+    clearNewReportForm,
+    setNewReportFormTranslation,
     setUser,
-    setNotes,
+    setReportDetailNotes,
     reload,
     setReloadIsDone
 } = stateSlice.actions
@@ -153,7 +155,7 @@ export function updateNotes(id_report) {
             const notes_other = processVotes(response.data)
             const {note_mine, note_mine_id} = getUserVoteInfo(response.data, getState().states.user)
             const n_votes = Object.keys(response.data).length
-            dispatch(setNotes({
+            dispatch(setReportDetailNotes({
                 notes_other: notes_other,
                 note_mine: note_mine,
                 n_votes: n_votes,

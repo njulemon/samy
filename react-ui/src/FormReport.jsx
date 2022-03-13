@@ -2,10 +2,12 @@ import {getReportForm, postReport} from "./api/Report";
 import {Form, Formik, useFormikContext, Field} from "formik";
 import {useEffect, useState} from "react";
 import {useAppDispatch, useAppSelector} from "./app/hooks";
-import {clear, reload, setComment, setFields, setTouched} from "./app/States";
+import {clearNewReportForm, reload, setNewReportComment, setNewReportFields, setNewReportFormTouched} from "./app/States";
 import FormReportField from "./FormReportField";
-import {hideReportModal} from "./app/States";
+import {hideNewReportModal} from "./app/States";
 import FieldImageAutoUpload from "./FieldImageAutoUpload";
+
+import {useNavigate} from "react-router-dom";
 
 const FormStore = () => {
 
@@ -17,16 +19,16 @@ const FormStore = () => {
 
     // manage event from the form (choices are saved in the store).
     useEffect(() => {
-        dispatch(setFields(formik.values))
+        dispatch(setNewReportFields(formik.values))
     }, [formik.values, dispatch])
 
     useEffect(() => {
-            dispatch(setTouched(formik.touched))
+            dispatch(setNewReportFormTouched(formik.touched))
         }, [formik.touched, dispatch]
     )
 
     useEffect(() => {
-            dispatch(setComment(formik.values))
+            dispatch(setNewReportComment(formik.values))
         },
         [formik.values.comment, dispatch]
     )
@@ -46,6 +48,9 @@ function FormReport() {
 
     // LOCAL STATE (error form)
     const [errorForm, setErrorForm] = useState('')
+
+    // reload page
+    const navigate = useNavigate()
 
     // REDUX STORE
     const dispatch = useAppDispatch()
@@ -131,9 +136,10 @@ function FormReport() {
                             (response) => {
                                 if (response.status === 200) {
                                     setErrorForm('')
-                                    dispatch(hideReportModal())
-                                    dispatch(clear())
-                                    dispatch(reload())
+                                    dispatch(hideNewReportModal())
+                                    dispatch(clearNewReportForm())
+                                    navigate(0)
+                                    //dispatch(reload())
                                 } else {
                                     setErrorForm('Le signalement n\'a pas pu être enregistré')
                                 }

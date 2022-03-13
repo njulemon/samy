@@ -11,7 +11,11 @@ function ModalNewReport() {
 
 
     return (
-        <Modal show={showNewReport} onHide={() => dispatch(hideNewReportModal())}>
+        <Modal show={showNewReport} onHide={() =>
+        {
+            dispatch(hideNewReportModal())
+        }
+        }>
             <Modal.Header closeButton>
                 <Modal.Title>Nouveau signalement</Modal.Title>
             </Modal.Header>

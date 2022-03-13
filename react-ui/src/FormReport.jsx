@@ -138,8 +138,8 @@ function FormReport() {
                                     setErrorForm('')
                                     dispatch(hideNewReportModal())
                                     dispatch(clearNewReportForm())
-                                    navigate(0)
-                                    //dispatch(reload())
+                                    // navigate(0)
+                                    dispatch(reload())
                                 } else {
                                     setErrorForm('Le signalement n\'a pas pu être enregistré')
                                 }

@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from api.forms import CustomUserCreationForm, CustomUserChangeForm
-from api.models import CustomUser, Report, Votes, KeyValidator, RestPassword, ReportImage
+from api.models import CustomUser, Report, Votes, KeyValidator, RestPassword, ReportImage, AuthorizedMail
 
 
 class CustomUserAdmin(UserAdmin):
@@ -33,3 +33,4 @@ admin.site.register(Votes)
 admin.site.register(KeyValidator)
 admin.site.register(RestPassword)
 admin.site.register(ReportImage)
+admin.site.register(AuthorizedMail)

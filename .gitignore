@@ -32,4 +32,4 @@ db.sqlite3
 .DS_Store
 
 # static files
-/api/static
+/api/static/api/media

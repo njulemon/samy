@@ -1,6 +1,6 @@
 import rest_framework.mixins
 from django.contrib.auth import authenticate, login as django_internal_login, logout
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.http import HttpResponse
 
@@ -21,10 +21,10 @@ from api.CustomPermissions import ActionBasedPermission, IsOwnerOrReadOnly
 from api.MultiSerializerViewSet import MultiSerializerViewSet
 from api.enum import ReportUserType, map_category_1, map_category_2
 from api.fr import report_form_fr, basic_terms
-from api.models import Report, Votes, CustomUser, KeyValidator, RestPassword, ReportImage
+from api.models import Report, Votes, CustomUser, KeyValidator, RestPassword, ReportImage, AuthorizedMail
 from api.serializers import ReportSerializer, VotesSerializer, UserSerializer, NewUserSerializer, \
     CreateResetPasswordSerializer, UserPasswordSerializer, ReportImageSerializer, ReportSerializerHyperLink, \
-    ReportImageSerializerNoUser
+    ReportImageSerializerNoUser, AuthorizedMailSerializerRead, AuthorizedMailSerializerWrite
 
 
 class VoteViewSetReport(viewsets.ModelViewSet):
@@ -172,6 +172,16 @@ class UserViewSet(viewsets.GenericViewSet, CreateModelMixin):
             protocol = 'http'
 
         if ser.is_valid():
+
+            has_access = False
+            for email_hashed_instance in AuthorizedMail.objects.all():
+                if check_password(ser.validated_data['email'], email_hashed_instance.email_hashed):
+                    has_access = True
+                    break
+            if not has_access:
+                error_message = {'error': f'You are not in the list of authorized users. '
+                                          f'Please contact admin {CustomUser.objects.filter(is_superuser=True)[0].email}'}
+                return Response(error_message)
 
             user = CustomUser.objects.create(
                 first_name=ser.validated_data['first_name'],
@@ -378,5 +388,34 @@ class ReportImageView(viewsets.ModelViewSet):
             )
             response = Response(ReportImageSerializer(instance=new_image).data)
             return response
+        else:
+            return Response(ser.errors)
+
+
+class AuthorizedMailViewSet(MultiSerializerViewSet):
+    """
+    To post data, you need to pass a JSON array of dictionaries.
+    """
+    queryset = AuthorizedMail.objects.all()
+    serializer_class = AuthorizedMailSerializerRead
+    serializers = {
+        'default': AuthorizedMailSerializerRead,
+        'list': AuthorizedMailSerializerRead,
+        'create': AuthorizedMailSerializerWrite,
+        'retrieve': AuthorizedMailSerializerRead,
+        'update': AuthorizedMailSerializerWrite,
+        'partial_update': AuthorizedMailSerializerWrite,
+        'destroy': AuthorizedMailSerializerWrite
+    }
+
+    permission_classes = (IsAdminUser,)
+    authentication_classes = [SessionAuthentication]
+
+    def create(self, request, *args, **kwargs):
+        ser = AuthorizedMailSerializerWrite(data=request.data, many=True)
+        if ser.is_valid():
+            instance = ser.save()
+            ser_read = AuthorizedMailSerializerRead(instance=instance, many=True)
+            return Response(ser_read.data)
         else:
             return Response(ser.errors)

@@ -69,7 +69,10 @@ class Votes(models.Model):
 
 
 class AuthorizedMail(models.Model):
-    email = models.EmailField(unique=True)
+    email_hashed = models.CharField(max_length=128)
+
+    def __str__(self):
+        return self.email_hashed
 
 
 class KeyValidator(models.Model):

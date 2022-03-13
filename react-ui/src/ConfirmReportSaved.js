@@ -1,14 +1,18 @@
 import {useEffect} from "react";
 import {useAppDispatch} from "./app/hooks";
 import {setReloadIsDone} from "./app/States";
+import {useNavigate} from "react-router-dom";
 
-function Reload() {
+function ConfirmReportSaved() {
 
     const dispatch = useAppDispatch()
+    const navigate = useNavigate()
 
     useEffect(
         () => {
-            setTimeout(() => dispatch(setReloadIsDone()), 3000)
+            setTimeout(() => {
+                dispatch(setReloadIsDone())
+            }, 3000)
         },
         [dispatch]
     )
@@ -41,4 +45,4 @@ function Reload() {
     )
 }
 
-export default Reload
+export default ConfirmReportSaved

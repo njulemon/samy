@@ -5,7 +5,7 @@ from rest_framework.exceptions import ValidationError
 
 from api import Tools
 from api.enum import ReportUserType, ReportCategory1, ReportCategory2
-from api.models import Report, CustomUser, Votes, RestPassword, ReportImage
+from api.models import Report, CustomUser, Votes, RestPassword, ReportImage, AuthorizedMail
 
 
 class ReportImageSerializer(serializers.ModelSerializer):
@@ -234,3 +234,24 @@ class UserPasswordSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         raise NotImplementedError
+
+
+class AuthorizedMailSerializerRead(serializers.ModelSerializer):
+
+    class Meta:
+        model = AuthorizedMail
+        fields = '__all__'
+
+
+class AuthorizedMailSerializerWrite(serializers.ModelSerializer):
+
+    email = serializers.EmailField()
+
+    class Meta:
+        model = AuthorizedMail
+        fields = ['email']
+
+    def create(self, validated_data):
+        email_hashed = make_password(validated_data['email'])
+        auth_mail = AuthorizedMail.objects.create(email_hashed=email_hashed)
+        return auth_mail

@@ -10,16 +10,14 @@ import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import {useEffect, useRef, useState} from "react";
 import React from 'react';
-import {joinDots} from "./DotsGrouping";
 
 import ModalNewReport from "./ModalNewReport";
-import {useAppDispatch, useAppSelector} from "./app/hooks";
+import {useAppDispatch} from "./app/hooks";
 import {
     showNewReportModal,
     denyAccess,
     setCoordinatesNewReport,
-    showReportDetailModal,
-    setReloadIsDone
+    showReportDetailModal
 } from "./app/States";
 import {getReport} from "./api/Report";
 import {logout} from "./api/Access";
@@ -38,42 +36,45 @@ function MapWithMenu() {
     const size_x_meter = useRef(100000);
     const size_y_meter = useRef(100000);
 
+    const [mapCreated, setMapCreated] = useState(false)
+
     const [idReportDetail, setIdReportDetail] = useState(null)
-    const reload = useAppSelector((state) => state.states.reload)
+    // let reload = useAppSelector((state) => state.states.reload)
 
     //modal event is displayed ?
-    const eventModal = useAppSelector((state) => state.states.modales.modal_event_detail)
+    // const eventModal = useAppSelector((state) => state.states.modales.modal_event_detail)
 
     // allow access to global states (eg 'isLogged')
     const dispatch = useAppDispatch()
 
     // coordinates of the reports and content (for tooltip)
-    const list_init_markers_coord = useRef([])
-    const list_init_report_content = useRef([])
+    const listReportCoordinates = useRef([])
+    const listReports = useRef([])
 
     // marker for new reports
     const new_report_marker = useRef(null)
 
-    // report markers reduced (to not have high density of dots).
-    const list_markers_coord = useRef(list_init_markers_coord.current);
-
     // list of the marker to keep in memory to delete -> update the map.
-    const list_markers = useRef([]);
-    const n_events_by_marker = useRef([]);
+    const listMarkers = useRef([]);
 
     // dot showing current location
     const you_are_here_dot = useRef(new Marker(new LatLng(0, 0)));
 
-    // report dots display rule
-    const max_dots = 500
-
     function onMapZoom() {
         updateMarkers();
+
+        // record location
+        const zoom = map.current.getZoom()
+        const bounds = map.current.getBounds()
+        localStorage.setItem("map-zoom", zoom.toString())
+        localStorage.setItem("map-center-lat", bounds.getCenter().lat)
+        localStorage.setItem("map-center-lng", bounds.getCenter().lng)
     }
 
     // this method is called each time we change the area displayed.
     function updateMarkers() {
 
+        console.log('updateMarkers')
         setIdReportDetail(null)
 
         if (map.current) {
@@ -81,10 +82,8 @@ function MapWithMenu() {
             size_x_meter.current = map.current.distance(map.current.getBounds().getNorthEast(), map.current.getBounds().getNorthWest());
             size_y_meter.current = map.current.distance(map.current.getBounds().getNorthEast(), map.current.getBounds().getSouthEast());
 
-            [list_markers_coord.current, n_events_by_marker.current] = joinDots(list_init_markers_coord.current, map.current?.getBounds(), max_dots);
-
             // remove old markers.
-            list_markers.current.forEach(
+            listMarkers.current.forEach(
                 (marker) => {
                     map.current?.removeLayer(marker);
                 }
@@ -92,14 +91,14 @@ function MapWithMenu() {
 
             // create new one.
             if (map.current) {
-                list_markers_coord.current.forEach(
+                listReportCoordinates.current.forEach(
                     (coord, index) => {
 
-                        list_markers.current.push(
+                        listMarkers.current.push(
                             // @ts-ignore
                             L.marker(coord).addTo(map.current).on('click', () => {
                                 setIdReportDetail(null)  // we need to force change if we click again on the same record.
-                                setIdReportDetail(list_init_report_content.current[index].id)
+                                setIdReportDetail(listReports.current[index].id)
                             }))
                     }
                 );
@@ -156,36 +155,6 @@ function MapWithMenu() {
         }
     }
 
-    // download all the reports and keep them in memory.
-    function downloadReportAndDisplay() {
-        getReport()
-            .then(
-                (response) => {
-                    if (response.status === 200) {
-                        list_init_markers_coord.current.splice(0, list_init_markers_coord.current.length)
-                        list_init_report_content.current.splice(0, list_init_report_content.current.length)
-                        response.data.forEach(
-                            (report) => list_init_markers_coord.current.push(
-                                new LatLng(report.latitude, report.longitude
-                                ))
-                        )
-                        response.data.forEach(
-                            (report) => {
-                                list_init_report_content.current.push(report)
-                            }
-                        )
-                        try {
-                            updateMarkers()
-                        } catch (e) {
-                            console.log(e)
-                        }
-
-                    }
-                }
-            )
-            .catch()
-    }
-
     // init
     useEffect(
         () => {
@@ -212,10 +181,11 @@ function MapWithMenu() {
 
             L.control.attribution({position: 'bottomleft'}).addTo(map.current);
 
-            downloadReportAndDisplay()
+            map.current.on('zoomend', onMapZoom);
+            map.current.on('moveend', onMapZoom)
 
-            map.current.on('zoom', onMapZoom);
-            map.current.on('move', onMapZoom)
+            // we trigger the fact that map has been created.
+            setMapCreated(true)
 
             return () => {
                 const zoom = map.current.getZoom()
@@ -224,10 +194,52 @@ function MapWithMenu() {
                 localStorage.setItem("map-center-lat", bounds.getCenter().lat)
                 localStorage.setItem("map-center-lng", bounds.getCenter().lng)
                 map.current?.remove();
+                setMapCreated(false)
             }
         },
         []
     );
+
+    useEffect(
+        () => {
+
+            // download all the reports and keep them in memory.
+            const downloadReportAndDisplay = () => {
+                console.log('downloadReportAndDisplay')
+                getReport()
+                    .then(
+                        (response) => {
+                            if (response.status === 200) {
+                                listReportCoordinates.current.splice(0, listReportCoordinates.current.length)
+                                listReports.current.splice(0, listReports.current.length)
+                                response.data.forEach(
+                                    (report) => listReportCoordinates.current.push(
+                                        new LatLng(report.latitude, report.longitude
+                                        ))
+                                )
+                                response.data.forEach(
+                                    (report) => {
+                                        listReports.current.push(report)
+                                    }
+                                )
+                                try {
+                                    updateMarkers()
+                                } catch (e) {
+                                    console.log(e)
+                                }
+
+                            }
+                        }
+                    )
+                    .catch()
+            }
+
+            if (mapCreated) {
+                downloadReportAndDisplay()
+            }
+
+        }, [mapCreated]
+    )
 
     // when id of event is changed (clicked)
     useEffect(
@@ -239,17 +251,9 @@ function MapWithMenu() {
         [idReportDetail, dispatch]
     )
 
-    useEffect(
-        () => {
-            downloadReportAndDisplay()
-            dispatch(setReloadIsDone())
-        },
-        [reload]
-    )
-
     return (
         <>
-            { idReportDetail ?
+            {idReportDetail ?
                 (<ModalReportDetail id_report={idReportDetail} key={"modal-event-detail-" + idReportDetail}/>)
                 :
                 null

@@ -103,7 +103,7 @@ export const stateSlice = createSlice({
         reload: (state) => {
             state.reload = true
         },
-        // after reloading, map set back reload to its original value. 
+        // after reloading, map set back reload to its original value.
         setReloadIsDone: (state) => {
             state.reload = false
         }

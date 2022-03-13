@@ -25,12 +25,15 @@ SECRET_KEY = 'django-insecure-*#a0yy99@&g@y6#mya70dmf+y6-$d39ku_#g0yfmr8l7ak(ba3
 try:
     os.environ['DEV']
     DEBUG = True
-    MEDIA_ROOT = '/Users/nicolas.julemont/Documents/CODE/samy/api/static/api/media'
+    MEDIA_ROOT = './static/media/'
     MEDIA_URL = 'media/'
-    STATIC_ROOT = '/Users/nicolas.julemont/Documents/CODE/samy/api/static/api'
+    STATIC_ROOT = './static/'
     STATIC_URL = 'static/'
-    # STATICFILES_DIRS = ['/media/']
 except KeyError:
+    MEDIA_ROOT = './static/media/'
+    MEDIA_URL = 'media/'
+    STATIC_ROOT = './static/'
+    STATIC_URL = 'static/'
     DEBUG = False
 
 CSRF_COOKIE_HTTPONLY = True
@@ -154,11 +157,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
-
-STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

@@ -95,8 +95,6 @@ map_category_2 = {
         {
             ReportCategory1.INFRASTRUCTURE: [
                 ReportCategory2.NONE_CAT_2,
-                ReportCategory2.LANE_HOLE,
-                ReportCategory2.LANE_POOR_CONDITION,
                 ReportCategory2.SIGNAGE__MISSING,
                 ReportCategory2.SIGNAGE__BAD_CONDITION
             ]

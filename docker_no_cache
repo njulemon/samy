@@ -1,0 +1,8 @@
+You can write whatever you want in this file.
+But the content must change each time we make a new version that is uploaded to AWS.
+The goal of this file is to force Docker builder to retrieve the new version code from Git.
+If there is no change in it, it will use the cache even if the code in the repo has changed.
+
+send this zip file : >> zip aws_dev.zip Dockerfile Dockerrun.aws.json ./ssh_bitbucket/* docker_no_cache
+
+ksdjflksdfjqlddcgdfgfdgdfgdfg

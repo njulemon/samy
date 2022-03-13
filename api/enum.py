@@ -42,8 +42,6 @@ class BasicTerm(enum.Enum):
     CYCLIST = 1
 
 
-
-
 # ----------------------------------------------------------------------------------------------------------------------
 # REPORTS
 class ReportUserType(ModelEnum):
@@ -62,72 +60,68 @@ class ReportCategory2(ModelEnum):
     NONE_CAT_2 = 0
     # subset items of the items of cat 1.
 
-    BICYCLE_PATH_HOLE = 1
-    BICYCLE_PATH_POOR_CONDITION = 2
-    BICYCLE_PATH_VANISHED_PAINT = 3
-    BICYCLE_PATH_UNCLEAR_SIGNAGE = 4
-    BICYCLE_PATH_BORDER_NEED_TO_BE_LOWERED = 5
+    LANE_HOLE = 1
+    LANE_POOR_CONDITION = 2
+    LANE_VANISHED_PAINT = 3
+    LANE_UNCLEAR_SIGNAGE = 4
+    LANE_BORDER_NEED_TO_BE_LOWERED = 5
+    LANE_SLIPPERY = 6
+    LANE_TOO_THIN = 7
+    LANE_CROSSING_DANGEROUS = 8
+    LANE_PRIORITY_NOT_RESPECTED_DANGEROUS = 9
 
-    NO_BICYCLE_PATH_DANGEROUS_SITUATION = 6
+    LANE_CROSSWALK_MISSING = 10
 
-    SIGNAGE__MISSING = 7
-    SIGNAGE__BAD_CONDITION = 8
+    RACK_DAMAGED = 11
+
+    NO_BICYCLE_PATH_DANGEROUS_SITUATION = 12
+
+    SIGNAGE__MISSING = 13
+    SIGNAGE__BAD_CONDITION = 14
+
+    INCIDENT_GLASS_ON_LANE = 15
+    INCIDENT_NAILS_ON_LANE = 16
 
 
 # ----------------------------------------------------------------------------------------------------------------------
 # CATEGORIES TREE
 map_category_1 = {
-    ReportUserType.PEDESTRIAN: [ReportCategory1.NONE_CAT_1, ReportCategory1.INFRASTRUCTURE, ReportCategory1.INCIDENT],
+    ReportUserType.PEDESTRIAN: [ReportCategory1.NONE_CAT_1, ReportCategory1.INFRASTRUCTURE],
     ReportUserType.CYCLIST: [ReportCategory1.NONE_CAT_1, ReportCategory1.INFRASTRUCTURE, ReportCategory1.INCIDENT]
 }
 
 map_category_2 = {
     ReportUserType.PEDESTRIAN:
-        {ReportCategory1.INFRASTRUCTURE: [
-            ReportCategory2.NONE_CAT_2,
-            ReportCategory2.BICYCLE_PATH_HOLE,
-            ReportCategory2.BICYCLE_PATH_POOR_CONDITION,
-            ReportCategory2.BICYCLE_PATH_VANISHED_PAINT,
-            ReportCategory2.BICYCLE_PATH_UNCLEAR_SIGNAGE,
-            ReportCategory2.BICYCLE_PATH_BORDER_NEED_TO_BE_LOWERED,
-            ReportCategory2.NO_BICYCLE_PATH_DANGEROUS_SITUATION,
-            ReportCategory2.SIGNAGE__MISSING,
-            ReportCategory2.SIGNAGE__BAD_CONDITION
-        ],
-            ReportCategory1.INCIDENT: [
+        {
+            ReportCategory1.INFRASTRUCTURE: [
                 ReportCategory2.NONE_CAT_2,
-                ReportCategory2.BICYCLE_PATH_HOLE,
-                ReportCategory2.BICYCLE_PATH_POOR_CONDITION,
-                ReportCategory2.BICYCLE_PATH_VANISHED_PAINT,
-                ReportCategory2.BICYCLE_PATH_UNCLEAR_SIGNAGE,
-                ReportCategory2.BICYCLE_PATH_BORDER_NEED_TO_BE_LOWERED,
-                ReportCategory2.NO_BICYCLE_PATH_DANGEROUS_SITUATION,
+                ReportCategory2.LANE_HOLE,
+                ReportCategory2.LANE_POOR_CONDITION,
                 ReportCategory2.SIGNAGE__MISSING,
                 ReportCategory2.SIGNAGE__BAD_CONDITION
             ]
         },
     ReportUserType.CYCLIST:
-        {ReportCategory1.INFRASTRUCTURE: [
-            ReportCategory2.NONE_CAT_2,
-            ReportCategory2.BICYCLE_PATH_HOLE,
-            ReportCategory2.BICYCLE_PATH_POOR_CONDITION,
-            ReportCategory2.BICYCLE_PATH_VANISHED_PAINT,
-            ReportCategory2.BICYCLE_PATH_UNCLEAR_SIGNAGE,
-            ReportCategory2.BICYCLE_PATH_BORDER_NEED_TO_BE_LOWERED,
-            ReportCategory2.NO_BICYCLE_PATH_DANGEROUS_SITUATION,
-            ReportCategory2.SIGNAGE__MISSING,
-            ReportCategory2.SIGNAGE__BAD_CONDITION
-        ],
-            ReportCategory1.INCIDENT: [
+        {
+            ReportCategory1.INFRASTRUCTURE: [
                 ReportCategory2.NONE_CAT_2,
-                ReportCategory2.BICYCLE_PATH_HOLE,
-                ReportCategory2.BICYCLE_PATH_POOR_CONDITION,
-                ReportCategory2.BICYCLE_PATH_VANISHED_PAINT,
-                ReportCategory2.BICYCLE_PATH_UNCLEAR_SIGNAGE,
-                ReportCategory2.BICYCLE_PATH_BORDER_NEED_TO_BE_LOWERED,
+                ReportCategory2.LANE_HOLE,
+                ReportCategory2.LANE_POOR_CONDITION,
+                ReportCategory2.LANE_VANISHED_PAINT,
+                ReportCategory2.LANE_UNCLEAR_SIGNAGE,
+                ReportCategory2.LANE_BORDER_NEED_TO_BE_LOWERED,
+                ReportCategory2.LANE_SLIPPERY,
+                ReportCategory2.LANE_TOO_THIN,
+                ReportCategory2.LANE_CROSSING_DANGEROUS,
+                ReportCategory2.LANE_PRIORITY_NOT_RESPECTED_DANGEROUS,
                 ReportCategory2.NO_BICYCLE_PATH_DANGEROUS_SITUATION,
+                ReportCategory2.RACK_DAMAGED,
                 ReportCategory2.SIGNAGE__MISSING,
                 ReportCategory2.SIGNAGE__BAD_CONDITION
+            ],
+            ReportCategory1.INCIDENT: [
+                ReportCategory2.INCIDENT_GLASS_ON_LANE,
+                ReportCategory2.INCIDENT_NAILS_ON_LANE
             ]
         }
 }

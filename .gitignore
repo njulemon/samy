@@ -34,3 +34,5 @@ db.sqlite3
 # static files
 /static/admin
 /static/rest_framework
+
+aws.zip

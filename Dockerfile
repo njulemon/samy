@@ -22,6 +22,7 @@ WORKDIR /var
 RUN apt-get update -y
 RUN apt-get upgrade -y
 RUN apt-get install wget software-properties-common build-essential libnss3-dev zlib1g-dev libgdbm-dev libncurses5-dev   libssl-dev libffi-dev libreadline-dev libsqlite3-dev libbz2-dev -y
+RUN apt-get install default-libmysqlclient-dev -y
 RUN wget https://www.python.org/ftp/python/3.9.10/Python-3.9.10.tgz
 RUN tar xvf Python-3.9.10.tgz
 RUN ./Python-3.9.10/configure --enable-optimizations

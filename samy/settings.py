@@ -21,13 +21,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-*#a0yy99@&g@y6#mya70dmf+y6-$d39ku_#g0yfmr8l7ak(ba3'
 
-# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG=True
 try:
     os.environ['DEV']
     DEBUG = True
-    MEDIA_ROOT = './static/media/'
-    MEDIA_URL = 'media/'
-    STATIC_ROOT = './static/'
+    # MEDIA_ROOT = './static/media/'
+    # MEDIA_URL = 'media/'
+    # STATIC_ROOT = './static/'
     STATIC_URL = 'static/'
 except KeyError:
     MEDIA_ROOT = './static/media/'
@@ -58,7 +58,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     # 'api.apps.ApiConfig',
-    'api'
+    'api',
+    'storages'
 ]
 
 MIDDLEWARE = [
@@ -175,3 +176,48 @@ try:
 except KeyError:
     raise EnvironmentError('Email variables are not defined.')
 
+# MySQL
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'samy',
+        'HOST': '127.0.0.1',
+        'PORT': '3307',
+        'USER': 'root',
+        'PASSWORD': 'plumeplume',
+        'CHARSET': 'utf8'
+    }
+}
+
+
+try:
+    DATABASES['default']['HOST'] = os.environ['MYSQL_HOST']
+except KeyError:
+    print('MySql DB host is not present in the environment.')
+try:
+    DATABASES['default']['PORT'] = os.environ['MYSQL_PORT']
+except KeyError:
+    print('MySql DB port is not present in the environment.')
+try:
+    DATABASES['default']['USER'] = os.environ['MYSQL_USER']
+except KeyError:
+    print('MySql DB user is not present in the environment.')
+try:
+    DATABASES['default']['PASSWORD'] = os.environ['MYSQL_PASSWORD']
+except KeyError:
+    print('MySql DB password is not present in the environment.')
+try:
+    DATABASES['default']['NAME'] = os.environ['MYSQL_DBNAME']
+except KeyError:
+    print('MySql DB NAME is not present in the environment.')
+
+
+# S3 FILE storage
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
+AWS_S3_ACCESS_KEY_ID = os.environ['AWS_S3_ACCESS_KEY_ID']
+AWS_S3_SECRET_ACCESS_KEY = os.environ['AWS_S3_SECRET_ACCESS_KEY']
+AWS_S3_REGION_NAME = 'eu-central-1'
+AWS_DEFAULT_ACL = 'public-read'

@@ -32,7 +32,7 @@ export function deleteImage(pk) {
     )
         .then(
             (response) => axios.delete(
-                urlServer + uriPicture + pk,
+                urlServer + uriPicture + pk.toString() + '/',
                 {
                     withCredentials: true,
                     headers: {

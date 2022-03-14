@@ -262,18 +262,30 @@ function MapWithMenu() {
             <div>
                 <div id='map'>
                     <div className="leaflet-top leaflet-right">
-                        <FontAwesomeIcon icon={faSignOutAlt} className="logout-button"
-                                         onClick={() => {
-                                             logout().then(() => dispatch(denyAccess()))
-                                         }} fixedWidth/>
-                    </div>
-                    <div className="leaflet-bottom leaflet-right">
                         <div className="background-leaflet-buttons">
-                            <FontAwesomeIcon icon={faMapMarkerAlt} className="here-icon" onClick={updateLocation}
-                                             fixedWidth/>
-                            <br/>
-                            <FontAwesomeIcon icon={faCirclePlus} className="new-icon" onClick={addNewReportMarker}
-                                             fixedWidth/>
+                            <div className="container-fluid">
+                                <div className="row">
+                                    <FontAwesomeIcon icon={faSignOutAlt} className="logout-button"
+                                                     onClick={() => {
+                                                         logout().then(() => dispatch(denyAccess()))
+                                                     }} fixedWidth/>
+                                </div>
+                                <hr />
+                                <div className="row">
+                                    {/*</div>*/}
+                                    {/*<div className="leaflet-bottom leaflet-right">*/}
+                                    {/*    <div className="background-leaflet-buttons">*/}
+                                    <FontAwesomeIcon icon={faMapMarkerAlt} className="here-icon"
+                                                     onClick={updateLocation}
+                                                     fixedWidth/>
+                                </div>
+                                <div className="row">
+                                    <FontAwesomeIcon icon={faCirclePlus} className="new-icon"
+                                                     onClick={addNewReportMarker}
+                                                     fixedWidth/>
+                                </div>
+                            </div>
+                            {/*</div>*/}
                         </div>
                     </div>
                 </div>

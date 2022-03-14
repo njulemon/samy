@@ -2,7 +2,13 @@ import {getReportForm, postReport} from "./api/Report";
 import {Form, Formik, useFormikContext, Field} from "formik";
 import {useEffect, useState} from "react";
 import {useAppDispatch, useAppSelector} from "./app/hooks";
-import {clearNewReportForm, reload, setNewReportComment, setNewReportFields, setNewReportFormTouched} from "./app/States";
+import {
+    clearNewReportForm,
+    reload,
+    setNewReportComment,
+    setNewReportFields,
+    setNewReportFormTouched
+} from "./app/States";
 import FormReportField from "./FormReportField";
 import {hideNewReportModal} from "./app/States";
 import FieldImageAutoUpload from "./FieldImageAutoUpload";
@@ -43,6 +49,7 @@ function FormReport() {
     const [userOption, setUserOption] = useState(["CYCLIST"]);
     const [cat1, setCat1] = useState([]);
     const [cat2, setCat2] = useState([]);
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
     const [pk_picture, set_pk_picture] = useState(null)
 
@@ -119,7 +126,10 @@ function FormReport() {
                     category_1: formStore.values.category_1,
                     category_2: formStore.values.category_2
                 }}
-                onSubmit={(values, {setSubmitting}) => {
+                onSubmit={(values) => {
+
+                    setIsSubmitting(true)
+
                     const data = {
                         'user_type': values.user_type,
                         'category_1': values.category_1,
@@ -146,12 +156,13 @@ function FormReport() {
                             }
                         )
                         .catch((reason) => setErrorForm('Le signalement n\'a pas pu être enregistré'))
+                        .finally(() => setIsSubmitting(false))
                 }}
                 validate={validateForm}
             >
 
 
-                {(formik, isSubmitting) => (
+                {(formik) => (
                     <Form>
                         <FormStore/>
 
@@ -191,7 +202,7 @@ function FormReport() {
                             ) : null}
                         </div>
 
-                        <FieldImageAutoUpload pk={pk_picture} setPk={set_pk_picture}/>
+                        <FieldImageAutoUpload pk={pk_picture} setPk={set_pk_picture} setIsSubmitting={setIsSubmitting}/>
 
                         {errorForm !== '' ?
                             (<div className="mb-3">
@@ -204,7 +215,7 @@ function FormReport() {
                         <div className="mb-3">
                             <button className="btn btn-primary form-button" type="submit"
                                     disabled={isSubmitting}>
-                                {isSubmitting ? "Merci de patienter..." : "Envoyer"}
+                                Envoyer
                             </button>
                         </div>
 

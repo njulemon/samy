@@ -15,4 +15,4 @@ export const uriPicture = '/api/report-image/'
 
 export const uriReportForm = '/api/report-form/'
 
-export const urlMedia = 'http://localhost:8000/media/'
+export const urlMedia = urlServer + '/media/'

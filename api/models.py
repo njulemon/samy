@@ -38,10 +38,12 @@ class Report(models.Model):
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
     timestamp_creation = models.DateTimeField(auto_now_add=True)
+
     # creator of the report. If user delete the account this field is set to null.
     owner = models.ForeignKey(
         to=CustomUser,
-        on_delete=models.CASCADE
+        on_delete=models.SET_NULL,
+        null=True
     )
     image = models.ForeignKey(
         to=ReportImage,

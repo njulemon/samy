@@ -23,7 +23,7 @@ function FieldImageAutoUpload({pk, setPk, setIsSubmitting}) {
         let formData = new FormData();
 
         // resize image [Blob]
-        const imageResized = await resizeImage(file, 1280)
+        const imageResized = await resizeImage(file, 720)
 
         formData.set('image', imageResized, file_name);
 

@@ -32,7 +32,7 @@ function ModalReportDetail({id_report}) {
     useEffect(
         () => {
             if (id_report) {
-                axios.get(urlServer + uriReport + id_report, {withCredentials: true})
+                axios.get(urlServer + uriReport + id_report.toString() + '/', {withCredentials: true})
                     .then((response) => {
                         setReportDataDescription(response.data)
                     })
@@ -130,7 +130,7 @@ function ModalReportDetail({id_report}) {
                                             {pictureLink ?
                                                 <div className="">
                                                     <img src={pictureLink} alt="Report"
-                                                         className="image-report shadow-sm rounded"/>
+                                                         className="image-report shadow-sm w-100"/>
                                                 </div>
                                                 : null}
                                         </div>

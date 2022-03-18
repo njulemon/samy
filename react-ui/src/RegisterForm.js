@@ -56,6 +56,7 @@ function RegisterForm() {
                     'password': values.password
                 }
 
+
                 setSubmitting(true)
                 postRegister(data)
                     .then(
@@ -86,7 +87,7 @@ function RegisterForm() {
         >
 
 
-            {(formik, isSubmitting) => (
+            {(formik) => (
                 registeredDone ? <div> Votre compte a bien été créé. Veuillez valider votre adresse e-mail en cliquant sur le lien inclu dans l'e-mail que vous avez reçu. </div> :
                 <Form>
                     <div className="mb-3">
@@ -163,8 +164,8 @@ function RegisterForm() {
                     </div>
 
                     <button className="btn btn-primary form-button" type="submit"
-                            disabled={isSubmitting}>
-                        {isSubmitting ? "Merci de patienter..." : "Envoyer"}
+                            disabled={formik.isSubmitting}>
+                        {formik.isSubmitting ? "Merci de patienter..." : "Envoyer"}
                     </button>
                     {errorForm !== '' ?
                         (<div className="mb-3">

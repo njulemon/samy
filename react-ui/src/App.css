@@ -144,8 +144,7 @@ div.circle-here {
 }
 
 .image-report {
-    width: 200px;
-    border-radius: 5px;
+    border-radius: 15px;
 }
 
 .image-report-cross {

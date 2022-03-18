@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Samy-app",
+  "name": "Samy-app, the GRACQ companion",
   "icons": [
     {
       "src": "favicon.ico",
@@ -19,7 +19,7 @@
     }
   ],
   "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
+  "display": "fullscreen",
+  "theme_color": "#3f8618",
   "background_color": "#ffffff"
 }

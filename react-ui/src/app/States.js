@@ -149,7 +149,7 @@ export const checkAccessAndGetUser = () => async dispatch => {
 export function updateNotes(id_report) {
     return async function updateNotesThunk(dispatch, getState) {
         const response = await axios.get(
-            urlServer + uriVotes + id_report,
+            urlServer + uriVotes + id_report.toString() + '/',
             {withCredentials: true})
         if (response.status === 200 && response.data !== []) {
             const notes_other = processVotes(response.data)

@@ -173,15 +173,15 @@ class UserViewSet(viewsets.GenericViewSet, CreateModelMixin):
 
         if ser.is_valid():
 
-            has_access = False
-            for email_hashed_instance in AuthorizedMail.objects.all():
-                if check_password(ser.validated_data['email'], email_hashed_instance.email_hashed):
-                    has_access = True
-                    break
-            if not has_access:
-                error_message = {'error': f'You are not in the list of authorized users. '
-                                          f'Please contact admin by email {CustomUser.objects.filter(is_superuser=True)[0].email}'}
-                return Response(status=status.HTTP_401_UNAUTHORIZED, data=error_message)
+            # has_access = False
+            # for email_hashed_instance in AuthorizedMail.objects.all():
+            #     if check_password(ser.validated_data['email'], email_hashed_instance.email_hashed):
+            #         has_access = True
+            #         break
+            # if not has_access:
+            #     error_message = {'error': f'You are not in the list of authorized users. '
+            #                               f'Please contact admin by email {CustomUser.objects.filter(is_superuser=True)[0].email}'}
+            #     return Response(status=status.HTTP_401_UNAUTHORIZED, data=error_message)
 
             user = CustomUser.objects.create(
                 first_name=ser.validated_data['first_name'],

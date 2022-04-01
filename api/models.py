@@ -3,7 +3,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from .enum import ReportUserType, ReportCategory1, ReportCategory2
+from .enum import ReportUserType, ReportCategory1, ReportCategory2, ReportOperation
 from .managers import CustomUserManager
 
 
@@ -33,6 +33,7 @@ class ReportImage(models.Model):
 
 class Report(models.Model):
     user_type = models.IntegerField(choices=ReportUserType.get_model_choices())
+    operation = models.IntegerField(choices=ReportOperation.get_model_choices(), default=1)
     category_1 = models.IntegerField(choices=ReportCategory1.get_model_choices())
     category_2 = models.IntegerField(choices=ReportCategory2.get_model_choices())
     latitude = models.FloatField(default=0.0)

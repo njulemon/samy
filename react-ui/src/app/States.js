@@ -21,7 +21,7 @@ export const stateSlice = createSlice({
 
         form_report: {
             values: {
-                user_type: 'NONE_USER_TYPE',
+                operation: 'LOCALE',
                 category_1: 'NONE_CAT_1',
                 category_2: 'NONE_CAT_2',
                 latitude: 0.0,
@@ -30,7 +30,7 @@ export const stateSlice = createSlice({
                 comment: null
             },
             touched: {
-                user_type: false,
+                operation: false,
                 category_1: false,
                 category_2: false,
             }
@@ -61,7 +61,7 @@ export const stateSlice = createSlice({
             state.isLogged = false
         },
         setNewReportFields: (state, action) => {
-            state.form_report.values.user_type = action.payload.user_type
+            state.form_report.values.operation = action.payload.operation
             state.form_report.values.category_1 = action.payload.category_1
             state.form_report.values.category_2 = action.payload.category_2
         },
@@ -76,12 +76,12 @@ export const stateSlice = createSlice({
             state.form_report.values.comment = action.payload.comment
         },
         setNewReportFormTouched: (state, action) => {
-            state.form_report.touched.user_type = action.payload.user_type
+            state.form_report.touched.operation = action.payload.operation
             state.form_report.touched.category_1 = action.payload.category_1
             state.form_report.touched.category_2 = action.payload.category_2
         },
         clearNewReportForm: (state) => {
-            state.form_report.values.user_type = 'NONE_USER_TYPE'
+            state.form_report.values.operation = 'LOCALE'
             state.form_report.values.category_1 = 'NONE_CAT_1'
             state.form_report.values.category_2 = 'NONE_CAT_2'
             state.form_report.values.latitude = 0.0

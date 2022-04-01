@@ -162,23 +162,25 @@ function ModalReportDetail({id_report}) {
                                                                 {capitalize(translation[reportDataDescription.category_2])}
                                                             </h5>
                                                             <p className="fw-lighter">
-                                                                Signalé le {(new Date(reportDataDescription.timestamp_creation)).toLocaleDateString()}
+                                                                Signalé
+                                                                le {(new Date(reportDataDescription.timestamp_creation)).toLocaleDateString()}
                                                                 &nbsp;à {(new Date(reportDataDescription.timestamp_creation)).toLocaleTimeString()}
                                                             </p>
                                                         </div>
                                                     </div>
 
                                                     <div className="row">
-                                                        <div className="col-md-12 col-sm-12 mb-3 mt-3">
-                                                            {pictureLink ?
+                                                        {pictureLink ?
+                                                            <div className="col-md-12 col-sm-12 mb-3 mt-3">
                                                                 <div className="">
                                                                     <img src={pictureLink} alt="Report"
                                                                          className="image-report shadow-sm w-100"/>
                                                                 </div>
-                                                                : null}
-                                                        </div>
-                                                        <div className="col-md-12 col-sm-12 mb-3 mt-3">
-                                                            {reportDataDescription?.comment ?
+                                                            </div>
+                                                            : null}
+                                                        {reportDataDescription?.comment ?
+                                                            <div className="col-md-12 col-sm-12 mb-3 mt-3">
+
                                                                 <div className="">
                                                                     <div className="shadow-sm h-100 rounded">
                                                                         <div className="p-2">
@@ -189,9 +191,10 @@ function ModalReportDetail({id_report}) {
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                : null
-                                                            }
-                                                        </div>
+
+                                                            </div>
+                                                            : null
+                                                        }
                                                     </div>
                                                 </div>
                                                 <div className="container-fluid">

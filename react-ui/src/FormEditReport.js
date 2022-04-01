@@ -7,46 +7,33 @@ import FieldImageAutoUpload from "./FieldImageAutoUpload";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 
-const FormStore = ({setUserTypeOptions, setCategory1Options, setCategory2Options, userType, category1, category2}) => {
+const FormStore = ({setOperationOptions, setCategory1Options, setCategory2Options, operation, category1, category2}) => {
 
     // needed for form validation
     const formik = useFormikContext();
 
-    // // manage event from the form (choices are saved in the store).
-    // // GET REPORT CHOICES FROM THE SERVER (translations + user type choices)
-    // useEffect(
-    //     () => {
-    //         getReportForm()
-    //             .then((response) => {
-    //                 setUserTypeOptions(response.data[0])
-    //                 setCategory1Options(response.data[1][userType])
-    //                 setCategory2Options(response.data[2][category1])
-    //             })
-    //     },
-    //     []
-    // )
 
     // GET REPORT CHOICES FROM THE SERVER (cat 1)
     useEffect(
         () => {
-            if (!formik.values.user_type.includes("NONE")) {
+            if (!formik.values.operation.includes("NONE")) {
                 getReportForm()
-                    .then((response) => setCategory1Options(response.data[1][formik.values.user_type]))
+                    .then((response) => setCategory1Options(response.data[1][formik.values.operation]))
             }
         },
-        [formik.values.user_type]
+        [formik.values.operation]
     )
 
     // GET REPORT CHOICES FROM THE SERVER (cat 2)
     useEffect(
         () => {
-            if (!formik.values.user_type.includes("NONE") && !formik.values.category_1.includes("NONE")) {
+            if (!formik.values.operation.includes("NONE") && !formik.values.category_1.includes("NONE")) {
                 getReportForm()
                     .then((response) =>
-                        setCategory2Options(response.data[2][formik.values.user_type][formik.values.category_1]))
+                        setCategory2Options(response.data[2][formik.values.operation][formik.values.category_1]))
             }
         },
-        [formik.values.user_type, formik.values.category_1]
+        [formik.values.operation, formik.values.category_1]
     )
 
     return null;
@@ -58,11 +45,11 @@ function FormEditReport({pk, setEdit}) {
     // LOCAL STATES (user list choices)
     const [isSubmitting, setIsSubmitting] = useState(false)
 
-    const [userTypeOptions, setUserTypeOptions] = useState(null)
+    const [operationOptions, setOperationOptions] = useState(null)
     const [category1Options, setCategory1Options] = useState(null)
     const [category2Options, setCategory2Options] = useState(null)
 
-    const [userType, setUserType] = useState(null)
+    const [operation, setOperation] = useState(null)
     const [category1, setCategory1] = useState(null)
     const [category2, setCategory2] = useState(null)
     const [latitude, setLatitude] = useState(null)
@@ -76,19 +63,16 @@ function FormEditReport({pk, setEdit}) {
     // LOCAL STATE (error form)
     const [errorForm, setErrorForm] = useState('')
 
-    // reload page
-    const navigate = useNavigate()
-
     // init formStore
     useEffect(() => {
             axios.all([getReport(pk), getReportForm()])
                 .then(
                     axios.spread((data, form) => {
-                        setUserTypeOptions(form.data[0])
-                        setCategory1Options(form.data[1][data.data.user_type])
-                        setCategory2Options(form.data[2][data.data.user_type][data.data.category_1])
+                        setOperationOptions(form.data[0])
+                        setCategory1Options(form.data[1][data.data.operation])
+                        setCategory2Options(form.data[2][data.data.operation][data.data.category_1])
 
-                        setUserType(data.data.user_type)
+                        setOperation(data.data.operation)
                         setCategory1(data.data.category_1)
                         setCategory2(data.data.category_2)
                         setLatitude(data.data.latitude)
@@ -106,8 +90,8 @@ function FormEditReport({pk, setEdit}) {
 
     const validateForm = (values) => {
         const errors = {};
-        if (values.user_type.includes("NONE")) {
-            errors.user_type = 'Veuillez indiquer votre statut d\'usager';
+        if (values.operation.includes("NONE")) {
+            errors.operation = 'Veuillez indiquer le destinataire du signalement';
         }
 
         if (values.category_1.includes("NONE")) {
@@ -130,7 +114,7 @@ function FormEditReport({pk, setEdit}) {
             {formContentNotLoaded ? null :
                 <Formik
                     initialValues={{
-                        user_type: userType,
+                        operation: operation,
                         category_1: category1,
                         category_2: category2,
                         comment: comment
@@ -139,7 +123,8 @@ function FormEditReport({pk, setEdit}) {
 
                         setIsSubmitting(true)
                         const data = {
-                            'user_type': values.user_type,
+                            'user_type': 'CYCLIST',
+                            'operation': values.operation,
                             'category_1': values.category_1,
                             'category_2': values.category_2,
                             'comment': values.comment ? values.comment : null,
@@ -171,16 +156,16 @@ function FormEditReport({pk, setEdit}) {
 
                     {(formik) => (
                         <Form>
-                            <FormStore setUserTypeOptions={setUserTypeOptions} setCategory1Options={setCategory1Options}
+                            <FormStore setOperationOptions={setOperationOptions} setCategory1Options={setCategory1Options}
                                        setCategory2Options={setCategory2Options}/>
 
                             <FormReportField key="report-form-field-user-type"
                                              formik={formik}
-                                             field_name='user_type'
-                                             list_options={userTypeOptions}
-                                             first_option="Catégorie d'usager ?"/>
+                                             field_name='operation'
+                                             list_options={operationOptions}
+                                             first_option="Signaler à"/>
 
-                            {formik.values.user_type.includes("NONE") ? null :
+                            {formik.values.operation.includes("NONE") ? null :
                                 <FormReportField key="report-form-field-cat-1"
                                                  formik={formik}
                                                  field_name='category_1'
@@ -188,7 +173,7 @@ function FormEditReport({pk, setEdit}) {
                                                  first_option="Catégorie de problème ?"/>
                             }
 
-                            {formik.values.user_type.includes("NONE") || formik.values.category_1.includes("NONE") ? null :
+                            {formik.values.operation.includes("NONE") || formik.values.category_1.includes("NONE") ? null :
                                 <FormReportField key="report-form-field-cat-2"
                                                  formik={formik}
                                                  field_name='category_2'

@@ -19,7 +19,7 @@ from templated_email import send_templated_mail
 from api import Tools
 from api.CustomPermissions import ActionBasedPermission, IsOwnerOrReadOnly
 from api.MultiSerializerViewSet import MultiSerializerViewSet
-from api.enum import ReportUserType, map_category_1, map_category_2
+from api.enum import ReportUserType, map_category_1, map_category_2, ReportOperation
 from api.fr import report_form_fr, basic_terms
 from api.models import Report, Votes, CustomUser, KeyValidator, RestPassword, ReportImage, AuthorizedMail
 from api.serializers import ReportSerializer, VotesSerializer, UserSerializer, NewUserSerializer, \
@@ -151,7 +151,7 @@ class ReportFormTree(viewsets.ViewSet):
 
     def list(self, request):
         dic_return = {
-            0: [item.name for item in ReportUserType],
+            0: [item.name for item in ReportOperation],
             1: {
                 user.name: [cat.name for cat in cat_list] for user, cat_list in map_category_1.items()
             },

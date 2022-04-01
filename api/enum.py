@@ -26,12 +26,12 @@ class ModelEnum(Enum):
                 return item
 
     @staticmethod
-    def get_category_1(user_type: 'ReportUserType'):
-        return map_category_1[user_type]
+    def get_category_1(operation: 'ReportOperation'):
+        return map_category_1[operation]
 
     @staticmethod
-    def get_category_2(user_type: 'ReportUserType', category_1: 'ReportCategory1'):
-        return map_category_2[(user_type, category_1)]
+    def get_category_2(operation: 'ReportOperation', category_1: 'ReportCategory1'):
+        return map_category_2[operation][category_1]
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -43,12 +43,17 @@ class BasicTerm(enum.Enum):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-# REPORTS
+# REPORTS (WARNING : DO NOT DELETE THOSE ENUMS EVENT IF NOT NEEDED ANYMORE !)
+# Instead, add new ones if needed !
 class ReportUserType(ModelEnum):
     NONE_USER_TYPE = 0
     PEDESTRIAN = 1
     CYCLIST = 2
 
+class ReportOperation(ModelEnum):
+    NONE_OPERATION = 0
+    LOCALE = 1
+    # set other type of operations.
 
 class ReportCategory1(ModelEnum):
     NONE_CAT_1 = 0
@@ -86,20 +91,15 @@ class ReportCategory2(ModelEnum):
 # ----------------------------------------------------------------------------------------------------------------------
 # CATEGORIES TREE
 map_category_1 = {
-    ReportUserType.PEDESTRIAN: [ReportCategory1.NONE_CAT_1, ReportCategory1.INFRASTRUCTURE],
-    ReportUserType.CYCLIST: [ReportCategory1.NONE_CAT_1, ReportCategory1.INFRASTRUCTURE, ReportCategory1.INCIDENT]
+    ReportOperation.LOCALE: [
+        ReportCategory1.NONE_CAT_1,
+        ReportCategory1.INFRASTRUCTURE,
+        ReportCategory1.INCIDENT]
+    # set options for other operations here...
 }
 
 map_category_2 = {
-    ReportUserType.PEDESTRIAN:
-        {
-            ReportCategory1.INFRASTRUCTURE: [
-                ReportCategory2.NONE_CAT_2,
-                ReportCategory2.SIGNAGE__MISSING,
-                ReportCategory2.SIGNAGE__BAD_CONDITION
-            ]
-        },
-    ReportUserType.CYCLIST:
+    ReportOperation.LOCALE:
         {
             ReportCategory1.INFRASTRUCTURE: [
                 ReportCategory2.NONE_CAT_2,

@@ -43,3 +43,14 @@ export function deleteImage(pk) {
             )
         )
 }
+
+export function getImage(pk) {
+
+    return axios.get(
+        urlServer + uriPicture + pk.toString() + '/',
+        {
+            withCredentials: true
+        }
+    )
+
+}

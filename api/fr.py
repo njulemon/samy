@@ -1,4 +1,4 @@
-from api.enum import ReportUserType, ReportCategory1, ReportCategory2, BasicTerm
+from api.enum import ReportUserType, ReportCategory1, ReportCategory2, BasicTerm, ReportOperation
 
 report_form_fr = {
     # default option
@@ -9,6 +9,10 @@ report_form_fr = {
     # user type
     ReportUserType.CYCLIST.name: "cycliste",
     ReportUserType.PEDESTRIAN.name: "piéton",
+
+    # operation
+    ReportOperation.NONE_OPERATION.name: "Signaler à",
+    ReportOperation.LOCALE.name: "locale du GRACQ",
 
     # cat 1
     ReportCategory1.INCIDENT.name: "incident",

@@ -19,7 +19,7 @@ import {
     setCoordinatesNewReport,
     showReportDetailModal
 } from "./app/States";
-import {getReport} from "./api/Report";
+import {getReports} from "./api/Report";
 import {logout} from "./api/Access";
 import ModalReportDetail from "./ModalReportDetail";
 
@@ -206,7 +206,7 @@ function MapWithMenu() {
             // download all the reports and keep them in memory.
             const downloadReportAndDisplay = () => {
                 console.log('downloadReportAndDisplay')
-                getReport()
+                getReports()
                     .then(
                         (response) => {
                             if (response.status === 200) {

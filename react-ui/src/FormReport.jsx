@@ -45,8 +45,8 @@ const FormStore = () => {
 
 function FormReport() {
 
-    // LOCAL STATES (user list choices)
-    const [userOption, setUserOption] = useState(["CYCLIST"]);
+    // LOCAL STATES
+    const [operationOption, setOperationOption] = useState(["CYCLIST"]);
     const [cat1, setCat1] = useState([]);
     const [cat2, setCat2] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -56,19 +56,16 @@ function FormReport() {
     // LOCAL STATE (error form)
     const [errorForm, setErrorForm] = useState('')
 
-    // reload page
-    const navigate = useNavigate()
-
     // REDUX STORE
     const dispatch = useAppDispatch()
     const formStore = useAppSelector((state) => state.states.form_report)
 
-    // GET REPORT CHOICES FROM THE SERVER (translations + user type choices)
+    // GET REPORT CHOICES FROM THE SERVER (translations +  choices)
     useEffect(
         () => {
             getReportForm()
                 .then((response) => {
-                    setUserOption(response.data[0])
+                    setOperationOption(response.data[0])
                 })
         },
         []
@@ -77,30 +74,30 @@ function FormReport() {
     // GET REPORT CHOICES FROM THE SERVER (cat 1)
     useEffect(
         () => {
-            if (!formStore.values.user_type.includes("NONE")) {
+            if (!formStore.values.operation.includes("NONE")) {
                 getReportForm()
-                    .then((response) => setCat1(response.data[1][formStore.values.user_type]))
+                    .then((response) => setCat1(response.data[1][formStore.values.operation]))
             }
         },
-        [formStore.values.user_type]
+        [formStore.values.operation]
     )
 
     // GET REPORT CHOICES FROM THE SERVER (cat 2)
     useEffect(
         () => {
-            if (!formStore.values.user_type.includes("NONE") && !formStore.values.category_1.includes("NONE")) {
+            if (!formStore.values.operation.includes("NONE") && !formStore.values.category_1.includes("NONE")) {
                 getReportForm()
                     .then((response) =>
-                        setCat2(response.data[2][formStore.values.user_type][formStore.values.category_1]))
+                        setCat2(response.data[2][formStore.values.operation][formStore.values.category_1]))
             }
         },
-        [formStore.values.user_type, formStore.values.category_1]
+        [formStore.values.operation, formStore.values.category_1]
     )
 
     const validateForm = (values) => {
         const errors = {};
-        if (values.user_type.includes("NONE")) {
-            errors.user_type = 'Veuillez indiquer votre statut d\'usager';
+        if (values.operation.includes("NONE")) {
+            errors.operation = 'Veuillez indiquer le destinataire du signalement';
         }
 
         if (values.category_1.includes("NONE")) {
@@ -122,7 +119,7 @@ function FormReport() {
         <>
             <Formik
                 initialValues={{
-                    user_type: formStore.values.user_type,
+                    operation: formStore.values.operation,
                     category_1: formStore.values.category_1,
                     category_2: formStore.values.category_2
                 }}
@@ -131,7 +128,8 @@ function FormReport() {
                     setIsSubmitting(true)
 
                     const data = {
-                        'user_type': values.user_type,
+                        'user_type': 'CYCLIST',
+                        'operation': values.operation,
                         'category_1': values.category_1,
                         'category_2': values.category_2,
                         'latitude': formStore.values.latitude,
@@ -155,7 +153,10 @@ function FormReport() {
                                 }
                             }
                         )
-                        .catch((reason) => setErrorForm('Le signalement n\'a pas pu être enregistré'))
+                        .catch((reason) => {
+                            setErrorForm('Désolé. Le signalement n\'a pas pu être enregistré. Veuillez réessayer plus tard. ')
+                            setIsSubmitting(false)
+                        })
                         .finally(() => setIsSubmitting(false))
                 }}
                 validate={validateForm}
@@ -166,13 +167,13 @@ function FormReport() {
                     <Form>
                         <FormStore/>
 
-                        <FormReportField key="report-form-field-user-type"
+                        <FormReportField key="report-form-field-operation-type"
                                          formik={formik}
-                                         field_name='user_type'
-                                         list_options={userOption}
+                                         field_name='operation'
+                                         list_options={operationOption}
                                          first_option="Catégorie d'usager ?"/>
 
-                        {formStore.values.user_type.includes("NONE") ? null :
+                        {formStore.values.operation.includes("NONE") ? null :
                             <FormReportField key="report-form-field-cat-1"
                                              formik={formik}
                                              field_name='category_1'
@@ -180,7 +181,7 @@ function FormReport() {
                                              first_option="Catégorie de problème ?"/>
                         }
 
-                        {formStore.values.user_type.includes("NONE") || formStore.values.category_1.includes("NONE") ? null :
+                        {formStore.values.operation.includes("NONE") || formStore.values.category_1.includes("NONE") ? null :
                             <FormReportField key="report-form-field-cat-2"
                                              formik={formik}
                                              field_name='category_2'

@@ -161,6 +161,10 @@ function ModalReportDetail({id_report}) {
                                                             <h5>
                                                                 {capitalize(translation[reportDataDescription.category_2])}
                                                             </h5>
+                                                            <p className="fw-lighter">
+                                                                Signalé le {(new Date(reportDataDescription.timestamp_creation)).toLocaleDateString()}
+                                                                &nbsp;à {(new Date(reportDataDescription.timestamp_creation)).toLocaleTimeString()}
+                                                            </p>
                                                         </div>
                                                     </div>
 

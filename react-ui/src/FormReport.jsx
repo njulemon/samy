@@ -155,7 +155,10 @@ function FormReport() {
                                 }
                             }
                         )
-                        .catch((reason) => setErrorForm('Le signalement n\'a pas pu être enregistré'))
+                        .catch((reason) => {
+                            setErrorForm('Désolé. Le signalement n\'a pas pu être enregistré. Veuillez réessayer plus tard. ')
+                            setIsSubmitting(false)
+                        })
                         .finally(() => setIsSubmitting(false))
                 }}
                 validate={validateForm}

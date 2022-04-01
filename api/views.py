@@ -93,7 +93,7 @@ class TranslationViewSet(viewsets.ViewSet):
 
 class ReportViewSet(MultiSerializerViewSet):
     """
-    Allowed usage : `list` all report, `get` one report, `create` report, `delete` report.
+    Allowed usage : `list` all report, `get` one report, `create` report, `delete`, `put` report.
     """
 
     queryset = Report.objects.all()
@@ -122,6 +122,20 @@ class ReportViewSet(MultiSerializerViewSet):
     def create(self, request, *args, **kwargs):
         request.data["owner"] = request.user.id
         serializer = ReportSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors)
+
+    def update(self, request, *args, **kwargs):
+        try:
+            instance = Report.objects.get(pk=kwargs['pk'])
+        except (ObjectDoesNotExist, MultipleObjectsReturned):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if not (request.user.id == instance.owner.pk or request.user.is_staff):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        serializer = ReportSerializer(data=request.data, instance=instance, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(status=status.HTTP_200_OK)
@@ -203,7 +217,7 @@ class UserViewSet(viewsets.GenericViewSet, CreateModelMixin):
                 recipient_list=[ser.validated_data['email']],
                 context={
                     'first_name': user.first_name,
-                    'link_key': f'{protocol}://{self.request.get_host()}/api/key-validation/{user.pk}?key={key_register}&format=json',
+                    'link_key': f'{protocol}://{self.request.get_host()}/api/key-validation/{user.pk}/?key={key_register}&format=json',
                     'email': user.email
                 })
 
@@ -267,7 +281,7 @@ class PasswordForgotRequestView(viewsets.GenericViewSet, CreateModelMixin, ListM
                 recipient_list=[ser.validated_data['account'].email],
                 context={
                     'first_name': first_name,
-                    'link_key': f'{protocol}://{self.request.get_host()}/R/no-redirection/reset-password/{pk_user}/{key}',
+                    'link_key': f'{protocol}://{self.request.get_host()}/R/no-redirection/reset-password/{pk_user}/{key}/',
                     'email': email
                 })
             return Response(ser.data, status=status.HTTP_201_CREATED)

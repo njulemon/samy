@@ -47,12 +47,15 @@ class Report(models.Model):
     )
     image = models.ForeignKey(
         to=ReportImage,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
         default=None
     )
     comment = models.CharField(max_length=2000, blank=True, null=True)
+
+    def __str__(self):
+        return f'from {self.owner.first_name} at {self.timestamp_creation}'
 
 
 class Votes(models.Model):

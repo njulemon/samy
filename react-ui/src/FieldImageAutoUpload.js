@@ -1,15 +1,25 @@
-import {useState} from "react";
-import {deleteImage, postImage} from "./api/PostImage";
+import {useEffect, useState} from "react";
+import {deleteImage, getImage, postImage} from "./api/PostImage";
 import {makeid} from "./Tools/KeyGenerator";
 import {urlMedia} from "./def/Definitions";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faTimes} from "@fortawesome/free-solid-svg-icons";
 
 
-function FieldImageAutoUpload({pk, setPk, setIsSubmitting}) {
+function FieldImageAutoUpload({pk, setPk, setIsSubmitting, initPk=null}) {
 
     const [errorForm, setErrorForm] = useState('')
     const [imageName, setImageName] = useState(null)
+
+    useEffect(() => {
+        if (initPk) {
+            getImage(initPk)
+                .then((response => {
+                    setPk(initPk)
+                    setImageName(response.data.image)
+                }))
+        }
+    }, [])
 
     const handleFileUpload = async (event) => {
 

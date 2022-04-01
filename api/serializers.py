@@ -49,7 +49,6 @@ class ReportSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-
         return Report.objects.create(
             user_type=ReportUserType.get_enum(validated_data["get_user_type_display"]).value,
             category_1=ReportCategory1.get_enum(validated_data["get_category_1_display"]).value,
@@ -61,6 +60,17 @@ class ReportSerializer(serializers.ModelSerializer):
             comment=validated_data['comment'] if 'comment' in validated_data.keys() else None
         )
 
+    def update(self, instance, validated_data):
+        instance.user_type = ReportUserType.get_enum(validated_data["get_user_type_display"]).value
+        instance.category_1 = ReportCategory1.get_enum(validated_data["get_category_1_display"]).value
+        instance.category_2 = ReportCategory2.get_enum(validated_data["get_category_2_display"]).value
+        instance.image = validated_data.get('image', None)
+        instance.comment = validated_data.get('comment', instance.comment)
+
+        instance.save()
+
+        return instance
+
 
 class ReportSerializerHyperLink(serializers.HyperlinkedModelSerializer):
     user_type = serializers.CharField(source='get_user_type_display')
@@ -68,6 +78,7 @@ class ReportSerializerHyperLink(serializers.HyperlinkedModelSerializer):
     category_2 = serializers.CharField(source='get_category_2_display')
     owner = serializers.IntegerField(source='owner.id')
     image = serializers.HyperlinkedRelatedField(view_name='report-image-detail', read_only=True)
+    image_pk = serializers.PrimaryKeyRelatedField(source='image', allow_null=True, read_only=True)
     id = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -237,14 +248,12 @@ class UserPasswordSerializer(serializers.Serializer):
 
 
 class AuthorizedMailSerializerRead(serializers.ModelSerializer):
-
     class Meta:
         model = AuthorizedMail
         fields = '__all__'
 
 
 class AuthorizedMailSerializerWrite(serializers.ModelSerializer):
-
     email = serializers.EmailField()
 
     class Meta:

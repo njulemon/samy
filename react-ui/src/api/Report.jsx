@@ -1,9 +1,18 @@
 import axios from "axios";
 import {uriCSRF, uriReport, uriReportForm, urlServer} from "../def/Definitions";
 
-export function getReport() {
+export function getReports() {
     return axios.get(
         urlServer + uriReport,
+        {
+            withCredentials: true
+        }
+    )
+}
+
+export function getReport(pk) {
+    return axios.get(
+        urlServer + uriReport + pk.toString() + '/',
         {
             withCredentials: true
         }
@@ -28,6 +37,30 @@ export function postReport(data) {
                     }
                 }
             )
+        )
+}
+
+
+export function patchReport(data, pk) {
+    return axios.get(
+        urlServer + uriCSRF,
+        {
+            withCredentials: true
+        }
+    )
+        .then(
+            (response) => {
+                axios.patch(
+                    urlServer + uriReport + pk.toString() + '/',
+                    data,
+                    {
+                        withCredentials: true,
+                        headers: {
+                            'X-CSRFToken': response.data.csrf_token
+                        }
+                    }
+                )
+            }
         )
 }
 

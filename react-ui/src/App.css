@@ -170,3 +170,25 @@ div.circle-here {
     border-color: black;
     border-width: thin;
 }
+
+.text-justify {
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+.edit-icon {
+    color: #6f6e6e;
+}
+
+.edit-icon:hover {
+    filter: drop-shadow(0 0 2px #a7a7a7) brightness(90%);
+}
+
+.delete-icon {
+    color: #e72d2d;
+}
+
+.delete-icon-shadow:hover {
+    filter: drop-shadow(0 0 1px rgba(231, 45, 45, 0.49)) brightness(95%);
+}
+

@@ -22,6 +22,8 @@ import {
 import {getReports} from "./api/Report";
 import {logout} from "./api/Access";
 import ModalReportDetail from "./ModalReportDetail";
+import {faStar} from "@fortawesome/free-regular-svg-icons/faStar";
+import ModalRanking from "./ModalRanking";
 
 let DefaultIcon = L.divIcon({className: 'circle', iconSize: [20, 20]});
 let HereDot = L.divIcon({className: 'circle-here', iconSize: [20, 20]});
@@ -39,10 +41,7 @@ function MapWithMenu() {
     const [mapCreated, setMapCreated] = useState(false)
 
     const [idReportDetail, setIdReportDetail] = useState(null)
-    // let reload = useAppSelector((state) => state.states.reload)
-
-    //modal event is displayed ?
-    // const eventModal = useAppSelector((state) => state.states.modales.modal_event_detail)
+    const [showModalRanking, setShowModalRanking] = useState(false)
 
     // allow access to global states (eg 'isLogged')
     const dispatch = useAppDispatch()
@@ -155,6 +154,10 @@ function MapWithMenu() {
         }
     }
 
+    const showRanking = () => {
+        setShowModalRanking(true)
+    }
+
     // init
     useEffect(
         () => {
@@ -205,7 +208,6 @@ function MapWithMenu() {
 
             // download all the reports and keep them in memory.
             const downloadReportAndDisplay = () => {
-                console.log('downloadReportAndDisplay')
                 getReports()
                     .then(
                         (response) => {
@@ -259,33 +261,47 @@ function MapWithMenu() {
                 null
             }
             <ModalNewReport/>
+            <ModalRanking
+                show={showModalRanking}
+                setShow={setShowModalRanking}
+            />
             <div>
                 <div id='map'>
                     <div className="leaflet-top leaflet-right">
                         <div className="background-leaflet-buttons">
                             <div className="container-fluid">
                                 <div className="row">
-                                    <FontAwesomeIcon icon={faSignOutAlt} className="logout-button"
-                                                     onClick={() => {
-                                                         logout().then(() => dispatch(denyAccess()))
-                                                     }} fixedWidth/>
+                                    <div className="col">
+                                        <FontAwesomeIcon icon={faSignOutAlt} className="logout-button"
+                                                         onClick={() => {
+                                                             logout().then(() => dispatch(denyAccess()))
+                                                         }} fixedWidth/>
+                                    </div>
                                 </div>
-                                <hr />
+                                <hr/>
                                 <div className="row">
-                                    {/*</div>*/}
-                                    {/*<div className="leaflet-bottom leaflet-right">*/}
-                                    {/*    <div className="background-leaflet-buttons">*/}
-                                    <FontAwesomeIcon icon={faMapMarkerAlt} className="here-icon"
-                                                     onClick={updateLocation}
-                                                     fixedWidth/>
+                                    <div className="col-md-auto">
+                                        <FontAwesomeIcon icon={faMapMarkerAlt} className="here-icon"
+                                                         onClick={updateLocation}
+                                                         fixedWidth/>
+                                    </div>
                                 </div>
                                 <div className="row">
-                                    <FontAwesomeIcon icon={faCirclePlus} className="new-icon"
-                                                     onClick={addNewReportMarker}
-                                                     fixedWidth/>
+                                    <div className="col-md-auto">
+                                        <FontAwesomeIcon icon={faCirclePlus} className="new-icon"
+                                                         onClick={addNewReportMarker}
+                                                         fixedWidth/>
+                                    </div>
+                                </div>
+                                <hr/>
+                                <div className="row">
+                                    <div className="col-md-auto">
+                                        <FontAwesomeIcon icon={faStar} className="new-icon mb-2"
+                                                         onClick={showRanking}
+                                                         fixedWidth/>
+                                    </div>
                                 </div>
                             </div>
-                            {/*</div>*/}
                         </div>
                     </div>
                 </div>

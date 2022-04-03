@@ -22,7 +22,7 @@ const ModalRanking = ({show, setShow, listReports, setHighlightReport}) => {
 
         const converter = (input) => {
             if (criterion === 'date') {
-                return Date(input)
+                return (new Date(input)).getTime()
             }
             if (criterion === 'votes_n' || criterion === 'votes_avg') {
                 return input == null ? 0 : Number(input)
@@ -57,8 +57,10 @@ const ModalRanking = ({show, setShow, listReports, setHighlightReport}) => {
     }, [])
 
     useEffect(() => {
-        getReport()
-    }, [])
+        if (show) {
+            getReport()
+        }
+    }, [show])
 
     useEffect(() => {
         axios.get(urlServer + '/api/votes/stat/', {withCredentials: true})
@@ -115,12 +117,19 @@ const ModalRanking = ({show, setShow, listReports, setHighlightReport}) => {
                                         <div className="row">
                                             <div className="col">
                                                 <div className="fs-6">
-                                                    <div className="text-uppercase fw-bold" key={"cat1-" + row.id.toString()}>
+                                                    <div className="text-uppercase fw-bold"
+                                                         key={"cat1-" + row.id.toString()}>
                                                         {row.category_1}
                                                         &nbsp;&nbsp;&nbsp;
                                                         <IconContext.Provider
-                                                            value={{style: { verticalAlign: 'baseline', color: "green" }}}>
-                                                            <GrMapLocation onClick={() => showReportOnMap(row.latitude, row.longitude)} />
+                                                            value={{
+                                                                style: {
+                                                                    verticalAlign: 'baseline',
+                                                                    color: "green"
+                                                                }
+                                                            }}>
+                                                            <GrMapLocation
+                                                                onClick={() => showReportOnMap(row.latitude, row.longitude)}/>
                                                         </IconContext.Provider>
                                                     </div>
 

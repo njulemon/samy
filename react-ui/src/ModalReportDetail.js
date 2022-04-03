@@ -10,8 +10,10 @@ import {capitalize} from "./Tools/String";
 import {deleteCsrf, PatchCsrf, PostCsrf} from "./api/Csrf";
 import {Rating} from "@mui/material";
 import {MdModeEditOutline, MdDeleteForever} from 'react-icons/md';
+import {IconContext} from 'react-icons'
 import FormEditReport from "./FormEditReport";
 import {useNavigate} from "react-router-dom";
+import {Alert, Toast} from "react-bootstrap";
 
 function ModalReportDetail({id_report}) {
 
@@ -21,6 +23,8 @@ function ModalReportDetail({id_report}) {
 
     const [reportDataDescription, setReportDataDescription] = useState(null)
     const [pictureLink, setPictureLink] = useState(null)
+
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
     // from redux store
     const translation = useAppSelector((state) => state.states.translation)
@@ -119,7 +123,10 @@ function ModalReportDetail({id_report}) {
                     null
                     :
                     (<>
-                            <Modal show={showEventDetail} onHide={() => dispatch(hideReportDetailModal())}>
+                            <Modal
+                                show={showEventDetail}
+                                onHide={() => dispatch(hideReportDetailModal())}
+                                fullscreen="sm-down">
                                 <Modal.Header closeButton>
                                     <Modal.Title>
                                         <div className="container-fluid">
@@ -135,10 +142,17 @@ function ModalReportDetail({id_report}) {
                                                     {(reportDataDescription?.owner === user?.id || user?.is_staff) ?
                                                         <div className="row">
                                                             <div className="col-6">
-                                                                <MdModeEditOutline onClick={() => handlerEdit()}/>
+                                                                <IconContext.Provider
+                                                                    value={{className: "edit-icon edit-icon-shadow"}}>
+                                                                    <MdModeEditOutline onClick={() => handlerEdit()}/>
+                                                                </IconContext.Provider>
                                                             </div>
                                                             <div className="col-6">
-                                                                <MdDeleteForever onClick={() => handleDelete()}/>
+                                                                <IconContext.Provider
+                                                                    value={{className: "delete-icon delete-icon-shadow"}}>
+                                                                    <MdDeleteForever
+                                                                        onClick={() => setShowDeleteConfirm(!showDeleteConfirm)}/>
+                                                                </IconContext.Provider>
                                                             </div>
                                                         </div>
                                                         :
@@ -149,7 +163,28 @@ function ModalReportDetail({id_report}) {
                                         </div>
                                     </Modal.Title>
                                 </Modal.Header>
+                                {
+                                    showDeleteConfirm ?
+                                        <Alert variant="danger" onClose={() => setShowDeleteConfirm(false)}
+                                               dismissible>
+                                            <Alert.Heading>
+                                                Suppression
+                                            </Alert.Heading>
+                                            <p>
+                                                Voulez-vous vraiment supprimer ce signalement ? Cette action est
+                                                irréversible.
+                                            </p>
+                                            <button className="btn btn-danger me-2"
+                                                    onClick={() => handleDelete()}>Supprimer
+                                            </button>
+                                            <button className="btn btn-primary me-2"
+                                                    onClick={() => setShowDeleteConfirm(false)}>Annuler
+                                            </button>
+                                        </Alert>
+                                        : null
+                                }
                                 <Modal.Body>
+
                                     {edit ?
                                         <FormEditReport pk={id_report} setEdit={setEdit}/>
                                         :
@@ -171,7 +206,7 @@ function ModalReportDetail({id_report}) {
 
                                                     <div className="row">
                                                         {pictureLink ?
-                                                            <div className="col-md-12 col-sm-12 mb-3 mt-3">
+                                                            <div className="col-md-12 col-sm-12 mb-3">
                                                                 <div className="">
                                                                     <img src={pictureLink} alt="Report"
                                                                          className="image-report shadow-sm w-100"/>
@@ -179,13 +214,12 @@ function ModalReportDetail({id_report}) {
                                                             </div>
                                                             : null}
                                                         {reportDataDescription?.comment ?
-                                                            <div className="col-md-12 col-sm-12 mb-3 mt-3">
+                                                            <div className="col-md-12 col-sm-12">
 
                                                                 <div className="">
                                                                     <div className="shadow-sm h-100 rounded">
-                                                                        <div className="p-2">
-
-                                                                            <p>
+                                                                        <div className="ps-2 pe-2">
+                                                                            <p className="text-justify">
                                                                                 {reportDataDescription?.comment}
                                                                             </p>
                                                                         </div>

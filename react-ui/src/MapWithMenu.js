@@ -22,9 +22,13 @@ import {
 import {getReports} from "./api/Report";
 import {logout} from "./api/Access";
 import ModalReportDetail from "./ModalReportDetail";
+import {faStar} from "@fortawesome/free-regular-svg-icons/faStar";
+import ModalRanking from "./ModalRanking";
+import {waitFor} from "@testing-library/react";
 
 let DefaultIcon = L.divIcon({className: 'circle', iconSize: [20, 20]});
 let HereDot = L.divIcon({className: 'circle-here', iconSize: [20, 20]});
+let HighlightDot = L.divIcon({className: 'highlight-dot', iconSize: [20, 20]});
 const newMarkerIcon = L.icon({iconUrl: icon, shadowUrl: iconShadow, iconAnchor: new Point(12, 41)})
 
 L.Marker.prototype.options.icon = DefaultIcon;
@@ -36,13 +40,12 @@ function MapWithMenu() {
     const size_x_meter = useRef(100000);
     const size_y_meter = useRef(100000);
 
+    const dotHighlight = useRef(new Marker(new LatLng(0, 0)))
+
     const [mapCreated, setMapCreated] = useState(false)
 
     const [idReportDetail, setIdReportDetail] = useState(null)
-    // let reload = useAppSelector((state) => state.states.reload)
-
-    //modal event is displayed ?
-    // const eventModal = useAppSelector((state) => state.states.modales.modal_event_detail)
+    const [showModalRanking, setShowModalRanking] = useState(false)
 
     // allow access to global states (eg 'isLogged')
     const dispatch = useAppDispatch()
@@ -117,11 +120,10 @@ function MapWithMenu() {
 
             /* add new marker */
             navigator.geolocation.getCurrentPosition(function (position) {
-                console.log('lat: ' + position.coords.latitude + ' long : ' + position.coords.longitude)
                 you_are_here_dot.current = L.marker(
                     new LatLng(position.coords.latitude, position.coords.longitude),
-                    {icon: HereDot})
-                    // @ts-ignore
+                    {icon: HereDot}
+                )
                     .addTo(map.current);
             });
 
@@ -130,8 +132,6 @@ function MapWithMenu() {
             /* geolocation is NOT available */
             alert('Not able to geolocate you.')
         }
-
-
     }
 
     function addNewReportMarker() {
@@ -155,6 +155,28 @@ function MapWithMenu() {
         }
     }
 
+    function highlightReport(lat, lng) {
+        try {
+            map.current?.removeLayer(dotHighlight.current)
+        } catch {
+        }
+        map.current?.setView(new LatLng(lat, lng), 15, {animate: true, duration: 1})
+        dotHighlight.current = L.marker(
+            new LatLng(lat, lng),
+            {icon: HighlightDot}
+        )
+            .addTo(map.current);
+
+        setTimeout(() => {
+            map.current?.removeLayer(dotHighlight.current)
+        }, 2_000)
+
+    }
+
+    const showRanking = () => {
+        setShowModalRanking(true)
+    }
+
     // init
     useEffect(
         () => {
@@ -176,7 +198,7 @@ function MapWithMenu() {
 
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | by N. Julémont'
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | Samy v-1.1.3.2 by N. Julémont'
             }).addTo(map.current);
 
             L.control.attribution({position: 'bottomleft'}).addTo(map.current);
@@ -205,7 +227,6 @@ function MapWithMenu() {
 
             // download all the reports and keep them in memory.
             const downloadReportAndDisplay = () => {
-                console.log('downloadReportAndDisplay')
                 getReports()
                     .then(
                         (response) => {
@@ -259,33 +280,49 @@ function MapWithMenu() {
                 null
             }
             <ModalNewReport/>
+            <ModalRanking
+                show={showModalRanking}
+                setShow={setShowModalRanking}
+                listReports={listReports}
+                setHighlightReport={highlightReport}
+            />
             <div>
                 <div id='map'>
                     <div className="leaflet-top leaflet-right">
                         <div className="background-leaflet-buttons">
                             <div className="container-fluid">
                                 <div className="row">
-                                    <FontAwesomeIcon icon={faSignOutAlt} className="logout-button"
-                                                     onClick={() => {
-                                                         logout().then(() => dispatch(denyAccess()))
-                                                     }} fixedWidth/>
+                                    <div className="col">
+                                        <FontAwesomeIcon icon={faSignOutAlt} className="logout-button"
+                                                         onClick={() => {
+                                                             logout().then(() => dispatch(denyAccess()))
+                                                         }} fixedWidth/>
+                                    </div>
                                 </div>
-                                <hr />
+                                <hr/>
                                 <div className="row">
-                                    {/*</div>*/}
-                                    {/*<div className="leaflet-bottom leaflet-right">*/}
-                                    {/*    <div className="background-leaflet-buttons">*/}
-                                    <FontAwesomeIcon icon={faMapMarkerAlt} className="here-icon"
-                                                     onClick={updateLocation}
-                                                     fixedWidth/>
+                                    <div className="col-md-auto">
+                                        <FontAwesomeIcon icon={faMapMarkerAlt} className="here-icon"
+                                                         onClick={updateLocation}
+                                                         fixedWidth/>
+                                    </div>
                                 </div>
                                 <div className="row">
-                                    <FontAwesomeIcon icon={faCirclePlus} className="new-icon"
-                                                     onClick={addNewReportMarker}
-                                                     fixedWidth/>
+                                    <div className="col-md-auto">
+                                        <FontAwesomeIcon icon={faCirclePlus} className="new-icon"
+                                                         onClick={addNewReportMarker}
+                                                         fixedWidth/>
+                                    </div>
+                                </div>
+                                <hr/>
+                                <div className="row">
+                                    <div className="col-md-auto">
+                                        <FontAwesomeIcon icon={faStar} className="new-icon mb-2"
+                                                         onClick={showRanking}
+                                                         fixedWidth/>
+                                    </div>
                                 </div>
                             </div>
-                            {/*</div>*/}
                         </div>
                     </div>
                 </div>

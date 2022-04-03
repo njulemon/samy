@@ -45,6 +45,27 @@ div.circle-here {
     box-shadow: 0 0 0 40px rgba(105, 132, 196, 0.15);
 }
 
+div.highlight-dot {
+    background-color: rgba(22, 101, 175, 0);
+    border-color: rgba(27, 131, 226, 0);
+    border-radius: 30px;
+    border-style: solid;
+    border-width: 0;
+    width: 35px;
+    height: 35px;
+    box-shadow: 0 0 0 5px rgba(105, 132, 196, 0.15);
+    animation: wobble 1s ease-in forwards infinite;
+}
+
+@keyframes wobble {
+  0% {
+    box-shadow: 0 0 0 5px rgba(105, 132, 196, 0.25);
+  }
+  100% {
+    box-shadow: 0 0 0 90px rgba(105, 132, 196, 0.05);
+  }
+}
+
 .here-icon {
     font-size: 35px;
     color: rgb(47, 120, 182);

@@ -31,7 +31,7 @@ class VoteViewSetReport(viewsets.ModelViewSet):
     queryset = Votes.objects.all()
     serializer_class = VotesSerializer
 
-    permission_classes = (ActionBasedPermission,)
+    permission_classes = (IsAuthenticated,)
     authentication_classes = [SessionAuthentication]
 
     action_permissions = {
@@ -44,6 +44,21 @@ class VoteViewSetReport(viewsets.ModelViewSet):
         queryset = Votes.objects.filter(report_id=pk)
         serializer = VotesSerializer(queryset, many=True)
         return Response(serializer.data)
+
+    @action(methods=['get'], detail=False)
+    def stat(self, request):
+        result = {"n" : {}, "sum": {}, "avg": {}}
+
+        # compute N & sum for each report
+        for vote in Votes.objects.filter(report__operation=1).all():  # report__operation=1 -> 'LOCALE'
+            result["n"][vote.report.id] = 1 + result["n"].get(vote.report.id, 0)
+            result["sum"][vote.report.id] = vote.gravity + result["sum"].get(vote.report.id, 0)
+
+        # compute avg based on sum & N
+        for report_id in result["n"].keys():
+            result["avg"][report_id] = result["sum"][report_id] / result["n"][report_id]
+
+        return Response(result)
 
 
 class VoteViewSetUser(viewsets.ViewSet):

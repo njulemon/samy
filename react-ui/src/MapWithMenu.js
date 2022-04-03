@@ -24,9 +24,11 @@ import {logout} from "./api/Access";
 import ModalReportDetail from "./ModalReportDetail";
 import {faStar} from "@fortawesome/free-regular-svg-icons/faStar";
 import ModalRanking from "./ModalRanking";
+import {waitFor} from "@testing-library/react";
 
 let DefaultIcon = L.divIcon({className: 'circle', iconSize: [20, 20]});
 let HereDot = L.divIcon({className: 'circle-here', iconSize: [20, 20]});
+let HighlightDot = L.divIcon({className: 'highlight-dot', iconSize: [20, 20]});
 const newMarkerIcon = L.icon({iconUrl: icon, shadowUrl: iconShadow, iconAnchor: new Point(12, 41)})
 
 L.Marker.prototype.options.icon = DefaultIcon;
@@ -37,6 +39,8 @@ function MapWithMenu() {
     const map = useRef(null);
     const size_x_meter = useRef(100000);
     const size_y_meter = useRef(100000);
+
+    const dotHighlight = useRef(new Marker(new LatLng(0, 0)))
 
     const [mapCreated, setMapCreated] = useState(false)
 
@@ -116,11 +120,10 @@ function MapWithMenu() {
 
             /* add new marker */
             navigator.geolocation.getCurrentPosition(function (position) {
-                console.log('lat: ' + position.coords.latitude + ' long : ' + position.coords.longitude)
                 you_are_here_dot.current = L.marker(
                     new LatLng(position.coords.latitude, position.coords.longitude),
-                    {icon: HereDot})
-                    // @ts-ignore
+                    {icon: HereDot}
+                )
                     .addTo(map.current);
             });
 
@@ -129,8 +132,6 @@ function MapWithMenu() {
             /* geolocation is NOT available */
             alert('Not able to geolocate you.')
         }
-
-
     }
 
     function addNewReportMarker() {
@@ -152,6 +153,24 @@ function MapWithMenu() {
                 ))
             })
         }
+    }
+
+    function highlightReport(lat, lng) {
+        try {
+            map.current?.removeLayer(dotHighlight.current)
+        } catch {
+        }
+        map.current?.setView(new LatLng(lat, lng), 15, {animate: true, duration: 1})
+        dotHighlight.current = L.marker(
+            new LatLng(lat, lng),
+            {icon: HighlightDot}
+        )
+            .addTo(map.current);
+
+        setTimeout(() => {
+            map.current?.removeLayer(dotHighlight.current)
+        }, 2_000)
+
     }
 
     const showRanking = () => {
@@ -179,7 +198,7 @@ function MapWithMenu() {
 
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | by N. Julémont'
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | by N. Julémont | v-1.1.3'
             }).addTo(map.current);
 
             L.control.attribution({position: 'bottomleft'}).addTo(map.current);
@@ -264,6 +283,8 @@ function MapWithMenu() {
             <ModalRanking
                 show={showModalRanking}
                 setShow={setShowModalRanking}
+                listReports={listReports}
+                setHighlightReport={highlightReport}
             />
             <div>
                 <div id='map'>

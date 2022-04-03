@@ -123,7 +123,10 @@ function ModalReportDetail({id_report}) {
                     null
                     :
                     (<>
-                            <Modal show={showEventDetail} onHide={() => dispatch(hideReportDetailModal())}>
+                            <Modal
+                                show={showEventDetail}
+                                onHide={() => dispatch(hideReportDetailModal())}
+                                fullscreen="sm-down">
                                 <Modal.Header closeButton>
                                     <Modal.Title>
                                         <div className="container-fluid">
@@ -171,8 +174,12 @@ function ModalReportDetail({id_report}) {
                                                 Voulez-vous vraiment supprimer ce signalement ? Cette action est
                                                 irréversible.
                                             </p>
-                                            <button className="btn btn-danger me-2" onClick={() => handleDelete()}>Supprimer</button>
-                                            <button className="btn btn-primary me-2" onClick={() => setShowDeleteConfirm(false)}>Annuler</button>
+                                            <button className="btn btn-danger me-2"
+                                                    onClick={() => handleDelete()}>Supprimer
+                                            </button>
+                                            <button className="btn btn-primary me-2"
+                                                    onClick={() => setShowDeleteConfirm(false)}>Annuler
+                                            </button>
                                         </Alert>
                                         : null
                                 }

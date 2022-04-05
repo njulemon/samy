@@ -35,7 +35,7 @@ function App() {
 
     useEffect(
         () => {
-            if (! location.pathname.includes('no-redirection'))
+            if (!location.pathname.includes('no-redirection'))
                 translation === {} ?
                     navigate('/R/wait') :
                     isLogged ?
@@ -47,16 +47,15 @@ function App() {
 
     return (
         <div className="App">
-
-            <Routes>
-                <Route path="/" element={<Login/>}/>
-                <Route path="/R/login" element={<Login/>}/>
-                <Route path="/R/reload" element={<ConfirmReportSaved/>}/>
-                <Route path="/R/map" element={<MapWithMenu/>}/>
-                <Route path="/R/no-redirection/reset-password/:pk/:key" element={<ResetPassword />} />
-                <Route path="/R/wait" element={null}/>
-            </Routes>
-        </div>
+                <Routes>
+                    <Route path="/" element={<Login/>}/>
+                    <Route path="/R/login" element={<Login/>}/>
+                    <Route path="/R/reload" element={<ConfirmReportSaved/>}/>
+                    <Route path="/R/map" element={<MapWithMenu/>}/>
+                    <Route path="/R/no-redirection/reset-password/:pk/:key" element={<ResetPassword/>}/>
+                    <Route path="/R/wait" element={null}/>
+                </Routes>
+            </div>
     );
 }
 

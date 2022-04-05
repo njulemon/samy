@@ -141,7 +141,7 @@ function ModalReportDetail({id_report}) {
                                                 <div className="col">
                                                     {(reportDataDescription?.owner === user?.id || user?.is_staff) ?
                                                         <div className="row">
-                                                            <div className="col-6">
+                                                            <div className="col-6 align-react-icon">
                                                                 <IconContext.Provider
                                                                     value={{className: "edit-icon edit-icon-shadow"}}>
                                                                     <MdModeEditOutline onClick={() => handlerEdit()}/>
@@ -209,7 +209,7 @@ function ModalReportDetail({id_report}) {
                                                             <div className="col-md-12 col-sm-12 mb-3">
                                                                 <div className="">
                                                                     <img src={pictureLink} alt="Report"
-                                                                         className="image-report shadow-sm w-100"/>
+                                                                         className="image-report shadow-sm"/>
                                                                 </div>
                                                             </div>
                                                             : null}

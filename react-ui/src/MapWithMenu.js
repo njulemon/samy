@@ -1,5 +1,5 @@
 import L, {LatLng, Marker, Point} from 'leaflet';
-import './App.css';
+// import './App.css';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faMapMarkerAlt, faCirclePlus, faSignOutAlt} from '@fortawesome/free-solid-svg-icons'
@@ -198,11 +198,12 @@ function MapWithMenu() {
 
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | Samy v-1.1.3.2 by N. Julémont'
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | Samy v-1.1.3.6 by N. Julémont'
             }).addTo(map.current);
 
             L.control.attribution({position: 'bottomleft'}).addTo(map.current);
 
+            // update of stored coordinates & zoom each time user navigate though map
             map.current.on('zoomend', onMapZoom);
             map.current.on('moveend', onMapZoom)
 
@@ -273,7 +274,7 @@ function MapWithMenu() {
     )
 
     return (
-        <>
+        <div className="container-map">
             {idReportDetail ?
                 (<ModalReportDetail id_report={idReportDetail} key={"modal-event-detail-" + idReportDetail}/>)
                 :
@@ -286,48 +287,47 @@ function MapWithMenu() {
                 listReports={listReports}
                 setHighlightReport={highlightReport}
             />
-            <div>
-                <div id='map'>
-                    <div className="leaflet-top leaflet-right">
-                        <div className="background-leaflet-buttons">
-                            <div className="container-fluid">
-                                <div className="row">
-                                    <div className="col">
-                                        <FontAwesomeIcon icon={faSignOutAlt} className="logout-button"
-                                                         onClick={() => {
-                                                             logout().then(() => dispatch(denyAccess()))
-                                                         }} fixedWidth/>
-                                    </div>
+
+            <div id='map'>
+                <div className="leaflet-top leaflet-right">
+                    <div className="background-leaflet-buttons">
+                        <div className="container-fluid">
+                            <div className="row">
+                                <div className="col">
+                                    <FontAwesomeIcon icon={faSignOutAlt} className="logout-button"
+                                                     onClick={() => {
+                                                         logout().then(() => dispatch(denyAccess()))
+                                                     }} fixedWidth/>
                                 </div>
-                                <hr/>
-                                <div className="row">
-                                    <div className="col-md-auto">
-                                        <FontAwesomeIcon icon={faMapMarkerAlt} className="here-icon"
-                                                         onClick={updateLocation}
-                                                         fixedWidth/>
-                                    </div>
+                            </div>
+                            <hr/>
+                            <div className="row">
+                                <div className="col-md-auto">
+                                    <FontAwesomeIcon icon={faMapMarkerAlt} className="here-icon"
+                                                     onClick={updateLocation}
+                                                     fixedWidth/>
                                 </div>
-                                <div className="row">
-                                    <div className="col-md-auto">
-                                        <FontAwesomeIcon icon={faCirclePlus} className="new-icon"
-                                                         onClick={addNewReportMarker}
-                                                         fixedWidth/>
-                                    </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-md-auto">
+                                    <FontAwesomeIcon icon={faCirclePlus} className="new-icon"
+                                                     onClick={addNewReportMarker}
+                                                     fixedWidth/>
                                 </div>
-                                <hr/>
-                                <div className="row">
-                                    <div className="col-md-auto">
-                                        <FontAwesomeIcon icon={faStar} className="new-icon mb-2"
-                                                         onClick={showRanking}
-                                                         fixedWidth/>
-                                    </div>
+                            </div>
+                            <hr/>
+                            <div className="row">
+                                <div className="col-md-auto">
+                                    <FontAwesomeIcon icon={faStar} className="new-icon mb-2"
+                                                     onClick={showRanking}
+                                                     fixedWidth/>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 

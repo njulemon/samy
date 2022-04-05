@@ -18,11 +18,9 @@ const ModalRanking = ({show, setShow, listReports, setHighlightReport}) => {
 
     const orderBy = (criterion) => {
 
-        console.log('orderBy')
-
         const converter = (input) => {
-            if (criterion === 'date') {
-                return (new Date(input)).getTime()
+            if (criterion === 'date_time') {
+                return input.getTime()
             }
             if (criterion === 'votes_n' || criterion === 'votes_avg') {
                 return input == null ? 0 : Number(input)
@@ -33,11 +31,11 @@ const ModalRanking = ({show, setShow, listReports, setHighlightReport}) => {
             .concat(votes)
             .sort((a, b) => {
                 if (converter(a[criterion]) > converter(b[criterion])) {
-                    return (criterion === 'date' ? 1 : -1)
+                    return (criterion === 'date_time' ? -1 : -1)
                 } else if (converter(a[criterion]) === converter(b[criterion])) {
                     return 0
                 } else {
-                    return (criterion === 'date' ? -1 : 1)
+                    return (criterion === 'date_time' ? 1 : 1)
                 }
             })
 
@@ -52,7 +50,7 @@ const ModalRanking = ({show, setShow, listReports, setHighlightReport}) => {
     const getReport = useCallback(async () => {
         return axios.get(urlServer + '/api/report/', {withCredentials: true})
             .then(response => setReports(response.data))
-            .then(() => orderBy('date'))
+            .then(() => orderBy('date_time'))
             .catch(error => setErrorMsg(error.toString()))
     }, [])
 
@@ -75,6 +73,7 @@ const ModalRanking = ({show, setShow, listReports, setHighlightReport}) => {
                             comment: capitalize(row.comment),
                             date: (new Date(row.timestamp_creation).toLocaleDateString()),
                             time: (new Date(row.timestamp_creation).toLocaleTimeString()),
+                            date_time: new Date(row.timestamp_creation),
                             votes_n: response.data["n"][row.id],
                             votes_avg: response.data["avg"][row.id],
                             id: row.id,
@@ -102,7 +101,7 @@ const ModalRanking = ({show, setShow, listReports, setHighlightReport}) => {
                 <div className="container-fluid">
                     <div className="text-start mb-3">
                         <DropdownButton id="dropdown-basic-button" variant="secondary" title="Trier par">
-                            <Dropdown.Item onClick={() => orderBy('date')}>Date</Dropdown.Item>
+                            <Dropdown.Item onClick={() => orderBy('date_time')}>Date</Dropdown.Item>
                             <Dropdown.Item onClick={() => orderBy('votes_n')}>Nombre de votes</Dropdown.Item>
                             <Dropdown.Item onClick={() => orderBy('votes_avg')}>Moyenne des votes</Dropdown.Item>
                         </DropdownButton>
@@ -116,65 +115,70 @@ const ModalRanking = ({show, setShow, listReports, setHighlightReport}) => {
                                     <div className="col-12">
                                         <div className="row">
                                             <div className="col">
-                                                <div className="fs-6">
-                                                    <div className="text-uppercase fw-bold"
-                                                         key={"cat1-" + row.id.toString()}>
-                                                        {row.category_1}
-                                                        &nbsp;&nbsp;&nbsp;
-                                                        <IconContext.Provider
-                                                            value={{
-                                                                style: {
-                                                                    verticalAlign: 'baseline',
-                                                                    color: "green"
-                                                                }
-                                                            }}>
-                                                            <GrMapLocation
-                                                                onClick={() => showReportOnMap(row.latitude, row.longitude)}/>
-                                                        </IconContext.Provider>
+                                                <div className="row">
+                                                    <div className="col">
+                                                    <div className="fs-6">
+                                                        <div className="text-uppercase fw-bold"
+                                                             key={"cat1-" + row.id.toString()}>
+                                                            {row.category_1}
+                                                        </div>
                                                     </div>
+                                                </div>
+                                                <div className="row">
+                                                    <div className="col-auto">
+                                                        <div className="fs-6">
+                                                            <div className="">{row.category_2}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col-auto">
+                                            <div className="fw-lighter text-end">
+                                                {row.date} <br/>
+                                                {row.time} <br/>
+                                                <IconContext.Provider
+                                                    value={{
+                                                        style: {
+                                                            verticalAlign: 'baseline',
+                                                            color: "green",
+                                                        }
+                                                    }}>
+                                                    <GrMapLocation
+                                                        size={25}
+                                                        onClick={() => showReportOnMap(row.latitude, row.longitude)}/>
+                                                </IconContext.Provider>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                                </div>
-                                            </div>
-                                            <div className="col-auto">
-                                                <div className="fw-lighter text-end">
-                                                    {row.date} <br/>
-                                                    {row.time}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-auto">
-                                                <div className="fs-6">
-                                                    <div className="">{row.category_2}</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-12 text-justify fw-light mb-2">
-                                        {row.comment ? capitalize(row.comment) : null}
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-auto">
-                                        <Rating
-                                            name="simple-controlled"
-                                            value={row.votes_avg}
-                                            disabled={true}/>
-                                    </div>
-                                    <div className="col">
-                                        {row.votes_n ? row.votes_n : "0"} votes
-                                    </div>
+
                                 </div>
                             </div>
+                        <div className="row">
+                        <div className="col-12 text-justify fw-light mb-2">
+                    {row.comment ? capitalize(row.comment) : null}
+                        </div>
+                        </div>
+                        <div className="row">
+                        <div className="col-auto">
+                        <Rating
+                        name="simple-controlled"
+                        value={row.votes_avg}
+                        disabled={true}/>
+                        </div>
+                        <div className="col">
+                    {row.votes_n ? row.votes_n : "0"} votes
+                        </div>
+                        </div>
+                        </div>
                         )
-                    )}
+                        )}
 
-                </div>
-            </Modal.Body>
-        </Modal>
-    )
-}
+                        </div>
+                        </Modal.Body>
+                        </Modal>
+                        )
+                    }
 
-export default ModalRanking
+                    export default ModalRanking

@@ -33,7 +33,8 @@ report_form_fr = {
     ReportCategory2.LANE_PRIORITY_NOT_RESPECTED_DANGEROUS.name: 'priorité cycliste peu respectée, dangereux',
     ReportCategory2.RACK_DAMAGED.name: 'Arceaux ou box vélo endommagé',
     ReportCategory2.INCIDENT_GLASS_ON_LANE.name: "Présence de verre",
-    ReportCategory2.INCIDENT_NAILS_ON_LANE.name: "Présence de clou ou équivalent"
+    ReportCategory2.INCIDENT_NAILS_ON_LANE.name: "Présence de clou ou équivalent",
+    ReportCategory2.ILLEGAL_PARKING.name: "Parking sauvage régulier"
 }
 
 basic_terms = {

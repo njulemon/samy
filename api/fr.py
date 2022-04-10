@@ -1,6 +1,8 @@
-from api.enum import ReportUserType, ReportCategory1, ReportCategory2, BasicTerm, ReportOperation
+from api.enum import ReportUserType, ReportCategory1, ReportCategory2, BasicTerm, ReportOperation, InCharge
 
 report_form_fr = {
+    # TODO : this list should be general, not related to form only. Change the name.
+
     # default option
     ReportUserType.NONE_USER_TYPE.name: "Usager ?",
     ReportCategory1.NONE_CAT_1.name: "Problème ?",
@@ -34,7 +36,12 @@ report_form_fr = {
     ReportCategory2.RACK_DAMAGED.name: 'Arceaux ou box vélo endommagé',
     ReportCategory2.INCIDENT_GLASS_ON_LANE.name: "Présence de verre",
     ReportCategory2.INCIDENT_NAILS_ON_LANE.name: "Présence de clou ou équivalent",
-    ReportCategory2.ILLEGAL_PARKING.name: "Parking sauvage régulier"
+    ReportCategory2.ILLEGAL_PARKING.name: "Parking sauvage régulier",
+
+    # In charge
+    InCharge.IC_IN_CHARGE_NONE.name: "Autoritée compétente non-définie",
+    InCharge.IC_MUNICIPALITY.name: "Commune",
+    InCharge.IC_REGION.name: "Région"
 }
 
 basic_terms = {

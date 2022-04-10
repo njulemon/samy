@@ -4,18 +4,20 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from api.forms import CustomUserCreationForm, CustomUserChangeForm
-from api.models import CustomUser, Report, Votes, KeyValidator, RestPassword, ReportImage, AuthorizedMail
+from api.models import CustomUser, Report, Votes, KeyValidator, RestPassword, ReportImage, AuthorizedMail, Area, \
+    ReportAnnotation, ReportAnnotationComment
 
 
 class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
     model = CustomUser
-    list_display = ('email', 'is_staff', 'is_active', 'date_joined')
-    list_filter = ('email', 'is_staff', 'is_active',)
+    list_display = ('email', 'first_name', 'last_name', 'is_staff', 'is_active', 'is_coordinator', 'date_joined')
+    list_filter = ('email', 'is_staff', 'is_active', 'is_coordinator')
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
+        (None, {'fields': ('email', 'password', 'first_name', 'last_name')}),
         ('Permissions', {'fields': ('is_staff', 'is_active')}),
+        ('Coordinator', {'fields': ('is_coordinator', 'coordinator_area')})
     )
     add_fieldsets = (
         (None, {
@@ -34,3 +36,6 @@ admin.site.register(KeyValidator)
 admin.site.register(RestPassword)
 admin.site.register(ReportImage)
 admin.site.register(AuthorizedMail)
+admin.site.register(Area)
+admin.site.register(ReportAnnotation)
+admin.site.register(ReportAnnotationComment)

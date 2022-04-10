@@ -5,12 +5,34 @@ from rest_framework.exceptions import ValidationError
 
 from api import Tools
 from api.enum import ReportUserType, ReportCategory1, ReportCategory2, ReportOperation
-from api.models import Report, CustomUser, Votes, RestPassword, ReportImage, AuthorizedMail
+from api.models import Report, CustomUser, Votes, RestPassword, ReportImage, AuthorizedMail, ReportAnnotation, Area
 
 
 class ReportImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReportImage
+        fields = '__all__'
+
+
+class ReportAnnotationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ReportAnnotation
+        fields = '__all__'
+
+
+class ReportAnnotationHyperLinkSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = ReportAnnotation
+        fields = '__all__'
+
+
+class AreaHyperLinkSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.IntegerField()
+
+    class Meta:
+        model = Area
         fields = '__all__'
 
 
@@ -21,6 +43,14 @@ class ReportImageSerializerNoUser(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    coordinator_area = serializers.StringRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = CustomUser
+        exclude = ['password']
+
+
+class UserSerializerHyperLink(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = CustomUser
         exclude = ['password']
@@ -29,7 +59,8 @@ class UserSerializer(serializers.ModelSerializer):
 class NewUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        exclude = ['is_superuser', 'is_staff', 'groups', 'user_permissions', 'date_joined', 'last_login', 'is_active']
+        exclude = ['is_superuser', 'is_staff', 'groups', 'user_permissions', 'date_joined', 'last_login', 'is_active',
+                   'is_coordinator', 'coordinator_area']
 
 
 class VotesSerializer(serializers.ModelSerializer):

@@ -129,3 +129,24 @@ map_category_2 = {
             ]
         }
 }
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# IN CHARGE
+class InCharge(ModelEnum):
+    IC_IN_CHARGE_NONE = 0
+    IC_MUNICIPALITY = 1
+    IC_REGION = 2
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# STATUS REPORT
+class ReportStatus(ModelEnum):
+    RS_STATUS_NONE = 0
+    RS_REPORTED = 1
+    RS_CLASSIFIED = 2
+    RS_REPORTED_TO_AUTHORITIES = 3
+    RS_NOT_RELEVANT = 4
+    RS_REPORT_IN_PROGRESS = 5
+    RS_SOLVED = 6
+

@@ -11,6 +11,7 @@ import {setNewReportFormTranslation} from "./app/States";
 import ConfirmReportSaved from "./ConfirmReportSaved";
 import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import ResetPassword from "./ResetPassword";
+import PageCoordinator from "./coodinator/PageCoordinator";
 
 require('dotenv').config()
 
@@ -54,6 +55,7 @@ function App() {
                     <Route path="/R/map" element={<MapWithMenu/>}/>
                     <Route path="/R/no-redirection/reset-password/:pk/:key" element={<ResetPassword/>}/>
                     <Route path="/R/wait" element={null}/>
+                    <Route path="/R/coordinator" element={<PageCoordinator />} />
                 </Routes>
             </div>
     );

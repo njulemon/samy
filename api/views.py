@@ -2,6 +2,7 @@ import rest_framework.mixins
 from django.contrib.auth import authenticate, login as django_internal_login, logout
 from django.contrib.auth.hashers import make_password, check_password
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+from django.db import transaction, DatabaseError
 from django.http import HttpResponse
 
 from django.views.decorators.csrf import csrf_protect
@@ -21,10 +22,12 @@ from api.CustomPermissions import ActionBasedPermission, IsOwnerOrReadOnly
 from api.MultiSerializerViewSet import MultiSerializerViewSet
 from api.enum import ReportUserType, map_category_1, map_category_2, ReportOperation
 from api.fr import report_form_fr, basic_terms
-from api.models import Report, Votes, CustomUser, KeyValidator, RestPassword, ReportImage, AuthorizedMail
+from api.models import Report, Votes, CustomUser, KeyValidator, RestPassword, ReportImage, AuthorizedMail, \
+    ReportAnnotation, Area
 from api.serializers import ReportSerializer, VotesSerializer, UserSerializer, NewUserSerializer, \
     CreateResetPasswordSerializer, UserPasswordSerializer, ReportImageSerializer, ReportSerializerHyperLink, \
-    ReportImageSerializerNoUser, AuthorizedMailSerializerRead, AuthorizedMailSerializerWrite
+    ReportImageSerializerNoUser, AuthorizedMailSerializerRead, AuthorizedMailSerializerWrite, UserSerializerHyperLink, \
+    ReportAnnotationHyperLinkSerializer, AreaHyperLinkSerializer, ReportAnnotationSerializer
 
 
 class VoteViewSetReport(viewsets.ModelViewSet):
@@ -47,7 +50,7 @@ class VoteViewSetReport(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=False)
     def stat(self, request):
-        result = {"n" : {}, "sum": {}, "avg": {}}
+        result = {"n": {}, "sum": {}, "avg": {}}
 
         # compute N & sum for each report
         for vote in Votes.objects.filter(report__operation=1).all():  # report__operation=1 -> 'LOCALE'
@@ -94,6 +97,7 @@ class TranslationViewSet(viewsets.ViewSet):
     Allow you to get translation dic.
 
     """
+    permission_classes = (AllowAny,)
 
     @action(detail=False)
     def fr(self, request):
@@ -120,10 +124,11 @@ class ReportViewSet(MultiSerializerViewSet):
         'retrieve': ReportSerializerHyperLink,
         'update': ReportSerializer,
         'partial_update': ReportSerializer,
-        'destroy': ReportSerializer
+        'destroy': ReportSerializer,
+        'new_annotation': ReportAnnotationHyperLinkSerializer
     }
 
-    permission_classes = (IsOwnerOrReadOnly,)
+    permission_classes = [IsOwnerOrReadOnly]
     authentication_classes = [SessionAuthentication]
 
     # to get csrf token
@@ -157,12 +162,43 @@ class ReportViewSet(MultiSerializerViewSet):
         else:
             return Response(serializer.errors)
 
+    @action(detail=False, methods=['post'], url_path='new-annotation', url_name='new-annotation')
+    def new_annotation(self, request):
+
+        try:
+            pk = request.query_params['pk_report']
+        except KeyError:
+            return Response({'error': 'You must provide the pk report as a query params pk_report=[int].'})
+
+        try:
+            report = Report.objects.get(pk=pk)
+        except (ObjectDoesNotExist, MultipleObjectsReturned):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        if report.annotation is not None:
+            return Response(status=status.HTTP_208_ALREADY_REPORTED)
+
+        try:
+            with transaction.atomic():
+                ser = ReportAnnotationSerializer(data=request.data)
+
+                if ser.is_valid():
+                    report.annotation = ser.save()
+                    report.save()
+                    return Response(ReportSerializer(instance=report).data, status=status.HTTP_201_CREATED)
+                else:
+                    return Response(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except DatabaseError:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class ReportFormTree(viewsets.ViewSet):
     """
             This viewset provides a `list` dictionary with all the fields as a tree.
             To access `translations` of key word ask language as second argument (eg. 'fr').
     """
+    permission_classes = (AllowAny,)
 
     def list(self, request):
         dic_return = {
@@ -219,7 +255,8 @@ class UserViewSet(viewsets.GenericViewSet, CreateModelMixin):
                 password=make_password(ser.validated_data['password']),
                 is_staff=False,
                 is_superuser=False,
-                is_active=False
+                is_active=False,
+                is_coordinator=False
             )
 
             key_register = Tools.key_generate(64)
@@ -247,6 +284,7 @@ class KeyValidationView(viewsets.GenericViewSet, rest_framework.mixins.RetrieveM
     The 'list' does not send back anything.
     Signature is /key-validation/{user.pk}?key={validation-key} to activate user.
     """
+    permission_classes = [AllowAny]
 
     def list(self, request, *args, **kwargs):
         return Response('')
@@ -277,6 +315,7 @@ class PasswordForgotRequestView(viewsets.GenericViewSet, CreateModelMixin, ListM
     """
     serializer_class = CreateResetPasswordSerializer
     queryset = RestPassword.objects.all()
+    permission_classes = [AllowAny]
 
     def list(self, request, *args, **kwargs):
         return Response('')
@@ -312,6 +351,7 @@ class RestPasswordView(viewsets.GenericViewSet, UpdateModelMixin, ListModelMixin
     """
     serializer_class = UserPasswordSerializer
     queryset = CustomUser.objects.all()
+    permission_classes = [AllowAny]
 
     def list(self, request, *args, **kwargs):
         return Response('')
@@ -336,6 +376,7 @@ class RestPasswordView(viewsets.GenericViewSet, UpdateModelMixin, ListModelMixin
 # ----------------------------------------------------------------------------------------------------------------------
 @api_view(['POST', 'GET'])
 @parser_classes([JSONParser])
+@permission_classes([AllowAny])
 @csrf_protect
 def login_(request):
     """
@@ -368,6 +409,7 @@ def login_(request):
 
 # ----------------------------------------------------------------------------------------------------------------------
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def logout_view(request):
     logout(request)
     return Response(status=200)
@@ -389,6 +431,7 @@ def get_user(request):
 
 # ----------------------------------------------------------------------------------------------------------------------
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def csrf(request):
     csrf_token = get_token(request)  # provided by Middleware csrf
     # send csrf middle ware token
@@ -402,7 +445,7 @@ class ReportImageView(viewsets.ModelViewSet):
     serializer_class = ReportImageSerializer
     parser_classes = [MultiPartParser]
 
-    permission_classes = (IsOwnerOrReadOnly,)
+    permission_classes = [IsOwnerOrReadOnly]
     authentication_classes = [SessionAuthentication]
 
     def create(self, request, *args, **kwargs):
@@ -448,3 +491,21 @@ class AuthorizedMailViewSet(MultiSerializerViewSet):
             return Response(ser_read.data)
         else:
             return Response(ser.errors)
+
+
+class ReportAnnotationViewSet(viewsets.ModelViewSet):
+    queryset = ReportAnnotation.objects.all()
+    serializer_class = ReportAnnotationHyperLinkSerializer
+    parser_classes = [MultiPartParser]
+
+    permission_classes = [IsOwnerOrReadOnly]
+    authentication_classes = [SessionAuthentication]
+
+
+class AreaViewSet(viewsets.ModelViewSet):
+    queryset = Area.objects.all()
+    serializer_class = AreaHyperLinkSerializer
+    parser_classes = [MultiPartParser]
+
+    permission_classes = [IsOwnerOrReadOnly]
+    authentication_classes = [SessionAuthentication]

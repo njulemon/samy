@@ -58,7 +58,7 @@ function ModalReportDetail({id_report}) {
     useEffect(
         () => {
             if (reportDataDescription?.image) {
-                axios.get(reportDataDescription.image)
+                axios.get(reportDataDescription.image, {withCredentials: true})
                     .then((result) => setPictureLink(result?.data?.image))
             }
 

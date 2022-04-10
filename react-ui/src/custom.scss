@@ -112,6 +112,10 @@ div.highlight-dot {
   pointer-events: auto;
 }
 
+.alert-button {
+  pointer-events: auto;
+}
+
 .logout-button {
   font-size: 35px;
   color: rgb(47, 120, 182);
@@ -141,6 +145,17 @@ $gradient-background-menu-c2: rgba(255, 255, 255, 0.42);
   background: linear-gradient(0deg, $gradient-background-menu-c1, $gradient-background-menu-c2);
   backdrop-filter: blur(8px) opacity(85%);
   background-size: 100px 300px;
+}
+
+$gradient-background-coordinator-c1: rgb(234, 234, 234);
+$gradient-background-coordinator-c2: rgb(255, 255, 255);
+
+.background-coordinator {
+  margin: 0;
+  padding: 0;
+  //box-shadow: 2px 2px 2px 0 rgba(3, 3, 3, 0.71);
+  background: linear-gradient(-30deg, $gradient-background-coordinator-c1, $gradient-background-coordinator-c2);
+  background-size: 100% 100%;
 }
 
 

@@ -52,13 +52,13 @@ const ModalRanking = ({show, setShow, listReports, setHighlightReport}) => {
             .then(response => setReports(response.data))
             .then(() => orderBy('date_time'))
             .catch(error => setErrorMsg(error.toString()))
-    }, [])
+    }, [orderBy])
 
     useEffect(() => {
         if (show) {
-            getReport()
+            getReport().then()
         }
-    }, [show])
+    }, [show, getReport])
 
     useEffect(() => {
         axios.get(urlServer + '/api/votes/stat/', {withCredentials: true})
@@ -83,7 +83,7 @@ const ModalRanking = ({show, setShow, listReports, setHighlightReport}) => {
                     })
                 )
             })
-    }, [reports])
+    }, [reports, translation])
 
     return (
         <Modal

@@ -27,6 +27,8 @@ import ModalRanking from "./ModalRanking";
 import {waitFor} from "@testing-library/react";
 import {faUser} from "@fortawesome/free-solid-svg-icons/faUser";
 import {faToolbox} from "@fortawesome/free-solid-svg-icons/faToolbox";
+import PageCoordinator from "./coodinator/PageCoordinator";
+import {useNavigate} from "react-router-dom";
 
 let DefaultIcon = L.divIcon({className: 'circle', iconSize: [20, 20]});
 let HereDot = L.divIcon({className: 'circle-here', iconSize: [20, 20]});
@@ -50,6 +52,7 @@ function MapWithMenu() {
 
     const [idReportDetail, setIdReportDetail] = useState(null)
     const [showModalRanking, setShowModalRanking] = useState(false)
+    const [showModalCoordinator, setShowModalCoordinator] = useState(false)
 
     // allow access to global states (eg 'isLogged')
     const dispatch = useAppDispatch()
@@ -66,6 +69,8 @@ function MapWithMenu() {
 
     // dot showing current location
     const you_are_here_dot = useRef(new Marker(new LatLng(0, 0)));
+
+    const navigate = useNavigate();
 
     function onMapZoom() {
         updateMarkers();
@@ -177,10 +182,6 @@ function MapWithMenu() {
 
     }
 
-    const showRanking = () => {
-        setShowModalRanking(true)
-    }
-
     // init
     useEffect(
         () => {
@@ -202,7 +203,7 @@ function MapWithMenu() {
 
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | Samy v-1.1.4 by N. Julémont'
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | Samy v-1.1.5.1 by N. Julémont'
             }).addTo(map.current);
 
             L.control.attribution({position: 'bottomleft'}).addTo(map.current);
@@ -221,7 +222,7 @@ function MapWithMenu() {
                 localStorage.setItem("map-center-lat", bounds.getCenter().lat)
                 localStorage.setItem("map-center-lng", bounds.getCenter().lng)
                 map.current?.remove();
-                setMapCreated(false)
+                // setMapCreated(false)
             }
         },
         []
@@ -279,12 +280,14 @@ function MapWithMenu() {
 
     return (
         <div className="container-map">
+
             {idReportDetail ?
                 (<ModalReportDetail id_report={idReportDetail} key={"modal-event-detail-" + idReportDetail}/>)
                 :
                 null
             }
-            <ModalNewReport/>
+            <ModalNewReport />
+
             <ModalRanking
                 show={showModalRanking}
                 setShow={setShowModalRanking}
@@ -301,24 +304,34 @@ function MapWithMenu() {
                                                  onClick={() => {
                                                      logout().then(() => dispatch(denyAccess()))
                                                  }} fixedWidth/>
+
                             </div>
                             <hr className="m-0 p-0"/>
-                            <div className="row m-0 p-0">
-                                <FontAwesomeIcon icon={faUser} className="here-icon"
-                                                 onClick={updateLocation}
-                                                 fixedWidth/>
-                            </div>
+                            {/*<div className="row m-0 p-0">*/}
+                            {/*    <FontAwesomeIcon icon={faUser} className="here-icon"*/}
+                            {/*                     fixedWidth/>*/}
+
+                            {/*</div>*/}
                             <div className="row m-0 p-0">
                                 <FontAwesomeIcon icon={faStar} className="new-icon mt-1"
-                                                 onClick={showRanking}
+                                                 onClick={() => setShowModalRanking(true)}
                                                  fixedWidth/>
                             </div>
-                            <hr className="m-0 p-0"/>
-                            <div className="row m-0 p-0">
-                                <FontAwesomeIcon icon={faToolbox} className="new-icon mt-1 d-none d-md-block "
-                                                 onClick={showRanking}
-                                                 fixedWidth/>
-                            </div>
+
+                            {user?.is_coordinator ?
+                                (
+                                    <>
+                                        <hr className="m-0 p-0"/>
+                                        <div className="row m-0 p-0">
+                                            <FontAwesomeIcon icon={faToolbox}
+                                                             className="new-icon mt-1 d-none d-md-block "
+                                                             onClick={() => navigate('/R/coordinator')}
+                                                             fixedWidth/>
+                                        </div>
+                                    </>
+                                )
+                                : null}
+
                         </div>
                     </div>
                 </div>

@@ -3,14 +3,19 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from .enum import ReportUserType, ReportCategory1, ReportCategory2, ReportOperation
+from .enum import ReportUserType, ReportCategory1, ReportCategory2, ReportOperation, InCharge, ReportStatus
 from .managers import CustomUserManager
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
+
     is_staff = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
+
+    is_coordinator = models.BooleanField(default=False)
+    coordinator_area = models.ManyToManyField(to="Area", default=None)
+
     date_joined = models.DateTimeField(default=timezone.now)
 
     # add other fields if needed.
@@ -31,6 +36,20 @@ class ReportImage(models.Model):
     owner = models.ForeignKey(to=CustomUser, on_delete=models.CASCADE)
 
 
+# USER RELATED
+# ----------------------------------------------------------------------------------------------------------------------
+class KeyValidator(models.Model):
+    account = models.ForeignKey(to=CustomUser, on_delete=models.CASCADE)
+    key = models.CharField(max_length=100)
+
+
+class RestPassword(models.Model):
+    account = models.OneToOneField(to=CustomUser, on_delete=models.CASCADE)
+    key = models.CharField(max_length=100)
+
+
+# REPORTS RELATED
+# ----------------------------------------------------------------------------------------------------------------------
 class Report(models.Model):
     user_type = models.IntegerField(choices=ReportUserType.get_model_choices())
     operation = models.IntegerField(choices=ReportOperation.get_model_choices(), default=1)
@@ -55,8 +74,32 @@ class Report(models.Model):
     )
     comment = models.CharField(max_length=2000, blank=True, null=True)
 
+    annotation = models.ForeignKey(to="ReportAnnotation", on_delete=models.SET_NULL, null=True, default=None)
+
     def __str__(self):
         return f'from {self.owner.first_name} at {self.timestamp_creation}'
+
+
+class ReportAnnotation(models.Model):
+    area = models.ForeignKey(to="Area", on_delete=models.SET_NULL, null=True, default=None)
+    in_charge = models.SmallIntegerField(choices=InCharge.get_model_choices(), default=0, null=True)
+    status = models.SmallIntegerField(choices=ReportStatus.get_model_choices(), default=1, null=True)
+    comments = models.ManyToManyField(to="ReportAnnotationComment", blank=True)
+    date_start = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+
+
+class ReportAnnotationComment(models.Model):
+    comment = models.CharField(max_length=500, blank=False)
+    date_start = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+
+
+class Area(models.Model):
+    name = models.CharField(max_length=30)
+
+    def __str__(self):
+        return f'{self.name}'
 
 
 class Votes(models.Model):
@@ -79,13 +122,3 @@ class AuthorizedMail(models.Model):
 
     def __str__(self):
         return self.email_hashed
-
-
-class KeyValidator(models.Model):
-    account = models.ForeignKey(to=CustomUser, on_delete=models.CASCADE)
-    key = models.CharField(max_length=100)
-
-
-class RestPassword(models.Model):
-    account = models.OneToOneField(to=CustomUser, on_delete=models.CASCADE)
-    key = models.CharField(max_length=100)

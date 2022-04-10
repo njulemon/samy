@@ -134,6 +134,7 @@ function FieldImageAutoUpload({pk, setPk, setIsSubmitting, initPk=null}) {
                             className='form-control'
                             type="file"
                             placeholder="Uploader une photo"
+                            accept="image/*"
                         />
                     </div>
 

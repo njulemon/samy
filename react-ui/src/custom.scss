@@ -15,46 +15,84 @@ $input-bg: rgb(222, 248, 217);
 // Import Bootstrap and its default variables
 @import '~bootstrap/scss/bootstrap.scss';
 
+html {
+  height: 100%;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+}
+
+.container-map {
+  height: 100%;
+  width: 100vw;
+}
 
 #map {
-    height: 100vh;
+  height: 100%;
+  width: 100vw;
+}
+
+.mini-map-container {
+  height: 100%;
+  width: 100%;
+  min-height: 400px;
+}
+
+.mini-map {
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+}
+
+#root {
+  height: 100%;
+  width: 100vw;
+}
+
+.App {
+  height: 100%;
+  width: 100vw;
 }
 
 body {
-    background-image: var(--bs-gradient);
+  background-image: var(--bs-gradient);
+  height: 100%;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
 }
 
 div.circle {
-    background-color: rgba(215, 60, 33, 0.68);
-    border-color: red;
-    border-radius: 30px;
-    border-style: solid;
-    border-width: 0px;
-    width: 30px;
-    height: 30px;
+  background-color: rgba(215, 60, 33, 0.68);
+  border-color: red;
+  border-radius: 30px;
+  border-style: solid;
+  border-width: 0px;
+  width: 30px;
+  height: 30px;
 }
 
 div.circle-here {
-    background-color: rgb(60, 140, 213);
-    border-color: #ffffff;
-    border-radius: 30px;
-    border-style: solid;
-    border-width: 3px;
-    width: 35px;
-    height: 35px;
-    box-shadow: 0 0 0 40px rgba(105, 132, 196, 0.15);
+  background-color: rgb(60, 140, 213);
+  border-color: #ffffff;
+  border-radius: 30px;
+  border-style: solid;
+  border-width: 3px;
+  width: 35px;
+  height: 35px;
+  box-shadow: 0 0 0 40px rgba(105, 132, 196, 0.15);
 }
 
 div.highlight-dot {
-    background-color: rgba(22, 101, 175, 0);
-    border-color: rgba(27, 131, 226, 0);
-    border-radius: 30px;
-    border-style: solid;
-    border-width: 0;
-    width: 35px;
-    height: 35px;
-    box-shadow: 0 0 0 5px rgba(105, 132, 196, 0.15);
-    animation: wobble 1s ease-in forwards infinite;
+  background-color: rgba(22, 101, 175, 0);
+  border-color: rgba(27, 131, 226, 0);
+  border-radius: 30px;
+  border-style: solid;
+  border-width: 0;
+  width: 35px;
+  height: 35px;
+  box-shadow: 0 0 0 5px rgba(105, 132, 196, 0.15);
+  animation: wobble 1s ease-in forwards infinite;
 }
 
 @keyframes wobble {
@@ -67,110 +105,140 @@ div.highlight-dot {
 }
 
 .here-icon {
-    font-size: 35px;
-    color: rgb(47, 120, 182);
-    margin: 8px 4px 4px;
-    pointer-events: auto;
-    padding: 0;
+  font-size: 35px;
+  color: rgb(47, 120, 182);
+  margin: 8px 4px 4px;
+  pointer-events: auto;
+  padding: 0;
 }
 
 .new-icon {
-    font-size: 35px;
-    color: rgb(47, 120, 182);
-    margin: 4px 4px 8px;
-    pointer-events: auto;
-    padding: 0;
+  font-size: 35px;
+  color: rgb(47, 120, 182);
+  margin: 4px 4px 8px;
+  pointer-events: auto;
+  padding: 0;
 }
 
 .modal-button {
-    pointer-events: auto;
+  pointer-events: auto;
+}
+
+.alert-button {
+  pointer-events: auto;
 }
 
 .logout-button {
-    font-size: 35px;
-    color: rgb(47, 120, 182);
-    margin: 4px 4px 8px;
-    pointer-events: auto;
-    padding: 0;
+  font-size: 35px;
+  color: rgb(47, 120, 182);
+  margin: 10px 4px 4px;
+  pointer-events: auto;
+  padding: 0;
+  vertical-align: middle
 }
 
 .form-button {
-    pointer-events: auto;
+  pointer-events: auto;
 }
 
 .leaflet-container {
-    line-height: 1;
+  line-height: 1;
 }
+
+$gradient-background-menu-c1: rgba(184, 184, 184, 0.18);
+$gradient-background-menu-c2: rgba(255, 255, 255, 0.42);
 
 .background-leaflet-buttons {
-    margin: 8px;
-    border-radius: 20px;
-    border: solid #ffffff;
-    border-width: 4px;
-    box-shadow: -4px 4px 5px 0 rgba(3, 3, 3, 0.71);
-
-    background: linear-gradient(0deg, rgb(41, 231, 202), rgb(245, 169, 20));
-    background-size: 200% 200%;
-
-    -webkit-animation: backgound-leaflet-buttons-animation 30s ease infinite;
-    -moz-animation: backgound-leaflet-buttons-animation 30s ease infinite;
-    -o-animation: backgound-leaflet-buttons-animation 30s ease infinite;
-    animation: backgound-leaflet-buttons-animation 30s ease infinite;
+  margin: 6px;
+  padding: 0;
+  border-radius: 5px;
+  border: 1px solid #bf4a4a;
+  //box-shadow: 2px 2px 2px 0 rgba(3, 3, 3, 0.71);
+  background: linear-gradient(0deg, $gradient-background-menu-c1, $gradient-background-menu-c2);
+  backdrop-filter: blur(8px) opacity(85%);
+  background-size: 100px 300px;
 }
 
-@-webkit-keyframes backgound-leaflet-buttons-animation {
-    0% {
-        background-position: 71% 0%
-    }
-    50% {
-        background-position: 30% 100%
-    }
-    100% {
-        background-position: 71% 0%
-    }
+$gradient-background-coordinator-c1: rgb(234, 234, 234);
+$gradient-background-coordinator-c2: rgb(255, 255, 255);
+
+.background-coordinator {
+  margin: 0;
+  padding: 0;
+  //box-shadow: 2px 2px 2px 0 rgba(3, 3, 3, 0.71);
+  background: linear-gradient(-30deg, $gradient-background-coordinator-c1, $gradient-background-coordinator-c2);
+  background-size: 100% 100%;
 }
 
-@-moz-keyframes backgound-leaflet-buttons-animation {
-    0% {
-        background-position: 71% 0%
-    }
-    50% {
-        background-position: 30% 100%
-    }
-    100% {
-        background-position: 71% 0%
-    }
-}
-
-@-o-keyframes backgound-leaflet-buttons-animation {
-    0% {
-        background-position: 71% 0%
-    }
-    50% {
-        background-position: 30% 100%
-    }
-    100% {
-        background-position: 71% 0%
-    }
-}
-
-@keyframes backgound-leaflet-buttons-animation {
-    0% {
-        background-position: 71% 0%
-    }
-    50% {
-        background-position: 30% 100%
-    }
-    100% {
-        background-position: 71% 0%
-    }
-}
 
 .login-vertical-center {
-    margin-top: 100px;
+  margin-top: 100px;
 
 }
 
 .fill-height {
-    min-height: 100vh;
+  min-height: 100vh;
+}
+
+.image-uploaded {
+  width: 100%;
+  max-height: 300px;
+  border-radius: 10px;
+}
+
+.image-report {
+  max-width: 100%;
+  border-radius: 15px;
+  //max-height: 350px;
+}
+
+.image-report-cross {
+  z-index: 3;
+  position: absolute;
+  transform: translate(-120%, 20%);
+  width: 21px;
+  height: 21px;
+  color: white;
+  background-color: rgba(241, 6, 36, 0.85);
+  border-radius: 4px;
+}
+
+.image-report-cross-absolute {
+  position: relative;
+  width: fit-content;
+  height: fit-content;
+}
+
+.border-comment {
+  border-style: solid;
+  border-radius: 5px;
+  border-color: black;
+  border-width: thin;
+}
+
+.text-justify {
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.edit-icon {
+  color: #6f6e6e;
+  vertical-align: text-top;
+}
+
+.align-react-icon {
+
+}
+
+.edit-icon:hover {
+  filter: drop-shadow(0 0 2px #a7a7a7) brightness(90%);
+}
+
+.delete-icon {
+  color: #e72d2d;
+  vertical-align: text-top;
+}
+
+.delete-icon-shadow:hover {
+  filter: drop-shadow(0 0 1px rgba(231, 45, 45, 0.49)) brightness(95%);
 }

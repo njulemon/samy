@@ -21,9 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
-
-
-DEBUG=True
+DEBUG = True
 try:
     os.environ['DEV']
     DEBUG = True
@@ -82,6 +80,9 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAdminUser',
     ]
 }
 
@@ -118,7 +119,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'samy.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -193,7 +193,6 @@ DATABASES = {
     }
 }
 
-
 try:
     DATABASES['default']['HOST'] = os.environ['MYSQL_HOST']
 except KeyError:
@@ -214,7 +213,6 @@ try:
     DATABASES['default']['NAME'] = os.environ['MYSQL_DBNAME']
 except KeyError:
     print('MySql DB NAME is not present in the environment.')
-
 
 # S3 FILE storage
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

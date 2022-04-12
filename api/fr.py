@@ -1,6 +1,9 @@
-from api.enum import ReportUserType, ReportCategory1, ReportCategory2, BasicTerm, ReportOperation
+from api.enum import ReportUserType, ReportCategory1, ReportCategory2, BasicTerm, ReportOperation, InCharge, \
+    ReportStatus
 
 report_form_fr = {
+    # TODO : this list should be general, not related to form only. Change the name.
+
     # default option
     ReportUserType.NONE_USER_TYPE.name: "Usager ?",
     ReportCategory1.NONE_CAT_1.name: "Problème ?",
@@ -33,7 +36,23 @@ report_form_fr = {
     ReportCategory2.LANE_PRIORITY_NOT_RESPECTED_DANGEROUS.name: 'priorité cycliste peu respectée, dangereux',
     ReportCategory2.RACK_DAMAGED.name: 'Arceaux ou box vélo endommagé',
     ReportCategory2.INCIDENT_GLASS_ON_LANE.name: "Présence de verre",
-    ReportCategory2.INCIDENT_NAILS_ON_LANE.name: "Présence de clou ou équivalent"
+    ReportCategory2.INCIDENT_NAILS_ON_LANE.name: "Présence de clou ou équivalent",
+    ReportCategory2.ILLEGAL_PARKING.name: "Parking sauvage régulier",
+
+    # In charge
+    InCharge.IC_IN_CHARGE_NONE.name: "Autoritée compétente non-définie",
+    InCharge.IC_MUNICIPALITY.name: "Commune",
+    InCharge.IC_REGION.name: "Région",
+
+    # status
+    ReportStatus.RS_STATUS_NONE.name: "Statut non-défini",
+    ReportStatus.RS_REPORTED.name: "Signalé",
+    ReportStatus.RS_CLASSIFIED.name: "Attribué",
+    ReportStatus.RS_REPORTED_TO_AUTHORITIES.name: "Signalé aux autorités",
+    ReportStatus.RS_NOT_RELEVANT.name: "Classé sans suite",
+    ReportStatus.RS_REPORT_IN_PROGRESS.name: "Intégration dans un rapport",
+    ReportStatus.RS_SOLVED.name: "Solutionné"
+
 }
 
 basic_terms = {

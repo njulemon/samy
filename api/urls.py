@@ -23,6 +23,9 @@ router.register(r'reset-password-send-mail', views.PasswordForgotRequestView, 'r
 router.register(r'reset-password', views.RestPasswordView, 'reset-password')
 router.register(r'report-image', views.ReportImageView, 'report-image')
 router.register(r'authorized-email', views.AuthorizedMailViewSet, 'authorized-email')
+router.register(r'report-annotation', views.ReportAnnotationViewSet, 'reportannotation')
+router.register(r'area', views.AreaViewSet, 'area')
+
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [

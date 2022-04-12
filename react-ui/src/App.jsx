@@ -11,6 +11,7 @@ import {setNewReportFormTranslation} from "./app/States";
 import ConfirmReportSaved from "./ConfirmReportSaved";
 import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import ResetPassword from "./ResetPassword";
+import PageCoordinator from "./coodinator/PageCoordinator";
 
 require('dotenv').config()
 
@@ -35,7 +36,7 @@ function App() {
 
     useEffect(
         () => {
-            if (! location.pathname.includes('no-redirection'))
+            if (!location.pathname.includes('no-redirection'))
                 translation === {} ?
                     navigate('/R/wait') :
                     isLogged ?
@@ -47,16 +48,16 @@ function App() {
 
     return (
         <div className="App">
-
-            <Routes>
-                <Route path="/" element={<Login/>}/>
-                <Route path="/R/login" element={<Login/>}/>
-                <Route path="/R/reload" element={<ConfirmReportSaved/>}/>
-                <Route path="/R/map" element={<MapWithMenu/>}/>
-                <Route path="/R/no-redirection/reset-password/:pk/:key" element={<ResetPassword />} />
-                <Route path="/R/wait" element={null}/>
-            </Routes>
-        </div>
+                <Routes>
+                    <Route path="/" element={<Login/>}/>
+                    <Route path="/R/login" element={<Login/>}/>
+                    <Route path="/R/reload" element={<ConfirmReportSaved/>}/>
+                    <Route path="/R/map" element={<MapWithMenu/>}/>
+                    <Route path="/R/no-redirection/reset-password/:pk/:key" element={<ResetPassword/>}/>
+                    <Route path="/R/wait" element={null}/>
+                    <Route path="/R/coordinator" element={<PageCoordinator />} />
+                </Routes>
+            </div>
     );
 }
 

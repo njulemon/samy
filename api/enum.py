@@ -50,10 +50,12 @@ class ReportUserType(ModelEnum):
     PEDESTRIAN = 1
     CYCLIST = 2
 
+
 class ReportOperation(ModelEnum):
     NONE_OPERATION = 0
     LOCALE = 1
     # set other type of operations.
+
 
 class ReportCategory1(ModelEnum):
     NONE_CAT_1 = 0
@@ -87,6 +89,8 @@ class ReportCategory2(ModelEnum):
     INCIDENT_GLASS_ON_LANE = 15
     INCIDENT_NAILS_ON_LANE = 16
 
+    ILLEGAL_PARKING = 17
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 # CATEGORIES TREE
@@ -118,8 +122,31 @@ map_category_2 = {
                 ReportCategory2.SIGNAGE__BAD_CONDITION
             ],
             ReportCategory1.INCIDENT: [
+                ReportCategory2.NONE_CAT_2,
+                ReportCategory2.ILLEGAL_PARKING,
                 ReportCategory2.INCIDENT_GLASS_ON_LANE,
                 ReportCategory2.INCIDENT_NAILS_ON_LANE
             ]
         }
 }
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# IN CHARGE
+class InCharge(ModelEnum):
+    IC_IN_CHARGE_NONE = 0
+    IC_MUNICIPALITY = 1
+    IC_REGION = 2
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# STATUS REPORT
+class ReportStatus(ModelEnum):
+    RS_STATUS_NONE = 0
+    RS_REPORTED = 1
+    RS_CLASSIFIED = 2
+    RS_REPORTED_TO_AUTHORITIES = 3
+    RS_NOT_RELEVANT = 4
+    RS_REPORT_IN_PROGRESS = 5
+    RS_SOLVED = 6
+

@@ -14,7 +14,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=False)
 
     is_coordinator = models.BooleanField(default=False)
-    coordinator_area = models.ManyToManyField(to="Area", default=None)
+    coordinator_area = models.ManyToManyField(to="Area", default=None, blank=True)
 
     date_joined = models.DateTimeField(default=timezone.now)
 

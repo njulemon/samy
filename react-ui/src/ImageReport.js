@@ -7,14 +7,20 @@ const ImageReport = ({reportId}) => {
     const [urlImage, setUrlImage] = useState(null)
 
     const setUrlImageRequest = useCallback(async () => {
-        const responseReport = await axios.get(urlServer + `/api/report/${reportId}/`, {withCredentials: true})
-            .catch(console.error)
 
-        if (!!responseReport.data.image){
+        if (!!reportId) {
+            const responseReport = await axios.get(urlServer + `/api/report/${reportId}/`, {withCredentials: true})
+                .catch(error => console.error)
 
-            const responseUriImage = await axios.get(responseReport.data.image, {withCredentials: true})
-            setUrlImage(responseUriImage.data.image)
+            if (!!responseReport?.data?.image) {
+                // debugger
+
+                const responseUriImage = await axios.get(responseReport.data.image, {withCredentials: true})
+                setUrlImage(responseUriImage.data.image)
+            }
         }
+
+
     }, [reportId])
 
     useEffect(() => {
@@ -23,7 +29,7 @@ const ImageReport = ({reportId}) => {
 
     return (
         urlImage &&
-        <div className="mt-3 mb-3 text-center">
+        <div className="text-center">
             <img className="image-report" src={urlImage} alt="Uploaded"/>
         </div>
     )

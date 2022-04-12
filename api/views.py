@@ -18,7 +18,7 @@ from rest_framework.response import Response
 from templated_email import send_templated_mail
 
 from api import Tools
-from api.CustomPermissions import ActionBasedPermission, IsOwnerOrReadOnly
+from api.CustomPermissions import ActionBasedPermission, IsOwnerOrReadOnly, IsCoordinatorOrReadOnly
 from api.MultiSerializerViewSet import MultiSerializerViewSet
 from api.enum import ReportUserType, map_category_1, map_category_2, ReportOperation
 from api.fr import report_form_fr, basic_terms
@@ -153,8 +153,11 @@ class ReportViewSet(MultiSerializerViewSet):
             instance = Report.objects.get(pk=kwargs['pk'])
         except (ObjectDoesNotExist, MultipleObjectsReturned):
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+        # ownership check (owner or admin)
         if not (request.user.id == instance.owner.pk or request.user.is_staff):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
+
         serializer = ReportSerializer(data=request.data, instance=instance, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -175,6 +178,10 @@ class ReportViewSet(MultiSerializerViewSet):
         except (ObjectDoesNotExist, MultipleObjectsReturned):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
+        # ownership check (owner or coordinator)
+        if not (request.user.id == report.owner.pk or request.user.is_coordinator):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
         if report.annotation is not None:
             return Response(status=status.HTTP_208_ALREADY_REPORTED)
 
@@ -191,6 +198,20 @@ class ReportViewSet(MultiSerializerViewSet):
 
         except DatabaseError:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    # @action(detail=True, methods=['get'], url_path='with-annotation', url_name='with-annotation')
+    # def new_annotation(self, request, pk=None):
+    #
+    #     # security
+    #     if not request.user.is_coordinator:
+    #         return Response(status=status.HTTP_401_UNAUTHORIZED)
+    #
+    #     try:
+    #         instance = Report.objects.get(pk=pk)
+    #     except (ObjectDoesNotExist, MultipleObjectsReturned):
+    #         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 class ReportFormTree(viewsets.ViewSet):
@@ -493,12 +514,21 @@ class AuthorizedMailViewSet(MultiSerializerViewSet):
             return Response(ser.errors)
 
 
-class ReportAnnotationViewSet(viewsets.ModelViewSet):
+class ReportAnnotationViewSet(MultiSerializerViewSet):
     queryset = ReportAnnotation.objects.all()
     serializer_class = ReportAnnotationHyperLinkSerializer
-    parser_classes = [MultiPartParser]
+    parser_classes = [MultiPartParser, JSONParser]
+    serializers = {
+        'default': ReportAnnotationHyperLinkSerializer,
+        'list': ReportAnnotationHyperLinkSerializer,
+        'create': ReportAnnotationHyperLinkSerializer,
+        'retrieve': ReportAnnotationHyperLinkSerializer,
+        'update': ReportAnnotationSerializer,
+        'partial_update': ReportAnnotationSerializer,
+        'destroy': ReportAnnotationHyperLinkSerializer
+    }
 
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsCoordinatorOrReadOnly]
     authentication_classes = [SessionAuthentication]
 
 

@@ -7,6 +7,8 @@ import {faArrowsRotate} from "@fortawesome/free-solid-svg-icons/faArrowsRotate";
 import {useAppSelector} from "../app/hooks";
 import ImageReport from "../ImageReport";
 import ReportAnnotationForm from "./ReportAnnotationForm";
+import MiniMap from "./MiniMap";
+import {capitalize} from "../Tools/String";
 
 const Unassigned = () => {
 
@@ -49,19 +51,42 @@ const Unassigned = () => {
                             {unassignedReport?.map(
                                 row => (
                                     <AlertAutoHide key={row.key}>
+                                        <div className="container-fluid">
+                                            <div className="row">
+                                                <div className="col-12 col-lg-12 mt-2">
+                                                    <h4 className="fw-bold">
+                                                        {capitalize(_[row.category_1])} <span className="fw-normal">[{row.id}]</span>
+                                                    </h4>
+                                                    <h5 className="fw-light">
+                                                        {capitalize(_[row.category_2])} <br/>
+                                                    </h5>
+                                                    <p className="fw-lighter">
+                                                        Signalé le {(new Date(row?.timestamp_creation)).toLocaleDateString()}
+                                                    </p>
+                                                    <p>
+                                                        {row.comment}
+                                                    </p>
+                                                </div>
+                                            </div>
 
-                                        <h5>
-                                            <span
-                                                className="text-capitalize fw-bold"> {_[row.category_1]}
-                                            </span> : {_[row.category_2]} <br/>
-                                        </h5>
+                                            <hr/>
 
-                                        <p>
-                                            {row.comment}
-                                        </p>
-
-                                        <ImageReport reportId={row.id}/>
-                                        <ReportAnnotationForm reportPk={row.id}/>
+                                            <div className="row">
+                                                <div className="col-12 col-lg-6">
+                                                    <MiniMap lat={row.latitude} lng={row.longitude} zoom={15}
+                                                             id={row.id}/>
+                                                </div>
+                                                <div className="col-12 col-lg-6">
+                                                    <ImageReport reportId={row.id}/>
+                                                </div>
+                                            </div>
+                                            <hr/>
+                                            <div className="row">
+                                                <div className="col-12 col-lg-6 mt-3">
+                                                    <ReportAnnotationForm reportPk={row.id}/>
+                                                </div>
+                                            </div>
+                                        </div>
 
                                     </AlertAutoHide>
                                 )

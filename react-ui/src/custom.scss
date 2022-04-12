@@ -32,6 +32,18 @@ html {
   width: 100vw;
 }
 
+.mini-map-container {
+  height: 100%;
+  width: 100%;
+  min-height: 400px;
+}
+
+.mini-map {
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+}
+
 #root {
   height: 100%;
   width: 100vw;
@@ -177,7 +189,7 @@ $gradient-background-coordinator-c2: rgb(255, 255, 255);
 .image-report {
   max-width: 100%;
   border-radius: 15px;
-  max-height: 350px;
+  //max-height: 350px;
 }
 
 .image-report-cross {

@@ -15,13 +15,13 @@ class ReportImageSerializer(serializers.ModelSerializer):
 
 
 class ReportAnnotationSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = ReportAnnotation
         fields = '__all__'
 
 
 class ReportAnnotationHyperLinkSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.IntegerField()
 
     class Meta:
         model = ReportAnnotation
@@ -119,6 +119,7 @@ class ReportSerializerHyperLink(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Report
         fields = '__all__'
+        depth = 2
 
 
 class RestPasswordSerializer(serializers.Serializer):

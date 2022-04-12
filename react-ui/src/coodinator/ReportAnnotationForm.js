@@ -57,13 +57,14 @@ const ReportAnnotationForm = ({reportPk, close}) => {
                   }) => (
                     <form onSubmit={handleSubmit} className="form-group">
                         <div className="row g-3">
-                            <div className="col-8 col-lg-3">
+                            <div className="col-8 col-lg-5">
                                 <select
                                     className="form-control"
                                     name="area"
                                     onChange={handleChange}
                                     onBlur={handleBlur}
-                                    value={values.email}>
+                                    value={values.email}
+                                    disabled={done}>
 
                                     <option value="0">
                                         Inconnu
@@ -75,7 +76,7 @@ const ReportAnnotationForm = ({reportPk, close}) => {
                                         </option>
                                     ))}
                                 </select>
-                                <div class="invalid-feedback d-block">
+                                <div className="invalid-feedback d-block">
                                     {errors.area && touched.area && errors.area}
                                 </div>
                             </div>

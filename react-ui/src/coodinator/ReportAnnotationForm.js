@@ -35,7 +35,7 @@ const ReportAnnotationForm = ({reportPk, close}) => {
                     return errors;
                 }}
                 onSubmit={(values, {setSubmitting}) => {
-                    const data = {area: values.area}
+                    const data = {area: values.area, status: 2}
                     PostCsrf(urlServer + `/api/report/new-annotation/?pk_report=${reportPk}`, data)
                         .then(() => {
                             setDone(true)

@@ -5,12 +5,27 @@ from rest_framework.exceptions import ValidationError
 
 from api import Tools
 from api.enum import ReportUserType, ReportCategory1, ReportCategory2, ReportOperation
-from api.models import Report, CustomUser, Votes, RestPassword, ReportImage, AuthorizedMail, ReportAnnotation, Area
+from api.models import Report, CustomUser, Votes, RestPassword, ReportImage, AuthorizedMail, ReportAnnotation, Area, \
+    ReportAnnotationComment
 
 
 class ReportImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReportImage
+        fields = '__all__'
+
+
+class ReportAnnotationCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReportAnnotationComment
+        fields = '__all__'
+
+
+class ReportAnnotationCommentHyperLinkSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = ReportAnnotationComment
         fields = '__all__'
 
 
@@ -21,11 +36,12 @@ class ReportAnnotationSerializer(serializers.ModelSerializer):
 
 
 class ReportAnnotationHyperLinkSerializer(serializers.HyperlinkedModelSerializer):
-    id = serializers.IntegerField()
+    comments = ReportAnnotationCommentHyperLinkSerializer(many=True)
 
     class Meta:
         model = ReportAnnotation
         fields = '__all__'
+        depth = 1
 
 
 class AreaHyperLinkSerializer(serializers.HyperlinkedModelSerializer):
@@ -115,6 +131,7 @@ class ReportSerializerHyperLink(serializers.HyperlinkedModelSerializer):
     image = serializers.HyperlinkedRelatedField(view_name='report-image-detail', read_only=True)
     image_pk = serializers.PrimaryKeyRelatedField(source='image', allow_null=True, read_only=True)
     id = serializers.IntegerField(read_only=True)
+    annotation = ReportAnnotationHyperLinkSerializer()
 
     class Meta:
         model = Report

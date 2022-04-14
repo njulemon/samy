@@ -24,10 +24,7 @@ import {logout} from "./api/Access";
 import ModalReportDetail from "./ModalReportDetail";
 import {faStar} from "@fortawesome/free-regular-svg-icons/faStar";
 import ModalRanking from "./ModalRanking";
-import {waitFor} from "@testing-library/react";
-import {faUser} from "@fortawesome/free-solid-svg-icons/faUser";
 import {faToolbox} from "@fortawesome/free-solid-svg-icons/faToolbox";
-import PageCoordinator from "./coodinator/PageCoordinator";
 import {useNavigate} from "react-router-dom";
 
 let DefaultIcon = L.divIcon({className: 'circle', iconSize: [20, 20]});
@@ -203,7 +200,7 @@ function MapWithMenu() {
 
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | Samy v-1.1.5.1 by N. Julémont'
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | Samy v-1.1.6 by GRACQ WB'
             }).addTo(map.current);
 
             L.control.attribution({position: 'bottomleft'}).addTo(map.current);

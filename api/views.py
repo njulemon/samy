@@ -23,11 +23,12 @@ from api.MultiSerializerViewSet import MultiSerializerViewSet
 from api.enum import ReportUserType, map_category_1, map_category_2, ReportOperation
 from api.fr import report_form_fr, basic_terms
 from api.models import Report, Votes, CustomUser, KeyValidator, RestPassword, ReportImage, AuthorizedMail, \
-    ReportAnnotation, Area
+    ReportAnnotation, Area, ReportAnnotationComment
 from api.serializers import ReportSerializer, VotesSerializer, UserSerializer, NewUserSerializer, \
     CreateResetPasswordSerializer, UserPasswordSerializer, ReportImageSerializer, ReportSerializerHyperLink, \
     ReportImageSerializerNoUser, AuthorizedMailSerializerRead, AuthorizedMailSerializerWrite, UserSerializerHyperLink, \
-    ReportAnnotationHyperLinkSerializer, AreaHyperLinkSerializer, ReportAnnotationSerializer
+    ReportAnnotationHyperLinkSerializer, AreaHyperLinkSerializer, ReportAnnotationSerializer, \
+    ReportAnnotationCommentSerializer, ReportAnnotationCommentHyperLinkSerializer
 
 
 class VoteViewSetReport(viewsets.ModelViewSet):
@@ -125,7 +126,8 @@ class ReportViewSet(MultiSerializerViewSet):
         'update': ReportSerializer,
         'partial_update': ReportSerializer,
         'destroy': ReportSerializer,
-        'new_annotation': ReportAnnotationHyperLinkSerializer
+        'new_annotation': ReportAnnotationHyperLinkSerializer,
+        'new_annotation_comment': ReportAnnotationCommentHyperLinkSerializer
     }
 
     permission_classes = [IsOwnerOrReadOnly]
@@ -199,18 +201,39 @@ class ReportViewSet(MultiSerializerViewSet):
         except DatabaseError:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    # @action(detail=True, methods=['get'], url_path='with-annotation', url_name='with-annotation')
-    # def new_annotation(self, request, pk=None):
-    #
-    #     # security
-    #     if not request.user.is_coordinator:
-    #         return Response(status=status.HTTP_401_UNAUTHORIZED)
-    #
-    #     try:
-    #         instance = Report.objects.get(pk=pk)
-    #     except (ObjectDoesNotExist, MultipleObjectsReturned):
-    #         return Response(status=status.HTTP_400_BAD_REQUEST)
+    @action(detail=False, methods=['post'], url_path='new-annotation-comment', url_name='new-annotation-comment')
+    def new_annotation_comment(self, request):
 
+        try:
+            pk = request.query_params['pk_report']
+        except KeyError:
+            return Response({'error': 'You must provide the pk report as a query params pk_report=[int].'})
+
+        try:
+            report = Report.objects.get(pk=pk)
+        except (ObjectDoesNotExist, MultipleObjectsReturned):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        # ownership check (owner or coordinator)
+        if not (request.user.id == report.owner.pk or request.user.is_coordinator):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        if report.annotation is None:
+            return Response(status=status.HTTP_412_PRECONDITION_FAILED)
+
+        try:
+            with transaction.atomic():
+                ser = ReportAnnotationCommentSerializer(data=request.data)
+
+                if ser.is_valid():
+                    report.annotation.comments.add(ser.save())
+                    report.save()
+                    return Response(ReportSerializer(instance=report).data, status=status.HTTP_201_CREATED)
+                else:
+                    return Response(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except DatabaseError:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
@@ -526,6 +549,24 @@ class ReportAnnotationViewSet(MultiSerializerViewSet):
         'update': ReportAnnotationSerializer,
         'partial_update': ReportAnnotationSerializer,
         'destroy': ReportAnnotationHyperLinkSerializer
+    }
+
+    permission_classes = [IsCoordinatorOrReadOnly]
+    authentication_classes = [SessionAuthentication]
+
+
+class ReportAnnotationCommentViewSet(MultiSerializerViewSet):
+    queryset = ReportAnnotationComment.objects.all()
+    serializer_class = ReportAnnotationCommentHyperLinkSerializer
+    parser_classes = [MultiPartParser, JSONParser]
+    serializers = {
+        'default': ReportAnnotationCommentHyperLinkSerializer,
+        'list': ReportAnnotationCommentHyperLinkSerializer,
+        'create': ReportAnnotationCommentSerializer,
+        'retrieve': ReportAnnotationCommentHyperLinkSerializer,
+        'update': ReportAnnotationCommentSerializer,
+        'partial_update': ReportAnnotationCommentSerializer,
+        'destroy': ReportAnnotationCommentSerializer
     }
 
     permission_classes = [IsCoordinatorOrReadOnly]

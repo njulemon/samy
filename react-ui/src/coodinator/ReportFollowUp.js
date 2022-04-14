@@ -22,7 +22,7 @@ const ReportFollowUp = ({reportPk}) => {
 
     return (
         <>
-            <h5>{capitalize(_[report?.category_1])} <span className="fw-normal">[{report?.id}]</span> </h5>
+            <h5>{capitalize(_[report?.category_1])} <span className="fw-normal">[{report?.id}]</span></h5>
             <h6>{capitalize(_[report?.category_2])}</h6>
 
             <hr/>
@@ -69,7 +69,10 @@ const ReportFollowUp = ({reportPk}) => {
                 Localité : {report?.annotation.area.name}
             </p>
 
-            <EditStatusForm urlAnnotation={report?.annotation.url}/>
+            <EditStatusForm
+                // urlAnnotation={report?.annotation.url}
+                reportPk={reportPk}
+            />
         </>
     )
 }

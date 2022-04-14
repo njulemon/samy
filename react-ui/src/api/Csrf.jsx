@@ -63,7 +63,7 @@ export function PatchCsrf(url: string, data: { [name: string]: string }) {
         )
 }
 
-export function deleteCsrf(url, data) {
+export function deleteCsrf(url) {
     /*We need to protect post data against csrf attacks.
     * ---
     * The server side send a cookie with csrf token and at the same time a value

@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import {urlServer} from "../def/Definitions";
 import {deleteCsrf, PostCsrf} from "../api/Csrf";
@@ -55,7 +55,7 @@ const useAnnotationHook = (reportPk) => {
             .catch(error => setError(error.toString()))
     }
 
-    useEffect(() => fetchAnnotation(), [reportPk])
+    useEffect(() => fetchAnnotation(), [options])
     useEffect(() => getOptions(), [reportPk])
 
     return [states, error, options, fetchAnnotation, addAnnotationComment, deleteAnnotationComment]

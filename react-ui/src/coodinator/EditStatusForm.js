@@ -1,6 +1,4 @@
 import React, {useEffect, useRef, useState} from "react";
-import axios from "axios";
-import {urlServer} from "../def/Definitions";
 import {useAppSelector} from "../app/hooks";
 import {PatchCsrf} from "../api/Csrf";
 import useAnnotationHook from "./useAnnotationHook";
@@ -46,10 +44,6 @@ const EditStatusForm = ({reportPk}) => {
             })
 
     }
-
-    useEffect(() => {
-        // fetchAnnotation()
-    }, [])
 
     useEffect(() => {
         in_charge.current.value = statesAnnotation.in_charge
@@ -105,7 +99,7 @@ const EditStatusForm = ({reportPk}) => {
                     <Accordion>
                         <Accordion.Item eventKey={reportPk}>
                             <Accordion.Header>
-                                Annotations
+                                Annotations {statesAnnotation?.comments?.length !== 0 && `(${statesAnnotation?.comments?.length})`}
                             </Accordion.Header>
                             <Accordion.Body>
                                 {statesAnnotation?.comments?.map(row =>

@@ -1,7 +1,7 @@
 import {useAppDispatch, useAppSelector} from "./app/hooks";
 import {hideReportDetailModal, updateNotes} from "./app/States";
 import Modal from "react-bootstrap/Modal";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {uriVotes, uriReport, urlServer} from "./def/Definitions";
 import {faBiking, faWalking} from "@fortawesome/free-solid-svg-icons";
@@ -13,9 +13,13 @@ import {MdModeEditOutline, MdDeleteForever} from 'react-icons/md';
 import {IconContext} from 'react-icons'
 import FormEditReport from "./FormEditReport";
 import {useNavigate} from "react-router-dom";
-import {Alert, Toast} from "react-bootstrap";
+import {Accordion, Alert} from "react-bootstrap";
+import useAnnotationHook from "./coodinator/useAnnotationHook";
+import {urlify} from "./Tools/Urlify";
 
 function ModalReportDetail({id_report}) {
+
+    const [statesAnnotation, __, options, fetchAnnotation, addAnnotationComment, deleteAnnotationComment] = useAnnotationHook(id_report)
 
     const showEventDetail = useAppSelector((state) => state.states.modales.modal_event_detail)
     const [error, setError] = useState(null)
@@ -44,6 +48,7 @@ function ModalReportDetail({id_report}) {
     useEffect(
         () => {
             if (id_report) {
+                fetchAnnotation()
                 axios.get(urlServer + uriReport + id_report.toString() + '/', {withCredentials: true})
                     .then((response) => {
                         setReportDataDescription(response.data)
@@ -231,7 +236,7 @@ function ModalReportDetail({id_report}) {
                                                         }
                                                     </div>
                                                 </div>
-                                                <div className="container-fluid">
+                                                <div className="container-fluid mb-2">
                                                     <hr/>
                                                     <div className="row">
                                                         <div className="col-6">
@@ -251,6 +256,45 @@ function ModalReportDetail({id_report}) {
                                                         </div>
                                                     </div>
                                                 </div>
+                                                {!!statesAnnotation?.in_charge &&
+                                                <div className="container-fluid mb-2">
+                                                    <hr/>
+                                                    <div className="row mt-2 mb-2">
+                                                        <div className="col">
+                                                            Status : {options && translation[options.status[statesAnnotation.status].display_name]} <br />
+                                                            Resp. : {options && translation[options.in_charge[statesAnnotation.in_charge].display_name]}
+                                                        </div>
+                                                    </div>
+                                                    <div className="row">
+                                                        <div className="col">
+                                                            <Accordion>
+                                                                <Accordion.Item eventKey={id_report}>
+                                                                    <Accordion.Header>
+                                                                        Annotations {statesAnnotation?.comments?.length !== 0 && `(${statesAnnotation?.comments?.length})`}
+                                                                    </Accordion.Header>
+                                                                    <Accordion.Body>
+                                                                        {statesAnnotation?.comments?.map(row =>
+                                                                            <div className="row"
+                                                                                 key={"comment" + row.id}>
+                                                                                <div className="col-10">
+                                                                                    <div className="fw-light">
+                                                                                        {(new Date(row.date_modified)).toLocaleDateString() + " " + (new Date(row.date_modified)).toLocaleTimeString()}
+                                                                                    </div>
+                                                                                    <p className="text-justify">
+                                                                                        {urlify(row.comment)}
+                                                                                    </p>
+                                                                                </div>
+                                                                                <hr/>
+                                                                            </div>
+                                                                        )}
+                                                                    </Accordion.Body>
+                                                                </Accordion.Item>
+                                                            </Accordion>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                }
+
                                             </>
                                         )
                                     }

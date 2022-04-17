@@ -47,18 +47,15 @@ const ModalRanking = ({show, setShow, listReports, setHighlightReport}) => {
         setHighlightReport(lat, lng)
     }
 
-    const getReport = useCallback(async () => {
-        return axios.get(urlServer + '/api/report/', {withCredentials: true})
-            .then(response => setReports(response.data))
-            .then(() => orderBy('date_time'))
-            .catch(error => setErrorMsg(error.toString()))
-    }, [orderBy])
 
     useEffect(() => {
         if (show) {
-            getReport().then()
+            axios.get(urlServer + '/api/report/', {withCredentials: true})
+                .then(response => setReports(response.data))
+                .then(() => orderBy('date_time'))
+                .catch(error => setErrorMsg(error.toString()))
         }
-    }, [show, getReport])
+    }, [show])
 
     useEffect(() => {
         axios.get(urlServer + '/api/votes/stat/', {withCredentials: true})
@@ -117,68 +114,68 @@ const ModalRanking = ({show, setShow, listReports, setHighlightReport}) => {
                                             <div className="col">
                                                 <div className="row">
                                                     <div className="col">
-                                                    <div className="fs-6">
-                                                        <div className="text-uppercase fw-bold"
-                                                             key={"cat1-" + row.id.toString()}>
-                                                            {row.category_1}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="row">
-                                                    <div className="col-auto">
                                                         <div className="fs-6">
-                                                            <div className="">{row.category_2}</div>
+                                                            <div className="text-uppercase fw-bold"
+                                                                 key={"cat1-" + row.id.toString()}>
+                                                                {row.category_1}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="row">
+                                                        <div className="col-auto">
+                                                            <div className="fs-6">
+                                                                <div className="">{row.category_2}</div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className="col-auto">
-                                            <div className="fw-lighter text-end">
-                                                {row.date} <br/>
-                                                {row.time} <br/>
-                                                <IconContext.Provider
-                                                    value={{
-                                                        style: {
-                                                            verticalAlign: 'baseline',
-                                                            color: "green",
-                                                        }
-                                                    }}>
-                                                    <GrMapLocation
-                                                        size={25}
-                                                        onClick={() => showReportOnMap(row.latitude, row.longitude)}/>
-                                                </IconContext.Provider>
+                                            <div className="col-auto">
+                                                <div className="fw-lighter text-end">
+                                                    {row.date} <br/>
+                                                    {row.time} <br/>
+                                                    <IconContext.Provider
+                                                        value={{
+                                                            style: {
+                                                                verticalAlign: 'baseline',
+                                                                color: "green",
+                                                            }
+                                                        }}>
+                                                        <GrMapLocation
+                                                            size={25}
+                                                            onClick={() => showReportOnMap(row.latitude, row.longitude)}/>
+                                                    </IconContext.Provider>
+                                                </div>
                                             </div>
                                         </div>
+
+
                                     </div>
-
-
+                                </div>
+                                <div className="row">
+                                    <div className="col-12 text-justify fw-light mb-2">
+                                        {row.comment ? capitalize(row.comment) : null}
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-auto">
+                                        <Rating
+                                            name="simple-controlled"
+                                            value={row.votes_avg}
+                                            disabled={true}/>
+                                    </div>
+                                    <div className="col">
+                                        {row.votes_n ? row.votes_n : "0"} votes
+                                    </div>
                                 </div>
                             </div>
-                        <div className="row">
-                        <div className="col-12 text-justify fw-light mb-2">
-                    {row.comment ? capitalize(row.comment) : null}
-                        </div>
-                        </div>
-                        <div className="row">
-                        <div className="col-auto">
-                        <Rating
-                        name="simple-controlled"
-                        value={row.votes_avg}
-                        disabled={true}/>
-                        </div>
-                        <div className="col">
-                    {row.votes_n ? row.votes_n : "0"} votes
-                        </div>
-                        </div>
-                        </div>
                         )
-                        )}
+                    )}
 
-                        </div>
-                        </Modal.Body>
-                        </Modal>
-                        )
-                    }
+                </div>
+            </Modal.Body>
+        </Modal>
+    )
+}
 
-                    export default ModalRanking
+export default ModalRanking

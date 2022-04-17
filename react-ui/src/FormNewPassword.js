@@ -13,7 +13,7 @@ function FormNewPassword({pk, key_reset}) {
 
         if (!values.password) {
             errors.password = 'Requis';
-        } else if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/i.test(values.password)) {
+        } else if (! /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/.test(values.password)) {
             errors.password = 'Le mot de passe doit contenir au moins 8 caractères, au moins un chiffre et au moins une lettre.';
         }
 

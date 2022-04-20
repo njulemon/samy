@@ -12,6 +12,7 @@ import ConfirmReportSaved from "./ConfirmReportSaved";
 import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import ResetPassword from "./ResetPassword";
 import PageCoordinator from "./coodinator/PageCoordinator";
+import * as localforage from "localforage";
 
 require('dotenv').config()
 
@@ -30,6 +31,15 @@ function App() {
             axios.get(
                 urlServer + uriTranslationFr
             ).then((response) => dispatch(setNewReportFormTranslation(response.data)))
+
+            localforage.config({
+                driver: localforage.WEBSQL, // Force WebSQL; same as using setDriver()
+                name: 'samy',
+                version: 1.0,
+                size: 4980736, // Size of database, in bytes. WebSQL-only for now.
+                storeName: 'samy', // Should be alphanumeric, with underscores.
+                description: 'storing geojson'
+            });
         }, // eslint-disable-next-line react-hooks/exhaustive-deps
         []
     )
@@ -48,16 +58,16 @@ function App() {
 
     return (
         <div className="App">
-                <Routes>
-                    <Route path="/" element={<Login/>}/>
-                    <Route path="/R/login" element={<Login/>}/>
-                    <Route path="/R/reload" element={<ConfirmReportSaved/>}/>
-                    <Route path="/R/map" element={<MapWithMenu/>}/>
-                    <Route path="/R/no-redirection/reset-password/:pk/:key" element={<ResetPassword/>}/>
-                    <Route path="/R/wait" element={null}/>
-                    <Route path="/R/coordinator" element={<PageCoordinator />} />
-                </Routes>
-            </div>
+            <Routes>
+                <Route path="/" element={<Login/>}/>
+                <Route path="/R/login" element={<Login/>}/>
+                <Route path="/R/reload" element={<ConfirmReportSaved/>}/>
+                <Route path="/R/map" element={<MapWithMenu/>}/>
+                <Route path="/R/no-redirection/reset-password/:pk/:key" element={<ResetPassword/>}/>
+                <Route path="/R/wait" element={null}/>
+                <Route path="/R/coordinator" element={<PageCoordinator/>}/>
+            </Routes>
+        </div>
     );
 }
 

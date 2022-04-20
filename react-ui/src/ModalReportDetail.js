@@ -14,7 +14,7 @@ import {IconContext} from 'react-icons'
 import FormEditReport from "./FormEditReport";
 import {useNavigate} from "react-router-dom";
 import {Accordion, Alert} from "react-bootstrap";
-import useAnnotationHook from "./coodinator/useAnnotationHook";
+import useAnnotationHook from "./hooks/useAnnotationHook";
 import {urlify} from "./Tools/Urlify";
 
 function ModalReportDetail({id_report}) {

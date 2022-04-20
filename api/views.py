@@ -1,3 +1,5 @@
+import json
+
 import rest_framework.mixins
 from django.contrib.auth import authenticate, login as django_internal_login, logout
 from django.contrib.auth.hashers import make_password, check_password
@@ -18,7 +20,7 @@ from rest_framework.response import Response
 from templated_email import send_templated_mail
 
 from api import Tools
-from api.CustomPermissions import ActionBasedPermission, IsOwnerOrReadOnly, IsCoordinatorOrReadOnly
+from api.CustomPermissions import ActionBasedPermission, IsOwnerOrReadOnly, IsCoordinatorOrReadOnly, IsAdminOrReadOnly
 from api.MultiSerializerViewSet import MultiSerializerViewSet
 from api.enum import ReportUserType, map_category_1, map_category_2, ReportOperation
 from api.fr import report_form_fr, basic_terms
@@ -28,7 +30,7 @@ from api.serializers import ReportSerializer, VotesSerializer, UserSerializer, N
     CreateResetPasswordSerializer, UserPasswordSerializer, ReportImageSerializer, ReportSerializerHyperLink, \
     ReportImageSerializerNoUser, AuthorizedMailSerializerRead, AuthorizedMailSerializerWrite, UserSerializerHyperLink, \
     ReportAnnotationHyperLinkSerializer, AreaHyperLinkSerializer, ReportAnnotationSerializer, \
-    ReportAnnotationCommentSerializer, ReportAnnotationCommentHyperLinkSerializer
+    ReportAnnotationCommentSerializer, ReportAnnotationCommentHyperLinkSerializer, AreaSerializer, AreaSerializerName
 
 
 class VoteViewSetReport(viewsets.ModelViewSet):
@@ -234,7 +236,6 @@ class ReportViewSet(MultiSerializerViewSet):
 
         except DatabaseError:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 
 class ReportFormTree(viewsets.ViewSet):
@@ -574,9 +575,19 @@ class ReportAnnotationCommentViewSet(MultiSerializerViewSet):
 
 
 class AreaViewSet(viewsets.ModelViewSet):
+    """
+    get the areas (communes).
+    """
     queryset = Area.objects.all()
     serializer_class = AreaHyperLinkSerializer
-    parser_classes = [MultiPartParser]
+    parser_classes = [MultiPartParser, JSONParser]
 
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsAdminOrReadOnly]
     authentication_classes = [SessionAuthentication]
+
+    @action(methods=['get'], detail=False)
+    def active(self, request):
+
+        areas = Area.objects.filter(active=True).all()
+
+        return Response(AreaSerializerName(instance=areas, many=True).data)

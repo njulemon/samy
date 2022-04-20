@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import {useAppSelector} from "../app/hooks";
 import {PatchCsrf} from "../api/Csrf";
-import useAnnotationHook from "./useAnnotationHook";
+import useAnnotationHook from "../hooks/useAnnotationHook";
 import {Accordion} from "react-bootstrap";
 import {MdDeleteForever} from "react-icons/md";
 import {IconContext} from "react-icons";

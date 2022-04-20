@@ -52,6 +52,20 @@ class AreaHyperLinkSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
+class AreaSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Area
+        fields = '__all__'
+
+
+class AreaSerializerName(serializers.ModelSerializer):
+
+    class Meta:
+        model = Area
+        fields = ['name']
+
+
 class ReportImageSerializerNoUser(serializers.ModelSerializer):
     class Meta:
         model = ReportImage

@@ -73,7 +73,7 @@ const Unassigned = () => {
 
                                             <div className="row">
                                                 <div className="col-12 col-lg-6">
-                                                    <MiniMap lat={row.latitude} lng={row.longitude} zoom={15}
+                                                    <MiniMap lat={row.latitude} lng={row.longitude} zoom={12}
                                                              id={row.id}/>
                                                 </div>
                                                 <div className="col-12 col-lg-6">

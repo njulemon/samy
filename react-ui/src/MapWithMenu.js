@@ -26,6 +26,8 @@ import {faStar} from "@fortawesome/free-regular-svg-icons/faStar";
 import ModalRanking from "./ModalRanking";
 import {faToolbox} from "@fortawesome/free-solid-svg-icons/faToolbox";
 import {useNavigate} from "react-router-dom";
+import {useAreaHook} from "./hooks/useAreaHook";
+import ModalOutOfArea from "./ModalOutOfArea";
 
 let DefaultIcon = L.divIcon({className: 'circle', iconSize: [20, 20]});
 let HereDot = L.divIcon({className: 'circle-here', iconSize: [20, 20]});
@@ -33,6 +35,38 @@ let HighlightDot = L.divIcon({className: 'highlight-dot', iconSize: [20, 20]});
 const newMarkerIcon = L.icon({iconUrl: icon, shadowUrl: iconShadow, iconAnchor: new Point(12, 41)})
 
 L.Marker.prototype.options.icon = DefaultIcon;
+
+const styleCommmunes = (feature) => {
+
+    switch (feature.properties.active) {
+        case true:
+            return {
+                stroke: true,
+                color: '#376eee',
+                weight: 2,
+                fillOpacity: 0.1,
+                fill: true,
+                fillColor: '#3b66e8',
+                smoothFactor: 1.0,
+                lineJoin: 'round'
+            }
+        case false:
+            return {
+                stroke: false,
+                color: '#32cd3a',
+                fillOpacity: 0.15,
+                fill: true,
+                fillColor: '#d20c68',
+                smoothFactor: 1.0,
+                lineJoin: 'round'
+            }
+    }
+}
+
+const filterCommuneNotActive = geoJsonFeature => {
+    return geoJsonFeature.properties.active
+}
+
 
 function MapWithMenu() {
 
@@ -51,6 +85,8 @@ function MapWithMenu() {
     const [showModalRanking, setShowModalRanking] = useState(false)
     const [showModalCoordinator, setShowModalCoordinator] = useState(false)
 
+    const [showModalOutOfArea, setShowModalOutOfArea] = useState(false)
+
     // allow access to global states (eg 'isLogged')
     const dispatch = useAppDispatch()
 
@@ -60,12 +96,17 @@ function MapWithMenu() {
 
     // marker for new reports
     const new_report_marker = useRef(null)
+    const lastRerportMarkerCoordinates = useRef(null)
 
     // list of the marker to keep in memory to delete -> update the map.
     const listMarkers = useRef([]);
 
     // dot showing current location
     const you_are_here_dot = useRef(new Marker(new LatLng(0, 0)));
+
+    // boundary communes
+    const areaHook = useAreaHook()
+    const layerCommune = useRef()
 
     const navigate = useNavigate();
 
@@ -144,20 +185,51 @@ function MapWithMenu() {
 
         console.log("addNewMarker")
         if (map.current) {
+
             let center = map.current.getCenter()
-            if (new_report_marker.current) {
-                map.current?.removeLayer(new_report_marker.current)
-            }
-            new_report_marker.current = L.marker(center, {icon: newMarkerIcon, draggable: true}).addTo(map.current)
-            new_report_marker.current.on('click', () => {
-                dispatch(showNewReportModal())
-                dispatch(setCoordinatesNewReport(
-                    {
+
+
+            if (areaHook.isMarkerInsideActivePolygon(center)) {
+
+                // delete current marker
+                if (new_report_marker.current) {
+                    map.current?.removeLayer(new_report_marker.current)
+                }
+
+                // add it
+                new_report_marker.current = L.marker(center, {icon: newMarkerIcon, draggable: true}).addTo(map.current)
+
+                // set callback click
+                new_report_marker.current.on('click', () => {
+                    dispatch(showNewReportModal())
+                    dispatch(setCoordinatesNewReport(
+                        {
+                            latitude: new_report_marker.current?.getLatLng().lat,
+                            longitude: new_report_marker.current?.getLatLng().lng
+                        }
+                    ))
+                })
+
+                new_report_marker.current.on('dragstart', () => {
+                    lastRerportMarkerCoordinates.current = {
                         latitude: new_report_marker.current?.getLatLng().lat,
                         longitude: new_report_marker.current?.getLatLng().lng
                     }
-                ))
-            })
+                })
+
+                new_report_marker.current.on('dragend', () => {
+                    if (!areaHook.isMarkerInsideActivePolygon(new_report_marker.current.getLatLng())) {
+                        new_report_marker.current.setLatLng(
+                            new LatLng(lastRerportMarkerCoordinates.current.latitude,
+                                lastRerportMarkerCoordinates.current.longitude)
+                        )
+                        setShowModalOutOfArea(true)
+                    }
+                })
+            } else {
+                setShowModalOutOfArea(true)
+            }
+
         }
     }
 
@@ -200,13 +272,13 @@ function MapWithMenu() {
 
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | Samy v-1.1.6.3 by GRACQ WB'
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | Samy v-1.1.6.4 by GRACQ WB'
             }).addTo(map.current);
 
             L.control.attribution({position: 'bottomleft'}).addTo(map.current);
 
             // update of stored coordinates & zoom each time user navigate though map
-            map.current.on('zoomend', onMapZoom);
+            map.current.on('zoomend', onMapZoom)
             map.current.on('moveend', onMapZoom)
 
             // we trigger the fact that map has been created.
@@ -275,6 +347,21 @@ function MapWithMenu() {
         [idReportDetail, dispatch]
     )
 
+    useEffect(() => {
+        if (mapCreated && !!areaHook.communesGeoJson) {
+            layerCommune.current = L.geoJSON(
+                areaHook.communesGeoJson,
+                {
+                    style: styleCommmunes,
+                    filter: filterCommuneNotActive,
+                    interactive: false,
+                    bubblingMouseEvents: false
+                })
+                .addTo(map.current)
+        }
+
+    }, [areaHook.communesGeoJson, mapCreated])
+
     return (
         <div className="container-map">
 
@@ -283,7 +370,12 @@ function MapWithMenu() {
                 :
                 null
             }
-            <ModalNewReport />
+            <ModalNewReport/>
+
+            <ModalOutOfArea
+            show={showModalOutOfArea}
+            setShow={setShowModalOutOfArea}
+            />
 
             <ModalRanking
                 show={showModalRanking}

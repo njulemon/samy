@@ -1,5 +1,5 @@
 import MiniMap from "./MiniMap";
-import ImageReport from "../ImageReport";
+import ImageReport from "../map/ImageReport";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {urlServer} from "../def/Definitions";
@@ -22,7 +22,7 @@ const ReportFollowUp = ({reportPk}) => {
 
     return (
         <>
-            <h5>{capitalize(_[report?.category_1])} <span className="fw-normal">[{report?.id}]</span> </h5>
+            <h5>{capitalize(_[report?.category_1])} <span className="fw-normal">[{report?.id}]</span></h5>
             <h6>{capitalize(_[report?.category_2])}</h6>
 
             <hr/>
@@ -46,7 +46,7 @@ const ReportFollowUp = ({reportPk}) => {
                             <div className="col">
                                 <MiniMap lat={report?.latitude}
                                          lng={report?.longitude}
-                                         zoom={16}
+                                         zoom={12}
                                          id={report?.id}/>
                             </div>
 
@@ -69,7 +69,10 @@ const ReportFollowUp = ({reportPk}) => {
                 Localité : {report?.annotation.area.name}
             </p>
 
-            <EditStatusForm urlAnnotation={report?.annotation.url}/>
+            <EditStatusForm
+                // urlAnnotation={report?.annotation.url}
+                reportPk={reportPk}
+            />
         </>
     )
 }

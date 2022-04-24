@@ -10,7 +10,7 @@ const ReportAnnotationForm = ({reportPk, close}) => {
     const [done, setDone] = useState(false)
 
     useEffect(() => {
-        axios.get(urlServer + '/api/area/', {withCredentials: true})
+        axios.get(urlServer + '/api/area/active/', {withCredentials: true})
             .then(response => {
                 setFormChoices(response.data.map(row => {
                     return {value: row.id, name: row.name}
@@ -35,7 +35,7 @@ const ReportAnnotationForm = ({reportPk, close}) => {
                     return errors;
                 }}
                 onSubmit={(values, {setSubmitting}) => {
-                    const data = {area: values.area}
+                    const data = {area: values.area, status: 2}
                     PostCsrf(urlServer + `/api/report/new-annotation/?pk_report=${reportPk}`, data)
                         .then(() => {
                             setDone(true)

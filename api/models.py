@@ -96,7 +96,11 @@ class ReportAnnotationComment(models.Model):
 
 
 class Area(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, unique=True)
+    active = models.BooleanField(default=False)
+    boundary = models.JSONField(default=dict)
+    latitude = models.FloatField(default=0.0)
+    longitude = models.FloatField(default=0.0)
 
     def __str__(self):
         return f'{self.name}'

@@ -5,7 +5,7 @@ import AlertAutoHide from "./AlertAutoHide";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowsRotate} from "@fortawesome/free-solid-svg-icons/faArrowsRotate";
 import {useAppSelector} from "../app/hooks";
-import ImageReport from "../ImageReport";
+import ImageReport from "../map/ImageReport";
 import ReportAnnotationForm from "./ReportAnnotationForm";
 import MiniMap from "./MiniMap";
 import {capitalize} from "../Tools/String";
@@ -73,7 +73,7 @@ const Unassigned = () => {
 
                                             <div className="row">
                                                 <div className="col-12 col-lg-6">
-                                                    <MiniMap lat={row.latitude} lng={row.longitude} zoom={15}
+                                                    <MiniMap lat={row.latitude} lng={row.longitude} zoom={12}
                                                              id={row.id}/>
                                                 </div>
                                                 <div className="col-12 col-lg-6">

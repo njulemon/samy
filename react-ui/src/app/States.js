@@ -38,7 +38,9 @@ export const stateSlice = createSlice({
 
         translation: {},
 
-        user: {}
+        user: {},
+
+        communesGeoJson: null
     },
 
     reducers: {
@@ -106,6 +108,9 @@ export const stateSlice = createSlice({
         // after reloading, map set back reload to its original value.
         setReloadIsDone: (state) => {
             state.reload = false
+        },
+        setCommunesGeoJson: (state, action) => {
+            state.communesGeoJson = action.payload
         }
     }
 })
@@ -127,23 +132,30 @@ export const {
     setUser,
     setReportDetailNotes,
     reload,
-    setReloadIsDone
+    setReloadIsDone,
+    setCommunesGeoJson
 } = stateSlice.actions
 
 // ---------------------------------------------//
 //      ASYNC REDUCERS (Middleware : Thunk)
 // ---------------------------------------------//
 
+
 export const checkAccessAndGetUser = () => async dispatch => {
-    const response = await axios.get(
-        urlServer + uriGetUser,
-        {withCredentials: true})
-    if (response.status === 200) {
-        dispatch(setUser(response.data))
-        dispatch(giveAccess())
-    } else {
+    try {
+        const response = await axios.get(
+            urlServer + uriGetUser,
+            {withCredentials: true})
+        if (response.status === 200) {
+            dispatch(setUser(response.data))
+            dispatch(giveAccess())
+        } else {
+            dispatch(denyAccess())
+        }
+    } catch (err) {
         dispatch(denyAccess())
     }
+
 }
 
 export function updateNotes(id_report) {

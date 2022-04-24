@@ -5,6 +5,7 @@ import FollowUp from "./FollowUp";
 import {useEffect, useState} from "react";
 import {checkAccessAndGetUser} from "../app/States";
 import {useAppDispatch, useAppSelector} from "../app/hooks";
+import MenuLeft from "./MenuLeft";
 
 
 const PageCoordinator = () => {
@@ -50,10 +51,19 @@ const PageCoordinator = () => {
                                 <div className="container-fluid">
                                     <div className="row">
                                         <div className="col-auto pt-4">
-                                            <Info />
+                                            <div className="row pb-2">
+                                                <div className="col">
+                                                    <Info/>
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col">
+                                                    <MenuLeft/>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div className="col pt-4">
-                                            <Unassigned />
+                                            <Unassigned/>
                                         </div>
                                     </div>
                                 </div>
@@ -62,10 +72,19 @@ const PageCoordinator = () => {
                                 <div className="container-fluid">
                                     <div className="row">
                                         <div className="col-auto pt-4">
-                                            <Info/>
+                                            <div className="row pb-2">
+                                                <div className="col">
+                                                    <Info/>
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col">
+                                                    <MenuLeft/>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div className="col pt-4">
-                                            <FollowUp />
+                                            <FollowUp/>
                                         </div>
                                     </div>
                                 </div>

@@ -29,6 +29,9 @@ class CustomUserAdmin(UserAdmin):
     ordering = ('email',)
 
 
+class AreaAdmin(admin.ModelAdmin):
+    search_fields = ('name',)
+
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Report)
 admin.site.register(Votes)
@@ -36,6 +39,6 @@ admin.site.register(KeyValidator)
 admin.site.register(RestPassword)
 admin.site.register(ReportImage)
 admin.site.register(AuthorizedMail)
-admin.site.register(Area)
+admin.site.register(Area, AreaAdmin)
 admin.site.register(ReportAnnotation)
 admin.site.register(ReportAnnotationComment)

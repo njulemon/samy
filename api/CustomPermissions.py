@@ -46,6 +46,28 @@ class IsCoordinatorOrReadOnly(permissions.BasePermission):
             return False
 
 
+class IsAdminOrReadOnly(permissions.BasePermission):
+    """
+    Allow coordinator to access dangerous method and
+    other users to view them.
+    """
+
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated
+
+    def has_object_permission(self, request, view, obj):
+        # Read permissions are allowed to any request,
+        # so we'll always allow GET, HEAD or OPTIONS requests.
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        # We just check if request user is staff.
+        try:
+            return request.user.is_staff
+        except:
+            return False
+
+
 class ActionBasedPermission(AllowAny):
     """
     Grant or deny access to a view, based on a mapping in view.action_permissions

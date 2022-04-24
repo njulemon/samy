@@ -13,7 +13,7 @@ const FollowUp = ({areas}) => {
     useEffect(() => {
         axios.get(urlServer + '/api/report/', {withCredentials: true})
             .then((response) => setReports(
-                response.data.filter(row => user.coordinator_area.includes(row.annotation.area.name))
+                response.data.filter(row => user.coordinator_area.includes(row.annotation?.area.name))
             ))
     }, [])
 

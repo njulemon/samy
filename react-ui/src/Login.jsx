@@ -5,8 +5,8 @@ import {PostCsrf} from "./api/Csrf";
 import {checkAccessAndGetUser, denyAccess} from "./app/States";
 import {useEffect, useState} from "react";
 import {logout} from "./api/Access";
-import RegisterModal from "./RegisterModal";
-import ModalResetPassword from "./ModalResetPassword";
+import ModalResetPassword from "./register_password/ModalResetPassword";
+import MenuNavAndFooter from "./MenuNavAndFooter";
 
 function Login() {
 
@@ -51,7 +51,7 @@ function Login() {
     }
 
     // modal to register.
-    const [showRegisterModal, setShowRegisterModal] = useState(false)
+    // const [showRegisterModal, setShowRegisterModal] = useState(false)
 
     // modal to reset password.
     const [showResetPasswordModal, setShowResetPasswordModal] = useState(false)
@@ -65,13 +65,20 @@ function Login() {
 
     // @ts-ignore
     return (
-        <>
-            <RegisterModal setShowModal={setShowRegisterModal} showModal={showRegisterModal} />
-            <ModalResetPassword setShowModal={setShowResetPasswordModal} showModal={showResetPasswordModal} />
-            <div className=" container-fluid fill-height">
+        // <div className="container-fluid m-0 p-0">
+        <MenuNavAndFooter>
+            {/*<RegisterModal setShowModal={setShowRegisterModal} showModal={showRegisterModal}/>*/}
+
+            <ModalResetPassword setShowModal={setShowResetPasswordModal} showModal={showResetPasswordModal}/>
+
+            {/*<NavbarSamy setShowRegisterModal={setShowRegisterModal}/>*/}
+
+
+
+            <div className="container-fluid container-login-scroll">
                 <div className="row login-vertical-center">
                     <div className="col"></div>
-                    <div className="col-xxl-3 col-xl-4 col-lg-5 col-md-6 col-sm-8 col-xs-10">
+                    <div className="col-xxl-4 col-xl-4 col-lg-5 col-md-6 col-sm-8 col-xs-10">
                         <div className="card shadow-lg rounded-lg bg-transparent">
                             <div className="card-body bg-transparent">
                                 <div className="container-fluid">
@@ -138,10 +145,11 @@ function Login() {
                                     <div className="row">
 
                                         <div className='col col-xs-6 text-left'>
-                                            <a onClick={() => setShowResetPasswordModal(true)} href="#"> Mot de passe oublié ?</a>
+                                            <a onClick={() => setShowResetPasswordModal(true)} href="#"> Mot de passe
+                                                oublié ?</a>
                                         </div>
                                         <div className="col col-xs-6 text-right">
-                                            <a onClick={() => setShowRegisterModal(true)} href="#">S'enregistrer</a>
+                                            {/*<a onClick={() => setShowRegisterModal(true)} href="#">S'enregistrer</a>*/}
                                         </div>
                                     </div>
                                 </div>
@@ -150,8 +158,11 @@ function Login() {
                     </div>
                     <div className="col"></div>
                 </div>
+                <div className="row p-4">
+                </div>
             </div>
-        </>
+            {/*<FooterSamy/>*/}
+        </MenuNavAndFooter>
     )
 }
 

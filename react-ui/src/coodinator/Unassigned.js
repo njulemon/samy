@@ -5,7 +5,7 @@ import AlertAutoHide from "./AlertAutoHide";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowsRotate} from "@fortawesome/free-solid-svg-icons/faArrowsRotate";
 import {useAppSelector} from "../app/hooks";
-import ImageReport from "../ImageReport";
+import ImageReport from "../map/ImageReport";
 import ReportAnnotationForm from "./ReportAnnotationForm";
 import MiniMap from "./MiniMap";
 import {capitalize} from "../Tools/String";

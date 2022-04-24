@@ -61,7 +61,7 @@ class IsAdminOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        # Instance must have an attribute named `owner`.
+        # We just check if request user is staff.
         try:
             return request.user.is_staff
         except:

@@ -142,15 +142,20 @@ export const {
 
 
 export const checkAccessAndGetUser = () => async dispatch => {
-    const response = await axios.get(
-        urlServer + uriGetUser,
-        {withCredentials: true})
-    if (response.status === 200) {
-        dispatch(setUser(response.data))
-        dispatch(giveAccess())
-    } else {
+    try {
+        const response = await axios.get(
+            urlServer + uriGetUser,
+            {withCredentials: true})
+        if (response.status === 200) {
+            dispatch(setUser(response.data))
+            dispatch(giveAccess())
+        } else {
+            dispatch(denyAccess())
+        }
+    } catch (err) {
         dispatch(denyAccess())
     }
+
 }
 
 export function updateNotes(id_report) {

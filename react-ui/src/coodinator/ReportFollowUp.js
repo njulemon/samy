@@ -1,5 +1,5 @@
 import MiniMap from "./MiniMap";
-import ImageReport from "../ImageReport";
+import ImageReport from "../map/ImageReport";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {urlServer} from "../def/Definitions";
@@ -46,7 +46,7 @@ const ReportFollowUp = ({reportPk}) => {
                             <div className="col">
                                 <MiniMap lat={report?.latitude}
                                          lng={report?.longitude}
-                                         zoom={16}
+                                         zoom={12}
                                          id={report?.id}/>
                             </div>
 

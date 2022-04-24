@@ -12,6 +12,8 @@ export const useAreaHook = () => {
     const dispatch = useAppDispatch()
     const communesGeoJson = useAppSelector((state) => state.states.communesGeoJson)
     const [communesGeoJsonRaw, setCommunesGeoJsonRaw] = useState(null)
+    // once data is loaded into memory (from DB or from fetching and filter with active commune only).
+    const [isLoaded, setIsLoaded] = useState(false)
 
     useEffect(() => {
         if (!communesGeoJson) {
@@ -24,6 +26,12 @@ export const useAreaHook = () => {
             })
         }
     }, [])
+
+    useEffect(() => {
+        if (!!communesGeoJson) {
+            setIsLoaded(true)
+        }
+    }, [communesGeoJson])
 
     useEffect(() => {
 
@@ -94,10 +102,11 @@ export const useAreaHook = () => {
                 const featuresCollection = {"type": "FeatureCollection", "features": features}
                 setCommunesGeoJsonRaw(featuresCollection)
                 localforage.setItem('communesGeoJson', featuresCollection)
+                setIsLoaded(true)
             })
     }
 
-    return {communesGeoJson, fetchFeatureSelection, isMarkerInsideActivePolygon}
+    return {communesGeoJson, fetchFeatureSelection, isMarkerInsideActivePolygon, isLoaded}
 }
 
 

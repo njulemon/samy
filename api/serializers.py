@@ -63,7 +63,7 @@ class AreaSerializerName(serializers.ModelSerializer):
 
     class Meta:
         model = Area
-        fields = ['name']
+        fields = ['id', 'name']
 
 
 class ReportImageSerializerNoUser(serializers.ModelSerializer):

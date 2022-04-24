@@ -20,16 +20,25 @@ def load_communes(apps, schema_editor):
             ordered[name_french]["properties"]["name"] = name_french
 
     for name in sorted(ordered.keys()):
-        try:
-            Area.objects.get(name=name)
-        except ObjectDoesNotExist:
-            Area.objects.create(
-                name=name,
-                active=False,
-                boundary=ordered[name],
-                latitude=sum([coor[0] for coor in ordered[name]["geometry"]["coordinates"][0][0]]) / len(ordered[name]["geometry"]["coordinates"][0][0]),
-                longitude = sum([coor[1] for coor in ordered[name]["geometry"]["coordinates"][0][0]]) / len(ordered[name]["geometry"]["coordinates"][0][0])
-            )
+        if ordered[name]["properties"]["LangCode"] != "D":
+            try:
+                area = Area.objects.get(name=name)
+                area.boundary = ordered[name]
+                area.latitude = sum([coor[0] for coor in ordered[name]["geometry"]["coordinates"][0][0]]) \
+                                / len(ordered[name]["geometry"]["coordinates"][0][0]),
+                area.longitude = sum([coor[1] for coor in ordered[name]["geometry"]["coordinates"][0][0]]) \
+                                 / len(ordered[name]["geometry"]["coordinates"][0][0])
+                area.save()
+            except ObjectDoesNotExist:
+                Area.objects.create(
+                    name=name,
+                    active=False,
+                    boundary=ordered[name],
+                    latitude=sum([coor[0] for coor in ordered[name]["geometry"]["coordinates"][0][0]]) / len(
+                        ordered[name]["geometry"]["coordinates"][0][0]),
+                    longitude=sum([coor[1] for coor in ordered[name]["geometry"]["coordinates"][0][0]]) / len(
+                        ordered[name]["geometry"]["coordinates"][0][0])
+                )
 
 
 class Migration(migrations.Migration):

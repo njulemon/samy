@@ -1,16 +1,19 @@
 // Override default variables before the import
 
-$primary: rgb(63, 134, 24);
-$secondary: rgb(146, 146, 146);
+$primary: #003049;
+$secondary: #f77f00;
+$tertiary: #d62828;
 $success: rgb(57, 144, 65);
 $info: rgb(64, 209, 224);
 $warning: rgb(234, 210, 53);
 $danger: rgb(226, 5, 5);
-$light: rgb(248, 248, 248);
+$light: rgba(103, 136, 210, 0.66);
 $dark: rgb(0, 0, 0);
+$primary-light: rgba(103, 136, 210, 0.66);
+$primary-lighter: rgba(172, 195, 243, 0.29);
 
-$gradient: linear-gradient(-10deg, $primary, rgba(110, 187, 23, 0.32));
-$input-bg: rgb(222, 248, 217);
+$gradient: linear-gradient(-5deg, $primary-light, $primary-light, $primary-light, $primary);
+$input-bg: $primary-lighter;
 
 // Import Bootstrap and its default variables
 @import '~bootstrap/scss/bootstrap.scss';
@@ -55,7 +58,8 @@ html {
 }
 
 body {
-  background-image: var(--bs-gradient);
+  //background-image: var(--bs-gradient);
+  background-color: $primary;
   height: 100%;
   width: 100vw;
   margin: 0;
@@ -248,4 +252,80 @@ $gradient-background-coordinator-c2: rgb(255, 255, 255);
   height: 200px;
   width: 100%;
   overflow-y: scroll;
+}
+
+.logo-samy-navbar {
+  color: white;
+}
+
+
+.logo-gracq-footer {
+  border-radius: 70px;
+  width: 7em;
+}
+
+.parent-container-scroll {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+}
+
+.container-login-scroll {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  background-image: var(--bs-gradient);
+}
+
+.container-wait {
+  //position: relative;
+  height: 100%;
+  width: 100%;
+  background-image: var(--bs-gradient);
+}
+
+.footer {
+  min-height: 20px;
+  margin-top:auto;
+  background-color: $primary;
+  color: white;
+  text-align: center;
+  //position: fixed;
+  //left: 0;
+  //bottom: 0;
+  //width: 100%;
+  //background-color: $primary;
+  //color: white;
+  //text-align: center;
+}
+
+.link-white {
+  color: white;
+}
+
+.link-white:hover {
+  color: $light;
+}
+
+.main-page-footer-header {
+  display: flex;
+  flex-direction: column;
+  height: 95vh;
+}
+
+.icon-inline {
+  display: inline; /* the default for span */
+  width: 30px;
+  height: 30px;
+  padding: 3px;
+  background-color: yellow;
+}
+
+.picture-page-vert {
+  max-width: 350px;
+}
+
+.picture-page-hor {
+  max-width: 400px;
 }

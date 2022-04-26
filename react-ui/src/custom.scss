@@ -247,6 +247,16 @@ $gradient-background-coordinator-c2: rgb(255, 255, 255);
   filter: drop-shadow(0 0 1px rgba(231, 45, 45, 0.49)) brightness(95%);
 }
 
+
+.link-icon {
+  color: #466ad4;
+  vertical-align: text-top;
+}
+
+.link-icon:hover {
+  filter: drop-shadow(0 0 2px #466ad4) brightness(90%);
+}
+
 .container-scroll {
   position: relative;
   height: 200px;

@@ -17,6 +17,7 @@ import Wait from "./Wait";
 import MapWaitSwitch from "./map/MapWaitSwitch";
 import Who from "./Who";
 import Features from "./Features";
+import ReportFullScreen from "./ReportFullScreen";
 
 require('dotenv').config()
 
@@ -77,6 +78,7 @@ function App() {
                 <Route path="/R/no-redirection/reset-password/:pk/:key" element={<ResetPassword/>}/>
                 <Route path="/R/wait" element={<Wait/>}/>
                 <Route path="/R/coordinator" element={<PageCoordinator/>}/>
+                <Route path="/R/no-redirection/report/:idReport" element={<ReportFullScreen/>}/>
             </Routes>
         </div>
     );

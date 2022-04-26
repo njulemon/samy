@@ -1,4 +1,3 @@
-import {Tab, Nav} from "react-bootstrap";
 import Info from "./Info";
 import Unassigned from "./Unassigned";
 import FollowUp from "./FollowUp";
@@ -6,12 +5,18 @@ import {useEffect, useState} from "react";
 import {checkAccessAndGetUser} from "../app/States";
 import {useAppDispatch, useAppSelector} from "../app/hooks";
 import MenuLeft from "./MenuLeft";
+import ContainerMenuLeft from "./ContainerMenuLeft";
+import {useReportFilter} from "../hooks/useReportFilter";
 
 
 const PageCoordinator = () => {
 
     const dispatch = useAppDispatch()
     const [activeTab, setActiveTab] = useState("unassigned")  // followup
+
+    const user = useAppSelector(state => state.states.user)
+
+    const reportFilterHook = useReportFilter(user.coordinator_area)
 
     useEffect(
         () => {
@@ -48,46 +53,16 @@ const PageCoordinator = () => {
                     {
                         {
                             "unassigned": (
-                                <div className="container-fluid">
-                                    <div className="row">
-                                        <div className="col-auto pt-4">
-                                            <div className="row pb-2">
-                                                <div className="col">
-                                                    <Info/>
-                                                </div>
-                                            </div>
-                                            <div className="row">
-                                                <div className="col">
-                                                    <MenuLeft/>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col pt-4">
-                                            <Unassigned/>
-                                        </div>
-                                    </div>
-                                </div>
+                                <ContainerMenuLeft reportFilterHook={reportFilterHook}>
+                                    <Unassigned/>
+                                </ContainerMenuLeft>
+
                             ),
                             "followup": (
-                                <div className="container-fluid">
-                                    <div className="row">
-                                        <div className="col-auto pt-4">
-                                            <div className="row pb-2">
-                                                <div className="col">
-                                                    <Info/>
-                                                </div>
-                                            </div>
-                                            <div className="row">
-                                                <div className="col">
-                                                    <MenuLeft/>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col pt-4">
-                                            <FollowUp/>
-                                        </div>
-                                    </div>
-                                </div>
+                                <ContainerMenuLeft reportFilterHook={reportFilterHook}>
+                                    <FollowUp reportFilterHook={reportFilterHook}/>
+                                </ContainerMenuLeft>
+
                             )
 
                         }[activeTab]

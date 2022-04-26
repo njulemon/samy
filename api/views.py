@@ -8,6 +8,7 @@ from django.db import transaction, DatabaseError
 from django.http import HttpResponse
 
 from django.views.decorators.csrf import csrf_protect
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, permissions, status, generics, views
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.decorators import api_view, parser_classes, permission_classes, authentication_classes, action
@@ -23,6 +24,7 @@ from api import Tools
 from api.CustomPermissions import ActionBasedPermission, IsOwnerOrReadOnly, IsCoordinatorOrReadOnly, IsAdminOrReadOnly
 from api.MultiSerializerViewSet import MultiSerializerViewSet
 from api.enum import ReportUserType, map_category_1, map_category_2, ReportOperation
+from api.filter import ReportFilter
 from api.fr import report_form_fr, basic_terms
 from api.models import Report, Votes, CustomUser, KeyValidator, RestPassword, ReportImage, AuthorizedMail, \
     ReportAnnotation, Area, ReportAnnotationComment
@@ -118,8 +120,14 @@ class ReportViewSet(MultiSerializerViewSet):
     Allowed usage : `list` all report, `get` one report, `create` report, `delete`, `put` report.
     """
 
+    filter_backends = [DjangoFilterBackend]
+
+    filterset_class = ReportFilter
+
     queryset = Report.objects.all()
+
     serializer_class = ReportSerializer
+
     serializers = {
         'default': ReportSerializer,
         'list': ReportSerializerHyperLink,
@@ -134,6 +142,8 @@ class ReportViewSet(MultiSerializerViewSet):
 
     permission_classes = [IsOwnerOrReadOnly]
     authentication_classes = [SessionAuthentication]
+
+
 
     # to get csrf token
     @action(methods=['get'], detail=False)
@@ -236,6 +246,8 @@ class ReportViewSet(MultiSerializerViewSet):
 
         except DatabaseError:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 
 
 class ReportFormTree(viewsets.ViewSet):

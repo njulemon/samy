@@ -11,7 +11,9 @@ export const useAreaHook = () => {
     // based on redux states
     const dispatch = useAppDispatch()
     const communesGeoJson = useAppSelector((state) => state.states.communesGeoJson)
+
     const [communesGeoJsonRaw, setCommunesGeoJsonRaw] = useState(null)
+
     // once data is loaded into memory (from DB or from fetching and filter with active commune only).
     const [isLoaded, setIsLoaded] = useState(false)
 

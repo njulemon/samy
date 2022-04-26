@@ -1,10 +1,21 @@
 import {Card, ListGroup} from "react-bootstrap";
 import {useAppSelector} from "../app/hooks";
 import avatar from '../images/avatar.png'
+import {useEffect, useState} from "react";
+import {urlServer} from "../def/Definitions";
+import axios from "axios";
 
 const Info = () => {
 
     const user = useAppSelector(state => state.states.user)
+
+    // list {id, name}
+    const [areas, setAreas] = useState()
+
+    useEffect(() => {
+        axios.get(urlServer + '/api/area/active/', {withCredentials: true})
+            .then((result) => {setAreas(result.data)})
+    }, [])
 
     return (
         <>
@@ -27,7 +38,7 @@ const Info = () => {
                         {user?.coordinator_area?.map(
                             row => (
                                 <ListGroup.Item key={row}>
-                                    {row}
+                                    {!!areas && areas.filter(item => item.id === row)[0].name}
                                 </ListGroup.Item>
                             )
                         )}

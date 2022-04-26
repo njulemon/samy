@@ -53,17 +53,25 @@ class AreaHyperLinkSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class AreaSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Area
         fields = '__all__'
 
 
 class AreaSerializerName(serializers.ModelSerializer):
-
     class Meta:
         model = Area
         fields = ['id', 'name']
+
+
+class ReportAnnotationNoBoundaryHyperLinkSerializer(serializers.HyperlinkedModelSerializer):
+    comments = ReportAnnotationCommentHyperLinkSerializer(many=True)
+    area = AreaSerializerName()
+
+    class Meta:
+        model = ReportAnnotation
+        depth = 1
+        fields = '__all__'
 
 
 class ReportImageSerializerNoUser(serializers.ModelSerializer):
@@ -73,7 +81,7 @@ class ReportImageSerializerNoUser(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    coordinator_area = serializers.StringRelatedField(many=True, read_only=True)
+    coordinator_area = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = CustomUser
@@ -145,7 +153,7 @@ class ReportSerializerHyperLink(serializers.HyperlinkedModelSerializer):
     image = serializers.HyperlinkedRelatedField(view_name='report-image-detail', read_only=True)
     image_pk = serializers.PrimaryKeyRelatedField(source='image', allow_null=True, read_only=True)
     id = serializers.IntegerField(read_only=True)
-    annotation = ReportAnnotationHyperLinkSerializer()
+    annotation = ReportAnnotationNoBoundaryHyperLinkSerializer()
 
     class Meta:
         model = Report

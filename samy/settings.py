@@ -59,7 +59,8 @@ INSTALLED_APPS = [
     'corsheaders',
     # 'api.apps.ApiConfig',
     'api',
-    'storages'
+    'storages',
+    'django_filters'
 ]
 
 MIDDLEWARE = [

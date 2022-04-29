@@ -1,4 +1,5 @@
 import json
+import os
 
 import rest_framework.mixins
 from django.contrib.auth import authenticate, login as django_internal_login, logout
@@ -322,7 +323,7 @@ class UserViewSet(viewsets.GenericViewSet, CreateModelMixin):
 
             send_templated_mail(
                 template_name='registered_confirmation',
-                from_email='nicolas.julemont@gmail.com',
+                from_email=os.environ["EMAIL_SOURCE"],
                 recipient_list=[ser.validated_data['email']],
                 context={
                     'first_name': user.first_name,

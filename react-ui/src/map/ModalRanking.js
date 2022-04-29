@@ -1,23 +1,28 @@
 import Modal from "react-bootstrap/Modal";
 import {useAppSelector} from "../app/hooks";
 import {capitalize} from "../Tools/String";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {urlServer} from "../def/Definitions";
 import {Rating} from "@mui/material";
 import {DropdownButton, Dropdown} from "react-bootstrap";
 import {IconContext} from 'react-icons'
 import {GrMapLocation} from 'react-icons/gr';
+import {useAreaListHook} from "../hooks/useAreaListHook";
 
 const ModalRanking = ({show, setShow, listReports, setHighlightReport}) => {
 
     const translation = useAppSelector((state) => state.states.translation)
     const [votes, setVotes] = useState([])
     const [reports, setReports] = useState([])
+    const [commune, setCommune] = useState(-1)
     const [errorMsg, setErrorMsg] = useState(null)
 
-    const orderBy = (criterion) => {
+    const areaListHook = useAreaListHook()
 
+    const orderBy = (criterion, votes) => {
+
+        // if any change happen
         const converter = (input) => {
             if (criterion === 'date_time') {
                 return input.getTime()
@@ -39,7 +44,7 @@ const ModalRanking = ({show, setShow, listReports, setHighlightReport}) => {
                 }
             })
 
-        setVotes(votesSorted)
+        return votesSorted
     }
 
     const showReportOnMap = (lat, lng) => {
@@ -47,21 +52,28 @@ const ModalRanking = ({show, setShow, listReports, setHighlightReport}) => {
         setHighlightReport(lat, lng)
     }
 
+    const handleChangeCommune = (value) => {
+        setCommune(value.target.value)
+    }
+
 
     useEffect(() => {
         if (show) {
             axios.get(urlServer + '/api/report/', {withCredentials: true})
                 .then(response => setReports(response.data))
-                .then(() => orderBy('date_time'))
                 .catch(error => setErrorMsg(error.toString()))
         }
     }, [show])
 
+
     useEffect(() => {
         axios.get(urlServer + '/api/votes/stat/', {withCredentials: true})
             .then(response => {
-                setVotes(reports
-                    .filter(row => (row.operation === "LOCALE"))
+                setVotes(orderBy('date_time', reports
+                    .filter(row => ((
+                        row.operation === "LOCALE")
+                        && (!!row.annotation)
+                        && (row.annotation?.area.id === Number(commune))))
                     .map(row => {
                         return {
                             category_1: capitalize(translation[row.category_1]),
@@ -78,9 +90,10 @@ const ModalRanking = ({show, setShow, listReports, setHighlightReport}) => {
                             longitude: row.longitude
                         }
                     })
-                )
+                ))
             })
-    }, [reports, translation])
+    }, [reports, translation, commune])
+
 
     return (
         <Modal
@@ -96,12 +109,42 @@ const ModalRanking = ({show, setShow, listReports, setHighlightReport}) => {
 
             <Modal.Body>
                 <div className="container-fluid">
-                    <div className="text-start mb-3">
-                        <DropdownButton id="dropdown-basic-button" variant="secondary" title="Trier par">
-                            <Dropdown.Item onClick={() => orderBy('date_time')}>Date</Dropdown.Item>
-                            <Dropdown.Item onClick={() => orderBy('votes_n')}>Nombre de votes</Dropdown.Item>
-                            <Dropdown.Item onClick={() => orderBy('votes_avg')}>Moyenne des votes</Dropdown.Item>
-                        </DropdownButton>
+                    <div className="row">
+
+                        <div className="col-auto">
+                            <div className="text-start mb-3">
+                                <select
+                                    className="form-control"
+                                    name="area"
+                                    onChange={handleChangeCommune}
+                                    value={commune}>
+
+                                    <option value="-1">
+                                        Choix commune
+                                    </option>
+
+                                    {areaListHook?.listAreas && areaListHook.listAreas.map(choice => (
+                                        <option key={choice.value} value={choice.value}>
+                                            {choice.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="col-auto">
+                            <div className="text-start mb-3">
+                                <DropdownButton id="dropdown-basic-button" variant="primary" title="Trier par">
+                                    <Dropdown.Item
+                                        onClick={() => setVotes(orderBy('date_time', votes))}>Date</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => setVotes(orderBy('votes_n', votes))}>Nombre de
+                                        votes</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => setVotes(orderBy('votes_avg', votes))}>Moyenne des
+                                        votes</Dropdown.Item>
+                                </DropdownButton>
+                            </div>
+                        </div>
+
                     </div>
 
                     {votes?.map(

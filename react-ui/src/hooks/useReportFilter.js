@@ -39,7 +39,7 @@ export const useReportFilter = (area) => {
         {
             status: [],  // list of ids
             dates: {
-                from: new Date(2000, 1, 1),
+                from: new Date(2022, 1, 1),
                 to: new Date()
             },
             area: []  // list of ids
@@ -83,6 +83,25 @@ export const useReportFilter = (area) => {
         setFilter({...filter, status: newStatus})
     }
 
+    const setDateFrom = (date) => {
+        if (!!date) {
+            setFilter({...filter, dates: {...filter.dates, from: date}})
+        }
+        else {
+            setFilter({...filter, dates: {...filter.dates, from: new Date(2022, 1, 1)}})
+        }
+
+    }
+
+    const setDateTo = (date) => {
+        if (!!date) {
+            setFilter({...filter, dates: {...filter.dates, to: date}})
+        }
+        else {
+            setFilter({...filter, dates: {...filter.dates, to: new Date()}})
+        }
+    }
+
     useEffect(() => {
         getOptions()
     }, [])
@@ -92,5 +111,5 @@ export const useReportFilter = (area) => {
         fetchReports()
     }, [filter])
 
-    return {reports, optionsStatus, filter, setArea, toggleStatus}
+    return {reports, optionsStatus, filter, setArea, toggleStatus, setDateFrom, setDateTo}
 }

@@ -409,7 +409,7 @@ function MapWithMenu({areaHook}) {
                                         <hr className="m-0 p-0"/>
                                         <div className="row m-0 p-0">
                                             <FontAwesomeIcon icon={faToolbox}
-                                                             className="new-icon mt-1 d-none d-md-block "
+                                                             className="new-icon mt-1 d-none d-lg-block "
                                                              onClick={() => navigate('/R/coordinator')}
                                                              fixedWidth/>
                                         </div>

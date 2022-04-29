@@ -36,5 +36,6 @@ db.sqlite3
 /static/rest_framework
 
 aws.zip
+aws_dev.zip
 
 **/*.swp

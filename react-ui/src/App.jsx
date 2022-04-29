@@ -1,6 +1,7 @@
 import "./custom.scss"
 import 'leaflet/dist/leaflet.css';
-import MapWithMenu from "./map/MapWithMenu";
+import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
 import Login from "./Login";
 import {useAppDispatch, useAppSelector} from "./app/hooks";
@@ -68,20 +69,20 @@ function App() {
 
     return (
         <div className="App">
-            <Routes>
-                <Route path="/" element={<Login/>}/>
-                <Route path="/R/menu/login" element={<Login/>}/>
-                <Route path="/R/menu/who" element={<Who/>}/>
-                <Route path="/R/menu/features" element={<Features/>}/>
-                <Route path="/R/reload" element={<ConfirmReportSaved/>}/>
-                <Route path="/R/map" element={<MapWaitSwitch/>}/>
-                <Route path="/R/no-redirection/reset-password/:pk/:key" element={<ResetPassword/>}/>
-                <Route path="/R/wait" element={<Wait/>}/>
-                <Route path="/R/coordinator" element={<PageCoordinator/>}/>
-                <Route path="/R/no-redirection/report/:idReport" element={<ReportFullScreen/>}/>
-            </Routes>
+                <Routes>
+                    <Route path="/" element={<Login/>}/>
+                    <Route path="/R/menu/login" element={<Login/>}/>
+                    <Route path="/R/menu/who" element={<Who/>}/>
+                    <Route path="/R/menu/features" element={<Features/>}/>
+                    <Route path="/R/reload" element={<ConfirmReportSaved/>}/>
+                    <Route path="/R/map" element={<MapWaitSwitch/>}/>
+                    <Route path="/R/no-redirection/reset-password/:pk/:key" element={<ResetPassword/>}/>
+                    <Route path="/R/wait" element={<Wait/>}/>
+                    <Route path="/R/coordinator" element={<PageCoordinator/>}/>
+                    <Route path="/R/no-redirection/report/:idReport" element={<ReportFullScreen/>}/>
+                </Routes>
         </div>
-    );
+);
 }
 
 export default App;

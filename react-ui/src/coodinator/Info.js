@@ -20,7 +20,7 @@ const Info = () => {
     return (
         <>
             <Card style={{width: '18rem'}}>
-                <Card.Img src={avatar}/>
+                {/*<Card.Img src={avatar}/>*/}
                 <Card.Body>
                     <Card.Text>
                         {`${user?.first_name} ${user?.last_name}`} <br/>

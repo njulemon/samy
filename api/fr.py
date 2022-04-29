@@ -23,7 +23,7 @@ report_form_fr = {
 
     # cat 2
     ReportCategory2.LANE_BORDER_NEED_TO_BE_LOWERED.name: "bordure sur piste cyclable trop abrupte",
-    ReportCategory2.LANE_HOLE.name: "trou dans la piste cyclable",
+    ReportCategory2.LANE_HOLE.name: "trou(s)",
     ReportCategory2.LANE_POOR_CONDITION.name: "piste cyclable en mauvais état",
     ReportCategory2.LANE_UNCLEAR_SIGNAGE.name: "signalisation incompréhensible",
     ReportCategory2.LANE_VANISHED_PAINT.name: "peinture effacée",
@@ -35,7 +35,7 @@ report_form_fr = {
     ReportCategory2.LANE_CROSSING_DANGEROUS.name: "croisement dangereux car mal aménagé",
     ReportCategory2.LANE_PRIORITY_NOT_RESPECTED_DANGEROUS.name: 'priorité cycliste peu respectée, dangereux',
     ReportCategory2.RACK_DAMAGED.name: 'Arceaux ou box vélo endommagé',
-    ReportCategory2.INCIDENT_GLASS_ON_LANE.name: "Présence de verre",
+    ReportCategory2.INCIDENT_GLASS_ON_LANE.name: "Présence régulière de verre",
     ReportCategory2.INCIDENT_NAILS_ON_LANE.name: "Présence de clou ou équivalent",
     ReportCategory2.ILLEGAL_PARKING.name: "Parking sauvage régulier",
 

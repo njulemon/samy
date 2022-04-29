@@ -169,13 +169,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 TEMPLATED_EMAIL_BACKEND = 'templated_email.backends.vanilla_django.TemplateBackend'
 
-EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587  # TLS
 EMAIL_USE_TLS = True
 EMAIL_TIMEOUT = 10
 try:
     EMAIL_HOST_USER = os.environ['SMTP_USERNAME']
     EMAIL_HOST_PASSWORD = os.environ['SMTP_PASSWORD']
+    EMAIL_HOST = os.environ["EMAIL_HOST"]
+    EMAIL_SOURCE = os.environ["EMAIL_SOURCE"]
 except KeyError:
     raise EnvironmentError('Email variables are not defined.')
 

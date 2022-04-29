@@ -26,7 +26,7 @@ const PageCoordinator = () => {
     )
 
     return (
-        <div className="container-fluid min-vh-100 w-100 background-coordinator p-4">
+        <div className="container-fluid vh-100 w-100 background-coordinator p-4">
             <h2>
                 Gestion des signalements
             </h2>
@@ -47,28 +47,25 @@ const PageCoordinator = () => {
                     </ul>
                 </div>
             </div>
-            <div className="row">
-                <div className="col-12">
 
-                    {
-                        {
-                            "unassigned": (
-                                <ContainerMenuLeft reportFilterHook={reportFilterHook}>
-                                    <Unassigned/>
-                                </ContainerMenuLeft>
+            {
+                {
+                    "unassigned": (
+                        <ContainerMenuLeft reportFilterHook={reportFilterHook}>
+                            <Unassigned/>
+                        </ContainerMenuLeft>
 
-                            ),
-                            "followup": (
-                                <ContainerMenuLeft reportFilterHook={reportFilterHook}>
-                                    <FollowUp reportFilterHook={reportFilterHook}/>
-                                </ContainerMenuLeft>
+                    ),
+                    "followup": (
+                        <ContainerMenuLeft reportFilterHook={reportFilterHook}>
+                            <FollowUp reportFilterHook={reportFilterHook}/>
+                        </ContainerMenuLeft>
 
-                            )
+                    )
 
-                        }[activeTab]
-                    }
-                </div>
-            </div>
+                }[activeTab]
+            }
+
         </div>
     )
 }

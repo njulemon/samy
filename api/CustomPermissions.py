@@ -68,6 +68,24 @@ class IsAdminOrReadOnly(permissions.BasePermission):
             return False
 
 
+class IsUser(permissions.BasePermission):
+    """
+    Object-level permission to only allow owners of an object to edit it.
+    Assumes the model instance has an `owner` attribute.
+    """
+
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated
+
+    def has_object_permission(self, request, view, obj):
+
+        # Instance is of type user
+        try:
+            return obj == request.user
+        except:
+            return False
+
+
 class ActionBasedPermission(AllowAny):
     """
     Grant or deny access to a view, based on a mapping in view.action_permissions

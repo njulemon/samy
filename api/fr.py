@@ -1,5 +1,5 @@
 from api.enum import ReportUserType, ReportCategory1, ReportCategory2, BasicTerm, ReportOperation, InCharge, \
-    ReportStatus
+    ReportStatus, Notifications
 
 report_form_fr = {
     # TODO : this list should be general, not related to form only. Change the name.
@@ -51,7 +51,12 @@ report_form_fr = {
     ReportStatus.RS_REPORTED_TO_AUTHORITIES.name: "Signalé aux autorités",
     ReportStatus.RS_NOT_RELEVANT.name: "Classé sans suite",
     ReportStatus.RS_REPORT_IN_PROGRESS.name: "Intégration dans un rapport",
-    ReportStatus.RS_SOLVED.name: "Solutionné"
+    ReportStatus.RS_SOLVED.name: "Solutionné",
+
+    # notifications
+    Notifications.NOT_NEWSLETTER.name: "Abonnement Newsletter",
+    Notifications.NOT_NEW_REPORT.name: "Ajout d'un signalement (uniquement les vôtres)",
+    Notifications.NOT_NEW_ANNOTATION.name: "Mise à jour de vos signalements",
 
 }
 

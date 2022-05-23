@@ -17,7 +17,7 @@ import {
     showNewReportModal,
     denyAccess,
     setCoordinatesNewReport,
-    showReportDetailModal
+    showReportDetailModal, setNewReportArea, showProfileModal
 } from "../app/States";
 import {getReports} from "../api/Report";
 import {logout} from "../api/Access";
@@ -27,6 +27,8 @@ import ModalRanking from "./ModalRanking";
 import {faToolbox} from "@fortawesome/free-solid-svg-icons/faToolbox";
 import {useNavigate} from "react-router-dom";
 import ModalOutOfArea from "./ModalOutOfArea";
+import ModalProfile from "../profile/ModalProfile";
+import {faUser} from "@fortawesome/free-solid-svg-icons/faUser";
 
 let DefaultIcon = L.divIcon({className: 'circle', iconSize: [20, 20]});
 let HereDot = L.divIcon({className: 'circle-here', iconSize: [20, 20]});
@@ -82,7 +84,6 @@ function MapWithMenu({areaHook}) {
 
     const [idReportDetail, setIdReportDetail] = useState(null)
     const [showModalRanking, setShowModalRanking] = useState(false)
-    const [showModalCoordinator, setShowModalCoordinator] = useState(false)
 
     const [showModalOutOfArea, setShowModalOutOfArea] = useState(false)
 
@@ -206,6 +207,16 @@ function MapWithMenu({areaHook}) {
                             longitude: new_report_marker.current?.getLatLng().lng
                         }
                     ))
+                    dispatch(setNewReportArea(
+                        {
+                            area_id: areaHook.getArea(
+                                new LatLng(
+                                    new_report_marker.current?.getLatLng().lat,
+                                    new_report_marker.current?.getLatLng().lng
+                                )
+                            )
+                        }
+                    ))
                 })
 
                 new_report_marker.current.on('dragstart', () => {
@@ -270,7 +281,7 @@ function MapWithMenu({areaHook}) {
 
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | Samy v-1.2.1 by GRACQ WB'
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | Samy v-1.2.2 by GRACQ WB'
             }).addTo(map.current);
 
             L.control.attribution({position: 'bottomleft'}).addTo(map.current);
@@ -369,6 +380,7 @@ function MapWithMenu({areaHook}) {
                 :
                 null
             }
+
             <ModalNewReport/>
 
             <ModalOutOfArea
@@ -383,12 +395,14 @@ function MapWithMenu({areaHook}) {
                 setHighlightReport={highlightReport}
             />
 
+            <ModalProfile />
+
             <div id='map'>
                 <div className="leaflet-top leaflet-right">
                     <div className="background-leaflet-buttons">
                         <div className="container-fluid m-0 p-0">
                             <div className="row m-0 p-0">
-                                <FontAwesomeIcon icon={faSignOutAlt} className="logout-button"
+                                <FontAwesomeIcon icon={faSignOutAlt} className="logout-button pointer"
                                                  onClick={() => {
                                                      logout().then(() => dispatch(denyAccess()))
                                                  }} fixedWidth/>
@@ -398,8 +412,16 @@ function MapWithMenu({areaHook}) {
                             <hr className="m-0 p-0"/>
 
                             <div className="row m-0 p-0">
-                                <FontAwesomeIcon icon={faStar} className="new-icon mt-1"
+                                <FontAwesomeIcon icon={faStar} className="new-icon mt-1 pointer"
                                                  onClick={() => setShowModalRanking(true)}
+                                                 fixedWidth/>
+                            </div>
+
+                            <hr className="m-0 p-0"/>
+
+                            <div className="row m-0 p-0">
+                                <FontAwesomeIcon icon={faUser} className="new-icon mt-1 pointer"
+                                                 onClick={() => dispatch(showProfileModal())}
                                                  fixedWidth/>
                             </div>
 
@@ -409,7 +431,7 @@ function MapWithMenu({areaHook}) {
                                         <hr className="m-0 p-0"/>
                                         <div className="row m-0 p-0">
                                             <FontAwesomeIcon icon={faToolbox}
-                                                             className="new-icon mt-1 d-none d-lg-block "
+                                                             className="new-icon mt-1 d-none d-lg-block pointer"
                                                              onClick={() => navigate('/R/coordinator')}
                                                              fixedWidth/>
                                         </div>
@@ -425,12 +447,12 @@ function MapWithMenu({areaHook}) {
                     <div className="background-leaflet-buttons">
                         <div className="container-fluid m-0 p-0">
                             <div className="row m-0 p-0">
-                                <FontAwesomeIcon icon={faMapMarkerAlt} className="here-icon"
+                                <FontAwesomeIcon icon={faMapMarkerAlt} className="here-icon pointer"
                                                  onClick={updateLocation}
                                                  fixedWidth/>
                             </div>
                             <div className="row m-0 p-0">
-                                <FontAwesomeIcon icon={faCirclePlus} className="new-icon"
+                                <FontAwesomeIcon icon={faCirclePlus} className="new-icon pointer"
                                                  onClick={addNewReportMarker}
                                                  fixedWidth/>
                             </div>

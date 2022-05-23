@@ -4,7 +4,7 @@ import {urlServer} from "../def/Definitions";
 
 const getReportFilteredUrl = (status, date_from, date_to, area) => {
 
-    const initialUrl = `http://localhost:8000/api/report/` +
+    const initialUrl = urlServer + `/api/report/` +
         `?timestamp_creation__gte=${date_from.toISOString()}` +
         `&timestamp_creation__lte=${date_to.toISOString()}`
 
@@ -42,7 +42,7 @@ export const useReportFilter = (area) => {
                 from: new Date(2022, 1, 1),
                 to: new Date()
             },
-            area: []  // list of ids
+            area: !!area ? area : []   // list of ids
         }
     )
 

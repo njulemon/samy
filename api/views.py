@@ -22,18 +22,20 @@ from rest_framework.response import Response
 from templated_email import send_templated_mail
 
 from api import Tools
-from api.CustomPermissions import ActionBasedPermission, IsOwnerOrReadOnly, IsCoordinatorOrReadOnly, IsAdminOrReadOnly
+from api.CustomPermissions import ActionBasedPermission, IsOwnerOrReadOnly, IsCoordinatorOrReadOnly, IsAdminOrReadOnly, \
+    IsUser
 from api.MultiSerializerViewSet import MultiSerializerViewSet
 from api.enum import ReportUserType, map_category_1, map_category_2, ReportOperation
 from api.filter import ReportFilter
 from api.fr import report_form_fr, basic_terms
 from api.models import Report, Votes, CustomUser, KeyValidator, RestPassword, ReportImage, AuthorizedMail, \
-    ReportAnnotation, Area, ReportAnnotationComment
+    ReportAnnotation, Area, ReportAnnotationComment, Notifications
 from api.serializers import ReportSerializer, VotesSerializer, UserSerializer, NewUserSerializer, \
     CreateResetPasswordSerializer, UserPasswordSerializer, ReportImageSerializer, ReportSerializerHyperLink, \
     ReportImageSerializerNoUser, AuthorizedMailSerializerRead, AuthorizedMailSerializerWrite, UserSerializerHyperLink, \
     ReportAnnotationHyperLinkSerializer, AreaHyperLinkSerializer, ReportAnnotationSerializer, \
-    ReportAnnotationCommentSerializer, ReportAnnotationCommentHyperLinkSerializer, AreaSerializer, AreaSerializerName
+    ReportAnnotationCommentSerializer, ReportAnnotationCommentHyperLinkSerializer, AreaSerializer, AreaSerializerName, \
+    UpdateUserSerializer, NotificationsSerializer
 
 
 class VoteViewSetReport(viewsets.ModelViewSet):
@@ -144,8 +146,6 @@ class ReportViewSet(MultiSerializerViewSet):
     permission_classes = [IsOwnerOrReadOnly]
     authentication_classes = [SessionAuthentication]
 
-
-
     # to get csrf token
     @action(methods=['get'], detail=False)
     def csrf(self, request):
@@ -159,7 +159,7 @@ class ReportViewSet(MultiSerializerViewSet):
         serializer = ReportSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(status=status.HTTP_200_OK)
+            return Response(serializer.data)
         else:
             return Response(serializer.errors)
 
@@ -227,8 +227,8 @@ class ReportViewSet(MultiSerializerViewSet):
         except (ObjectDoesNotExist, MultipleObjectsReturned):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        # ownership check (owner or coordinator)
-        if not (request.user.id == report.owner.pk or request.user.is_coordinator):
+        # check if coordinator
+        if not (request.user.is_coordinator):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         if report.annotation is None:
@@ -247,8 +247,6 @@ class ReportViewSet(MultiSerializerViewSet):
 
         except DatabaseError:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
 
 
 class ReportFormTree(viewsets.ViewSet):
@@ -335,6 +333,38 @@ class UserViewSet(viewsets.GenericViewSet, CreateModelMixin):
         else:
             return Response(ser.errors)
 
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+class UserDeleteViewSet(viewsets.GenericViewSet, rest_framework.mixins.DestroyModelMixin, rest_framework.mixins.ListModelMixin):
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = [SessionAuthentication]
+
+    def list(self, request, *args, **kwargs):
+        return Response('Delete current user method')
+
+    def destroy(self, request, *args, **kwargs):
+        user = request.user
+        user.delete()
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+class UserUpdateViewSet(viewsets.GenericViewSet, UpdateModelMixin, ListModelMixin):
+    queryset = CustomUser.objects.all()
+    serializer_class = UpdateUserSerializer
+    permission_classes = (IsUser,)
+    authentication_classes = [SessionAuthentication]
+
+    def list(self, request, *args, **kwargs):
+        return (Response('This end point only allows to patch current user data'))
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+class NotificationsViewSet(viewsets.GenericViewSet, ListModelMixin):
+    queryset = Notifications.objects.all()
+    serializer_class = NotificationsSerializer
+    permission_classes = (IsUser,)
+    authentication_classes = [SessionAuthentication]
 
 # ----------------------------------------------------------------------------------------------------------------------
 class KeyValidationView(viewsets.GenericViewSet, rest_framework.mixins.RetrieveModelMixin, ListModelMixin):
@@ -489,6 +519,20 @@ def get_user(request):
 
 # ----------------------------------------------------------------------------------------------------------------------
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_stat(request):
+    n_reports = Report.objects.filter(owner=request.user).count()
+    n_votes = Votes.objects.filter(user=request.user).count()
+    if n_reports > 0:
+        last_report_date = Report.objects.filter(owner=request.user).latest('timestamp_creation').timestamp_creation
+    else:
+        last_report_date = None
+
+    return Response({'n_reports': n_reports, 'n_votes': n_votes, 'last_report_date': last_report_date})
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+@api_view(['GET'])
 @permission_classes([AllowAny])
 def csrf(request):
     csrf_token = get_token(request)  # provided by Middleware csrf
@@ -600,7 +644,6 @@ class AreaViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=False)
     def active(self, request):
-
         areas = Area.objects.filter(active=True).all()
 
         return Response(AreaSerializerName(instance=areas, many=True).data)

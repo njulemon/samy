@@ -150,3 +150,10 @@ class ReportStatus(ModelEnum):
     RS_REPORT_IN_PROGRESS = 5
     RS_SOLVED = 6
 
+
+# ----------------------------------------------------------------------------------------------------------------------
+# NOTIFICATIONS (EMAIL)
+class Notifications(ModelEnum):
+    NOT_NEWSLETTER = 0
+    NOT_NEW_REPORT = 1
+    NOT_NEW_ANNOTATION = 2

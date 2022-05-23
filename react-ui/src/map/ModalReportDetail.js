@@ -218,6 +218,7 @@ function ModalReportDetail({id_report}) {
                                                                 Signalé
                                                                 le {(new Date(reportDataDescription.timestamp_creation)).toLocaleDateString()}
                                                                 &nbsp;à {(new Date(reportDataDescription.timestamp_creation)).toLocaleTimeString()}
+                                                                &nbsp;par @{reportDataDescription.owner_alias}
                                                             </p>
                                                         </div>
                                                     </div>
@@ -269,7 +270,7 @@ function ModalReportDetail({id_report}) {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {!!statesAnnotation?.in_charge &&
+                                                {!!statesAnnotation?.status &&
                                                 <div className="container-fluid mb-2">
                                                     <hr/>
                                                     <div className="row mt-2 mb-2">
@@ -290,8 +291,7 @@ function ModalReportDetail({id_report}) {
                                                                     </Accordion.Header>
                                                                     <Accordion.Body>
                                                                         {statesAnnotation?.comments?.map(row =>
-                                                                            <div className="row"
-                                                                                 key={"comment" + row.id}>
+                                                                            <div className="row" key={"comment" + row.id}>
                                                                                 <div className="col-10">
                                                                                     <div className="fw-light">
                                                                                         {(new Date(row.date_modified)).toLocaleDateString() + " " + (new Date(row.date_modified)).toLocaleTimeString()}

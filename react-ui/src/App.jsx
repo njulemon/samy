@@ -12,7 +12,7 @@ import {setNewReportFormTranslation} from "./app/States";
 import ConfirmReportSaved from "./map/ConfirmReportSaved";
 import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import ResetPassword from "./register_password/ResetPassword";
-import PageCoordinator from "./coodinator/PageCoordinator";
+import PageCoordinator from "./coordinator/PageCoordinator";
 import * as localforage from "localforage";
 import Wait from "./Wait";
 import MapWaitSwitch from "./map/MapWaitSwitch";

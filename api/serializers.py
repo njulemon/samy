@@ -6,7 +6,7 @@ from rest_framework.exceptions import ValidationError
 from api import Tools
 from api.enum import ReportUserType, ReportCategory1, ReportCategory2, ReportOperation
 from api.models import Report, CustomUser, Votes, RestPassword, ReportImage, AuthorizedMail, ReportAnnotation, Area, \
-    ReportAnnotationComment
+    ReportAnnotationComment, Notifications
 
 
 class ReportImageSerializer(serializers.ModelSerializer):
@@ -101,9 +101,21 @@ class NewUserSerializer(serializers.ModelSerializer):
                    'is_coordinator', 'coordinator_area']
 
 
+class UpdateUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['notifications', 'first_name', 'last_name', 'alias']
+
+
 class VotesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Votes
+        fields = '__all__'
+
+
+class NotificationsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notifications
         fields = '__all__'
 
 
@@ -112,7 +124,8 @@ class ReportSerializer(serializers.ModelSerializer):
     operation = serializers.CharField(source='get_operation_display')
     category_1 = serializers.CharField(source='get_category_1_display')
     category_2 = serializers.CharField(source='get_category_2_display')
-    owner = serializers.IntegerField(source='owner.id')
+    owner = serializers.IntegerField(source='owner.id', default=None)
+    owner_alias = serializers.CharField(source='owner.alias', read_only=True, default="Anonymous")
 
     class Meta:
         model = Report
@@ -149,7 +162,8 @@ class ReportSerializerHyperLink(serializers.HyperlinkedModelSerializer):
     operation = serializers.CharField(source='get_operation_display')
     category_1 = serializers.CharField(source='get_category_1_display')
     category_2 = serializers.CharField(source='get_category_2_display')
-    owner = serializers.IntegerField(source='owner.id')
+    owner = serializers.IntegerField(source='owner.id', default=None)
+    owner_alias = serializers.CharField(source='owner.alias', read_only=True, default="Anonymous")
     image = serializers.HyperlinkedRelatedField(view_name='report-image-detail', read_only=True)
     image_pk = serializers.PrimaryKeyRelatedField(source='image', allow_null=True, read_only=True)
     id = serializers.IntegerField(read_only=True)

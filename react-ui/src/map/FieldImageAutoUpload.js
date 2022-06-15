@@ -48,7 +48,7 @@ function FieldImageAutoUpload({pk, setPk, setIsSubmitting, initPk=null}) {
             })
             .catch((error => {
                 setErrorForm(error.data)
-
+                setIsSubmitting(false)
             }))
             .finally(
                 () => setIsSubmitting(false)

@@ -37,5 +37,6 @@ db.sqlite3
 
 aws.zip
 aws_dev.zip
+aws_prod.zip
 
 **/*.swp

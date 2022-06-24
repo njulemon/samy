@@ -1,7 +1,7 @@
 import "./custom.scss"
 import 'leaflet/dist/leaflet.css';
-import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import 'quill/dist/quill.snow.css';
+
 
 import Login from "./Login";
 import {useAppDispatch, useAppSelector} from "./app/hooks";

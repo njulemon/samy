@@ -19,11 +19,18 @@ const ContainerMenuLeft = ({children, ...rest}) => {
                     </div>
                 </div>
 
-                <div className="row">
-                    <div className="col">
-                        <FilterReport reportFilterHook={rest.reportFilterHook}/>
-                    </div>
-                </div>
+                {
+                    !!rest.reportFilterHook
+                        ?
+                        <div className="row">
+                            <div className="col">
+                                <FilterReport reportFilterHook={rest.reportFilterHook}/>
+                            </div>
+                        </div>
+                        :
+                        null
+                }
+
 
             </div>
 

@@ -7,6 +7,7 @@ import {useAppDispatch, useAppSelector} from "../app/hooks";
 import MenuLeft from "./MenuLeft";
 import ContainerMenuLeft from "./ContainerMenuLeft";
 import {useReportFilter} from "../hooks/useReportFilter";
+import QuillEditor from "./QuillEditor";
 
 
 const PageCoordinator = () => {
@@ -44,6 +45,11 @@ const PageCoordinator = () => {
                                 Suivi des signalements
                             </a>
                         </li>
+                        <li className="nav-item">
+                            <a className="nav-link" onClick={() => setActiveTab("dossiers")}>
+                                Dossiers
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -51,7 +57,7 @@ const PageCoordinator = () => {
             {
                 {
                     "unassigned": (
-                        <ContainerMenuLeft reportFilterHook={reportFilterHook}>
+                        <ContainerMenuLeft reportFilterHook={null}>
                             <Unassigned/>
                         </ContainerMenuLeft>
 
@@ -61,8 +67,13 @@ const PageCoordinator = () => {
                             <FollowUp reportFilterHook={reportFilterHook}/>
                         </ContainerMenuLeft>
 
-                    )
+                    ),
+                    "dossiers": (
+                        <ContainerMenuLeft reportFilterHook={null}>
+                            <QuillEditor/>
+                        </ContainerMenuLeft>
 
+                    )
                 }[activeTab]
             }
 

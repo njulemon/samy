@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {urlServer} from "../def/Definitions";
+import {useAppSelector} from "../app/hooks";
 
 const getReportFilteredUrl = (status, date_from, date_to, area) => {
 
@@ -15,90 +16,72 @@ const getReportFilteredUrl = (status, date_from, date_to, area) => {
     return area.reduce((str, item) => str + `&area=${item}`, temp)
 }
 
-export const useReportFilter = (area) => {
+export const useReportFilter = (areas, initOptions) => {
 
-    // contains the criterion of the filter
-    // - status
-    // - date
-    // - locality
+    const _ = useAppSelector(state => state.states.translation)
 
-
-    // array with items =
-    // {
-    //   "value": 0,
-    //   "display_name": "RS_STATUS_NONE"
-    // }
-    const [optionsStatus, setOptionsStatus] = useState()  // array with options
+    const [optionsStatus, setOptionsStatus] = useState([])  // array with options
 
     // list of reports
     const [reports, setReports] = useState()
 
+    const [area, setArea] = useState(areas)  // ids
+
+    const [dates, setDates] = useState(
+        {
+            from: new Date(2022, 1, 1),
+            to: new Date()
+        })
+
 
     // options selected by the user
     const [filter, setFilter] = useState(
-        {
-            status: [],  // list of ids
-            dates: {
-                from: new Date(2022, 1, 1),
-                to: new Date()
-            },
-            area: !!area ? area : []   // list of ids
-        }
+        []  // [{value : ..., label: ...}, ...]
     )
 
     const getOptions = () => {
         // get the options
         axios.options(urlServer + '/api/report-annotation/', {withCredentials: true})
             .then(request_option => {
-                setOptionsStatus(request_option.data.actions.POST.status.choices)
+                setOptionsStatus(request_option.data.actions.POST.status.choices.map(item => {return {value: item.value, label: _[item.display_name]}}))
                 return new Promise((res, fail) => res(request_option.data.actions.POST.status.choices))
             })
             .then((options) => {
-                    setFilter({...filter, status: options.filter(option => option.value !== 0).map(option => option.value)})
+                    setFilter(options.filter(option => initOptions.includes(option.value)).map(option => {return {value: option.value, label: _[option.display_name]}}))
                 }
             )
     }
 
     const fetchReports = () => {
-        console.log(filter.status)
-        axios.get(getReportFilteredUrl(filter.status, filter.dates.from, filter.dates.to, filter.area), {withCredentials: true})
+        if (filter.length !== 0) {
+            axios.get(getReportFilteredUrl(filter.map(item => item.value), dates.from, dates.to, area), {withCredentials: true})
             .then(response => setReports(response.data))
-    }
+        }
+        else {
+            setReports(null)
+        }
 
-    // list of ids of the areas.
-    const setArea = (area) => {
-        setFilter({...filter, area: area})
     }
 
     // toggle the status
-    const toggleStatus = status => {
-        // return a new array without the value
-        const newStatus = filter.status.filter(item => item !== status)
-
-        // if we did not remove anything we add the element.
-        if (filter.status.length === newStatus.length) {
-            newStatus.push(status)
-        }
-
-        setFilter({...filter, status: newStatus})
+    const toggleStatus = value => {
+        setFilter(value)
     }
 
-    const setDateFrom = (date) => {
-        if (!!date) {
-            setFilter({...filter, dates: {...filter.dates, from: date}})
-        }
-        else {
-            setFilter({...filter, dates: {...filter.dates, from: new Date(2022, 1, 1)}})
+    const setDateFrom = (new_date) => {
+        if (!!new_date) {
+            setDates({...dates, from: new_date})
+        } else {
+            setDates({...dates, from: new Date(2022, 1, 1)})
         }
 
     }
 
-    const setDateTo = (date) => {
-        if (!!date) {
-            setFilter({...filter, dates: {...filter.dates, to: date}})
-        }
-        else {
-            setFilter({...filter, dates: {...filter.dates, to: new Date()}})
+    const setDateTo = (new_date) => {
+        if (!!new_date) {
+            setDates({...dates, to: new_date})
+        } else {
+            setDates({...dates, to: new Date()})
         }
     }
 
@@ -111,5 +94,11 @@ export const useReportFilter = (area) => {
         fetchReports()
     }, [filter])
 
-    return {reports, optionsStatus, filter, setArea, toggleStatus, setDateFrom, setDateTo}
+     useEffect(() => {
+        fetchReports()
+    }, [dates])
+
+    useEffect(() => {console.log(optionsStatus)}, [optionsStatus])
+
+    return {reports, optionsStatus, filter, setArea, toggleStatus, setDateFrom, setDateTo, dates, setReports}
 }

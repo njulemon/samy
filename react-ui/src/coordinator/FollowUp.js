@@ -23,7 +23,7 @@ const FollowUp = ({reportFilterHook}) => {
                 return (
                     <Card className="mb-5" key={row.id}>
                         <Card.Body>
-                            <ReportFollowUp reportPk={row.id} key={row.id}/>
+                            <ReportFollowUp reportPk={row.id} key={'child' + row.id}/>
                         </Card.Body>
                     </Card>
                 )

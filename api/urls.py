@@ -29,6 +29,7 @@ router.register(r'report-image', views.ReportImageView, 'report-image')
 router.register(r'authorized-email', views.AuthorizedMailViewSet, 'authorized-email')
 router.register(r'report-annotation', views.ReportAnnotationViewSet, 'reportannotation')
 router.register(r'area', views.AreaViewSet, 'area')
+router.register(r'document', views.DocumentViewSet, 'document')
 router.register(r'report-annotation-comment', views.ReportAnnotationCommentViewSet, 'reportannotationcomment')
 
 

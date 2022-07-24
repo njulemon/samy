@@ -46,7 +46,7 @@ const ReportFollowUp = ({reportPk}) => {
                             <div className="col">
                                 <MiniMap lat={report?.latitude}
                                          lng={report?.longitude}
-                                         zoom={12}
+                                         zoom={16}
                                          id={report?.id}/>
                             </div>
 

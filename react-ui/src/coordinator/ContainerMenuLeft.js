@@ -17,10 +17,10 @@ const ContainerMenuLeft = ({children, ...rest}) => {
 
                     <Card style={{width: '18rem'}}>
                         <Card.Body>
-                            <div className="d-flex align-items-start">
-                                <div className="nav flex-column nav-pills" // id="v-pills-tab" role="tablist"
-                                     aria-orientation="vertical">
-
+                            {/*<div className="d-flex">*/}
+                                <div className="nav flex-column nav-pills nav-justified nav-fill" // id="v-pills-tab" role="tablist"
+                                     // aria-orientation="vertical">
+>
                                     <button className="nav-link active  mt-3" aria-selected="true"
                                             onClick={() => rest.setActiveTab("followup")}>
                                         Suivi des signalements
@@ -35,7 +35,7 @@ const ContainerMenuLeft = ({children, ...rest}) => {
                                         Attribution
                                     </button>
 
-                                </div>
+                                {/*</div>*/}
                             </div>
                         </Card.Body>
                     </Card>

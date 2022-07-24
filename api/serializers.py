@@ -6,7 +6,7 @@ from rest_framework.exceptions import ValidationError
 from api import Tools
 from api.enum import ReportUserType, ReportCategory1, ReportCategory2, ReportOperation
 from api.models import Report, CustomUser, Votes, RestPassword, ReportImage, AuthorizedMail, ReportAnnotation, Area, \
-    ReportAnnotationComment, Notifications
+    ReportAnnotationComment, Notifications, Document
 
 
 class ReportImageSerializer(serializers.ModelSerializer):
@@ -62,6 +62,12 @@ class AreaSerializerName(serializers.ModelSerializer):
     class Meta:
         model = Area
         fields = ['id', 'name']
+
+
+class AreaIdSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Area
+        fields = ['id']
 
 
 class ReportAnnotationNoBoundaryHyperLinkSerializer(serializers.HyperlinkedModelSerializer):
@@ -156,6 +162,11 @@ class ReportSerializer(serializers.ModelSerializer):
 
         return instance
 
+class ReportIdSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Report
+        fields = ['id']
 
 class ReportSerializerHyperLink(serializers.HyperlinkedModelSerializer):
     user_type = serializers.CharField(source='get_user_type_display')
@@ -353,3 +364,40 @@ class AuthorizedMailSerializerWrite(serializers.ModelSerializer):
         email_hashed = make_password(validated_data['email'])
         auth_mail = AuthorizedMail.objects.create(email_hashed=email_hashed)
         return auth_mail
+
+
+class DocumentSerializerHyperLink(serializers.HyperlinkedModelSerializer):
+    reports = ReportSerializerHyperLink(many=True)
+    owner = serializers.PrimaryKeyRelatedField(many=True, queryset=Area.objects.all())
+
+    class Meta:
+        model = Document
+        fields = '__all__'
+        depth = 1
+
+
+class DocumentSerializerPatch(serializers.ModelSerializer):
+
+    class Meta:
+        model = Document
+        fields = '__all__'
+
+
+class DocumentSerializerNoContentHyperLink(serializers.HyperlinkedModelSerializer):
+    reports = serializers.PrimaryKeyRelatedField(many=True, queryset=Report.objects.all())
+    owner = serializers.PrimaryKeyRelatedField(many=True, queryset=Area.objects.all())
+
+    class Meta:
+        model = Document
+        fields = ['id', 'name', 'owner', 'reports', 'url', 'timestamp_creation', 'timestamp_modification']
+        depth = 1
+
+
+class DocumentSerializerWithContentHyperLink(serializers.HyperlinkedModelSerializer):
+    reports = serializers.PrimaryKeyRelatedField(many=True, queryset=Report.objects.all())
+    owner = serializers.PrimaryKeyRelatedField(many=True, queryset=Area.objects.all())
+
+    class Meta:
+        model = Document
+        fields = ['id', 'name', 'owner', 'reports', 'content', 'url', 'timestamp_creation', 'timestamp_modification']
+        depth = 1

@@ -7,7 +7,7 @@ import {useAppDispatch, useAppSelector} from "../app/hooks";
 import MenuLeft from "./MenuLeft";
 import ContainerMenuLeft from "./ContainerMenuLeft";
 import {useReportFilter} from "../hooks/useReportFilter";
-import QuillEditor from "./QuillEditor";
+import Dossiers from "./Dossiers";
 
 
 const PageCoordinator = () => {
@@ -51,7 +51,7 @@ const PageCoordinator = () => {
                             ),
                             "dossiers": (
                                 <ContainerMenuLeft reportFilterHook={null} setActiveTab={setActiveTab}>
-                                    <QuillEditor/>
+                                    <Dossiers/>
                                 </ContainerMenuLeft>
 
                             )

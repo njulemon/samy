@@ -24,6 +24,28 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
             return False
 
 
+class IsLocalOwner(permissions.BasePermission):
+    """
+    Object-level permission to only allow a local member coordinator of an object to edit it.
+    Assumes the model instance has an `owner` attribute.
+    """
+
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated
+
+    def has_object_permission(self, request, view, obj):
+
+        # Instance must have an attribute named `owner`.
+        try:
+            list_areas_current_user = [item.id for item in request.user.coordinator_area.all()]
+            for area_id in list_areas_current_user:
+                if area_id in [item.id for item in obj.owner.all()] or request.user.is_staff:
+                    return True
+        except:
+            return False
+        return False
+
+
 class IsCoordinatorOrReadOnly(permissions.BasePermission):
     """
     Allow coordinator to access dangerous method and

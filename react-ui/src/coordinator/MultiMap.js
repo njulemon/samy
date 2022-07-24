@@ -1,8 +1,11 @@
-import {useEffect, useRef, useState} from "react";
-import L, {LatLng} from "leaflet";
+import React, {useEffect, useRef, useState} from "react";
+import L from "leaflet";
 import {useAreaHook} from "../hooks/useAreaHook";
+import ModalReportDetail from "../map/ModalReportDetail";
+import ModalReportSimple from "./ModalReportSimple";
 
-let HereDot = L.divIcon({className: 'circle-here', iconSize: [20, 20]});
+let HereDot = L.divIcon({className: 'circle-here-no-highlight', iconSize: [20, 20]});
+let CurrentDot = L.divIcon({className: 'circle-current-no-highlight', iconSize: [20, 20]});
 
 const styleCommmunes = (feature) => {
 
@@ -36,33 +39,43 @@ const filterCommuneNotActive = geoJsonFeature => {
 }
 
 
-const MiniMap = ({lat, lng, zoom, id}) => {
+const MultiMap = ({lat_lng, idMap, idsCurrent, idGreen}) => {
 
     const map = useRef(null);
     const [mapInitiated, setMapInitiated] = useState(false)
     const areaHook = useAreaHook()
     const layerCommune = useRef()
 
+    const [showReportModal, setShowReportModal] = useState(null)
+    const [idReportDetail, setIdReportDetail] = useState(null)
+
     // init
     useEffect(
         () => {
 
-            if (!!id) {
-                map.current = L.map('mini-map' + id, {attributionControl: false, zoomControl: true})
+            if (!!idMap) {
+                map.current = L.map('multi-map' + idMap, {attributionControl: false, zoomControl: true})
 
-
-                map.current.setView([lat, lng], zoom);
+                if (lat_lng.length !== 0) {
+                    map.current.fitBounds(new L.latLngBounds(lat_lng.map(item => new L.LatLng(item.latitude, item.longitude))));
+                }
 
 
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 }).addTo(map.current);
 
-                L.marker(
-                    new LatLng(lat, lng),
-                    {icon: HereDot}
-                )
-                    .addTo(map.current);
+                lat_lng.forEach(
+                    item => {
+                        L.marker(
+                            new L.LatLng(item.latitude, item.longitude),
+                            {icon: idsCurrent.includes(item.id) ? CurrentDot : HereDot}
+                        ).addTo(map.current).on('click', () => {
+                                setIdReportDetail(null)  // we need to force change if we click again on the same record.
+                                setIdReportDetail(item.id)
+                                setShowReportModal(true)
+                            })
+                    })
 
                 setMapInitiated(true)
             }
@@ -72,10 +85,11 @@ const MiniMap = ({lat, lng, zoom, id}) => {
                 map.current?.remove();
             }
         },
-        [lat, lng, zoom, id]
+        [lat_lng, idMap]
     )
 
     useEffect(() => {
+
         if (mapInitiated && !!areaHook.communesGeoJson) {
             layerCommune.current = L.geoJSON(
                 areaHook.communesGeoJson,
@@ -91,11 +105,14 @@ const MiniMap = ({lat, lng, zoom, id}) => {
     }, [areaHook.communesGeoJson, mapInitiated])
 
     return (
-        <div className="mini-map-container">
-            <div id={'mini-map' + id} className="mini-map">
+        <>
+            <ModalReportSimple idReport={idReportDetail} show={showReportModal} setShow={setShowReportModal}/>
+            <div className="multi-map-container">
+                <div id={'multi-map' + idMap} className="multi-map">
+                </div>
             </div>
-        </div>
+        </>
     )
 }
 
-export default MiniMap
+export default MultiMap

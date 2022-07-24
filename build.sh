@@ -9,9 +9,10 @@ url=""
 case $env in
 "dev") url="https://dev.samy-app.be" ;;
 "prod") url="https://www.samy-app.be" ;;
+"schaerbeek") url="https://schaerbeek.samy-app.be" ;;
 http?(s)://*:*) url=$env ;;
 *)
-  echo "You must enter as first parameter : [dev, prod] or an api url with port included !"
+  echo "You must enter as first parameter : [dev, prod, schaerbeek] or an api url with port included !"
   exit 1
   ;;
 esac

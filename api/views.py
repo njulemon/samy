@@ -23,19 +23,20 @@ from templated_email import send_templated_mail
 
 from api import Tools
 from api.CustomPermissions import ActionBasedPermission, IsOwnerOrReadOnly, IsCoordinatorOrReadOnly, IsAdminOrReadOnly, \
-    IsUser
+    IsUser, IsLocalOwner
 from api.MultiSerializerViewSet import MultiSerializerViewSet
 from api.enum import ReportUserType, map_category_1, map_category_2, ReportOperation
 from api.filter import ReportFilter
 from api.fr import report_form_fr, basic_terms
 from api.models import Report, Votes, CustomUser, KeyValidator, RestPassword, ReportImage, AuthorizedMail, \
-    ReportAnnotation, Area, ReportAnnotationComment, Notifications
+    ReportAnnotation, Area, ReportAnnotationComment, Notifications, Document
 from api.serializers import ReportSerializer, VotesSerializer, UserSerializer, NewUserSerializer, \
     CreateResetPasswordSerializer, UserPasswordSerializer, ReportImageSerializer, ReportSerializerHyperLink, \
     ReportImageSerializerNoUser, AuthorizedMailSerializerRead, AuthorizedMailSerializerWrite, UserSerializerHyperLink, \
     ReportAnnotationHyperLinkSerializer, AreaHyperLinkSerializer, ReportAnnotationSerializer, \
     ReportAnnotationCommentSerializer, ReportAnnotationCommentHyperLinkSerializer, AreaSerializer, AreaSerializerName, \
-    UpdateUserSerializer, NotificationsSerializer
+    UpdateUserSerializer, NotificationsSerializer, DocumentSerializerHyperLink, DocumentSerializerNoContentHyperLink, \
+    DocumentSerializerWithContentHyperLink, DocumentSerializerPatch
 
 
 class VoteViewSetReport(viewsets.ModelViewSet):
@@ -647,3 +648,30 @@ class AreaViewSet(viewsets.ModelViewSet):
         areas = Area.objects.filter(active=True).all()
 
         return Response(AreaSerializerName(instance=areas, many=True).data)
+
+    @action(methods=['get'], detail=False)
+    def coordinator(self, request):
+        areas = request.user.coordinator_area.all()
+
+        return Response(AreaSerializerName(instance=areas, many=True).data)
+
+
+class DocumentViewSet(MultiSerializerViewSet):
+    """
+    get the documents.
+    """
+    queryset = Document.objects.all()
+    serializer_class = DocumentSerializerHyperLink
+    serializers = {
+        'default': DocumentSerializerHyperLink,
+        'list': DocumentSerializerNoContentHyperLink,
+        'create': DocumentSerializerWithContentHyperLink,
+        'retrieve': DocumentSerializerHyperLink,  #DocumentSerializerHyperLink
+        'update': DocumentSerializerPatch,
+        'partial_update': DocumentSerializerPatch,
+        'destroy': DocumentSerializerHyperLink
+    }
+    parser_classes = [JSONParser]
+
+    permission_classes = [IsLocalOwner]
+    authentication_classes = [SessionAuthentication]

@@ -4,13 +4,13 @@ $primary: #003049;
 $secondary: #f77f00;
 $tertiary: #d62828;
 $success: rgb(57, 144, 65);
-$info: rgb(64, 209, 224);
+$info: rgb(217, 145, 63);
 $warning: rgb(234, 210, 53);
 $danger: rgb(226, 5, 5);
 $light: rgba(103, 136, 210, 0.66);
 $dark: rgb(0, 0, 0);
 $primary-light: rgba(103, 136, 210, 0.66);
-$primary-lighter: rgba(172, 195, 243, 0.29);
+$primary-lighter: rgba(239, 242, 252, 0.29);
 
 $gradient: linear-gradient(-5deg, $primary-light, $primary-light, $primary-light, $primary);
 $input-bg: $primary-lighter;
@@ -42,6 +42,19 @@ html {
 }
 
 .mini-map {
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+}
+
+
+.multi-map-container {
+  height: 100%;
+  width: 100%;
+  min-height: 300px;
+}
+
+.multi-map {
   height: 100%;
   width: 100%;
   border-radius: 10px;
@@ -85,6 +98,39 @@ div.circle-here {
   width: 35px;
   height: 35px;
   box-shadow: 0 0 0 40px rgba(105, 132, 196, 0.15);
+}
+
+div.circle-current {
+  background-color: rgb(206, 15, 15);
+  border-color: #ffffff;
+  border-radius: 30px;
+  border-style: solid;
+  border-width: 3px;
+  width: 35px;
+  height: 35px;
+  box-shadow: 0 0 0 40px rgba(105, 132, 196, 0.15);
+}
+
+div.circle-here-no-highlight {
+  background-color: rgb(60, 140, 213);
+  border-color: #ffffff;
+  border-radius: 30px;
+  border-style: solid;
+  border-width: 3px;
+  width: 35px;
+  height: 35px;
+  //box-shadow: 0 0 0 40px rgba(105, 132, 196, 0.15);
+}
+
+div.circle-current-no-highlight {
+  background-color: rgb(206, 15, 15);
+  border-color: #ffffff;
+  border-radius: 30px;
+  border-style: solid;
+  border-width: 3px;
+  width: 35px;
+  height: 35px;
+  //box-shadow: 0 0 0 40px rgba(105, 132, 196, 0.15);
 }
 
 div.highlight-dot {

@@ -59,7 +59,6 @@ class Notifications(models.Model):
     name = models.CharField(max_length=20, unique=True)
 
 
-
 # REPORTS RELATED
 # ----------------------------------------------------------------------------------------------------------------------
 class Report(models.Model):
@@ -138,3 +137,15 @@ class AuthorizedMail(models.Model):
 
     def __str__(self):
         return self.email_hashed
+
+
+class Document(models.Model):
+    name = models.CharField(max_length=100)
+    content = models.JSONField(blank=True, default=list)
+    reports = models.ManyToManyField(to="Report", default=None, blank=True)
+    owner = models.ManyToManyField(to='Area', default=None, blank=True)
+    timestamp_creation = models.DateTimeField(auto_now_add=True)
+    timestamp_modification = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'[{self.pk}] {self.name} [{self.timestamp_creation}]'

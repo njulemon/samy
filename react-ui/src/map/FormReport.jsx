@@ -133,7 +133,7 @@ function FormReport() {
                         'user_type': 'CYCLIST',
                         'operation': values.operation,
                         'category_1': values.category_1,
-                        'category_2': values.category_2,
+                        'category_2': [values.category_2],
                         'latitude': formStore.values.latitude,
                         'longitude': formStore.values.longitude,
                         'image': pk_picture,

@@ -16,6 +16,10 @@ class ModelEnum(Enum):
         return [(item.value, item.name) for item in cls]
 
     @classmethod
+    def get_model_choices_same(cls) -> List[Tuple[int, str]]:
+        return [(item.name, item.name) for item in cls]
+
+    @classmethod
     def get_name(cls, value: int) -> str:
         return cls(value)
 

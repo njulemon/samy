@@ -9,10 +9,10 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {capitalize} from "../Tools/String";
 import {deleteCsrf, PatchCsrf, PostCsrf} from "../api/Csrf";
 import {Rating} from "@mui/material";
-import {MdModeEditOutline, MdDeleteForever} from 'react-icons/md';
+import {MdModeEditOutline, MdDeleteForever, MdLink} from 'react-icons/md';
 import {IconContext} from 'react-icons'
 import FormEditReport from "./FormEditReport";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {Accordion, Alert} from "react-bootstrap";
 import useAnnotationHook from "../hooks/useAnnotationHook";
 import {urlify} from "../Tools/Urlify";
@@ -136,33 +136,46 @@ function ModalReportDetail({id_report}) {
                                     <Modal.Title>
                                         <div className="container-fluid">
                                             <div className="row">
-                                                <div className="col">
+                                                <div className="col-auto">
                                                     {reportDataDescription.user_type === "PEDESTRIAN" ?
                                                         <FontAwesomeIcon icon={faWalking} transform="grow-5"/>
                                                         :
                                                         <FontAwesomeIcon icon={faBiking}/>}
                                                 </div>
-                                                {capitalize(translation[reportDataDescription.category_1])}
-                                                <div className="col">
-                                                    {(reportDataDescription?.owner === user?.id || user?.is_staff) ?
-                                                        <div className="row">
-                                                            <div className="col-6 align-react-icon">
+                                                <div className="col ps-1 pe-4">
+                                                    {capitalize(translation[reportDataDescription.category_1])}
+                                                </div>
+                                                <div className="col-auto">
+                                                    <div className="row">
+                                                        {(reportDataDescription?.owner === user?.id || user?.is_staff) ?
+                                                            <>
+                                                                <div className="col-4 align-react-icon">
+                                                                    <IconContext.Provider
+                                                                        value={{className: "edit-icon edit-icon-shadow"}}>
+                                                                        <MdModeEditOutline
+                                                                            onClick={() => handlerEdit()}/>
+                                                                    </IconContext.Provider>
+                                                                </div>
+                                                                <div className="col-4">
+                                                                    <IconContext.Provider
+                                                                        value={{className: "delete-icon delete-icon-shadow"}}>
+                                                                        <MdDeleteForever
+                                                                            onClick={() => setShowDeleteConfirm(!showDeleteConfirm)}/>
+                                                                    </IconContext.Provider>
+                                                                </div>
+                                                            </>
+                                                            :
+                                                            null
+                                                        }
+                                                        <div className="col-4">
+                                                            <Link to={"/R/no-redirection/report/" + id_report}>
                                                                 <IconContext.Provider
-                                                                    value={{className: "edit-icon edit-icon-shadow"}}>
-                                                                    <MdModeEditOutline onClick={() => handlerEdit()}/>
+                                                                    value={{className: "link-icon link-icon-shadow"}}>
+                                                                    <MdLink/>
                                                                 </IconContext.Provider>
-                                                            </div>
-                                                            <div className="col-6">
-                                                                <IconContext.Provider
-                                                                    value={{className: "delete-icon delete-icon-shadow"}}>
-                                                                    <MdDeleteForever
-                                                                        onClick={() => setShowDeleteConfirm(!showDeleteConfirm)}/>
-                                                                </IconContext.Provider>
-                                                            </div>
+                                                            </Link>
                                                         </div>
-                                                        :
-                                                        <></>
-                                                    }
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -205,6 +218,7 @@ function ModalReportDetail({id_report}) {
                                                                 Signalé
                                                                 le {(new Date(reportDataDescription.timestamp_creation)).toLocaleDateString()}
                                                                 &nbsp;à {(new Date(reportDataDescription.timestamp_creation)).toLocaleTimeString()}
+                                                                &nbsp;par @{reportDataDescription.owner_alias}
                                                             </p>
                                                         </div>
                                                     </div>
@@ -256,13 +270,16 @@ function ModalReportDetail({id_report}) {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {!!statesAnnotation?.in_charge &&
+                                                {!!statesAnnotation?.status &&
                                                 <div className="container-fluid mb-2">
                                                     <hr/>
                                                     <div className="row mt-2 mb-2">
                                                         <div className="col">
-                                                            Status : {options && translation[options.status[statesAnnotation.status].display_name]} <br />
-                                                            Resp. : {options && translation[options.in_charge[statesAnnotation.in_charge].display_name]}
+                                                            Status
+                                                            : {options && translation[options.status[statesAnnotation.status].display_name]}
+                                                            <br/>
+                                                            Resp.
+                                                            : {options && translation[options.in_charge[statesAnnotation.in_charge].display_name]}
                                                         </div>
                                                     </div>
                                                     <div className="row">
@@ -274,8 +291,7 @@ function ModalReportDetail({id_report}) {
                                                                     </Accordion.Header>
                                                                     <Accordion.Body>
                                                                         {statesAnnotation?.comments?.map(row =>
-                                                                            <div className="row"
-                                                                                 key={"comment" + row.id}>
+                                                                            <div className="row" key={"comment" + row.id}>
                                                                                 <div className="col-10">
                                                                                     <div className="fw-light">
                                                                                         {(new Date(row.date_modified)).toLocaleDateString() + " " + (new Date(row.date_modified)).toLocaleTimeString()}

@@ -11,7 +11,9 @@ export const useAreaHook = () => {
     // based on redux states
     const dispatch = useAppDispatch()
     const communesGeoJson = useAppSelector((state) => state.states.communesGeoJson)
+
     const [communesGeoJsonRaw, setCommunesGeoJsonRaw] = useState(null)
+
     // once data is loaded into memory (from DB or from fetching and filter with active commune only).
     const [isLoaded, setIsLoaded] = useState(false)
 
@@ -43,17 +45,21 @@ export const useAreaHook = () => {
             const activeRequest = await axios.get(urlServer + '/api/area/active/', {withCredentials: true})
 
             // transform result (communes name) to an array
-            const listActive = activeRequest.data.map(row => row.name)
-
-            console.log(listActive)
+            const listActive = activeRequest.data.map(row => {
+                return {
+                    name: row.name,
+                    id: row.id
+                }
+            })
 
             let idx_negative = 0
             communesGeoJsonRaw.features?.forEach((row, idx) => {
                     const name = row["properties"]["name"]
 
                     // add active property to active commune
-                    if (!!listActive.includes(name)) {
+                    if (!!listActive.map(row => row.name).includes(name)) {
                         featuresCollectionCopy['features'][idx - idx_negative]["properties"]["active"] = true;
+                        featuresCollectionCopy['features'][idx - idx_negative]["properties"]["id"] = listActive.filter(row => row.name === name)[0].id;
                     }
 
                     // delete inactive communes from geoJson
@@ -91,6 +97,23 @@ export const useAreaHook = () => {
         return ret
     }
 
+    const getArea = latLngCoordinates => {
+
+        let area_id = null
+        communesGeoJson.features.forEach((commune, idx) => {
+
+            commune.geometry.coordinates.forEach(subArea => {
+
+                let polyPoints = subArea[0]
+                if (isMarkerInsidePolygon(latLngCoordinates, polyPoints)) {
+                    area_id = commune.properties.id
+                }
+            })
+
+        })
+        return area_id
+    }
+
     const fetchFeatureSelection = () => {
 
         const request = urlServer + `/api/area/`
@@ -106,7 +129,7 @@ export const useAreaHook = () => {
             })
     }
 
-    return {communesGeoJson, fetchFeatureSelection, isMarkerInsideActivePolygon, isLoaded}
+    return {communesGeoJson, fetchFeatureSelection, isMarkerInsideActivePolygon, isLoaded, getArea}
 }
 
 
@@ -119,13 +142,12 @@ const isMarkerInsidePolygon = (latLngCoordinates, polyPoints) => {
         j = i + 1
         var xi = Number(polyPoints[i][1]), yi = Number(polyPoints[i][0]);
         var xj = Number(polyPoints[j][1]), yj = Number(polyPoints[j][0]);
-        // console.log((yi > y))
+
 
         var intersect = ((yi > y) !== (yj > y))
             && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
         if (intersect) inside = !inside;
     }
 
-    console.log(inside)
     return inside;
 };

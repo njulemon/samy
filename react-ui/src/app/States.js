@@ -8,6 +8,7 @@ export const stateSlice = createSlice({
         modales: {
             modal_new_report: false,
             modal_event_detail: false,
+            modal_profile: false,
             current_event_id: -1,
             note_mine: null,
             note_mine_id: null,
@@ -27,7 +28,8 @@ export const stateSlice = createSlice({
                 latitude: 0.0,
                 longitude: 0.0,
                 picture_pk: null,
-                comment: null
+                comment: null,
+                area_id: null
             },
             touched: {
                 operation: false,
@@ -56,6 +58,12 @@ export const stateSlice = createSlice({
         hideReportDetailModal: (state) => {
             state.modales.modal_event_detail = false
         },
+        showProfileModal: (state) => {
+            state.modales.modal_profile = true
+        },
+        hideProfileModal: (state) => {
+            state.modales.modal_profile = false
+        },
         giveAccess: (state) => {
             state.isLogged = true
         },
@@ -76,6 +84,9 @@ export const stateSlice = createSlice({
         },
         setNewReportComment: (state, action) => {
             state.form_report.values.comment = action.payload.comment
+        },
+        setNewReportArea: (state, action) => {
+            state.form_report.values.area_id = action.payload.area_id
         },
         setNewReportFormTouched: (state, action) => {
             state.form_report.touched.operation = action.payload.operation
@@ -120,12 +131,15 @@ export const {
     hideNewReportModal,
     showReportDetailModal,
     hideReportDetailModal,
+    showProfileModal,
+    hideProfileModal,
     giveAccess,
     denyAccess,
     setNewReportFields,
     setCoordinatesNewReport,
     setNewReportComment,
     setNewReportPicture,
+    setNewReportArea,
     setNewReportFormTouched,
     clearNewReportForm,
     setNewReportFormTranslation,

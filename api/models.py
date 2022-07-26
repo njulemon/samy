@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from . import enum
 from .enum import ReportUserType, ReportCategory1, ReportCategory2, ReportOperation, InCharge, ReportStatus
 from .managers import CustomUserManager
 
@@ -22,6 +23,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(_('first name'), max_length=100)
     last_name = models.CharField(_('last name'), max_length=100)
 
+    # alias
+    alias = models.CharField('pseudo', max_length=20, default='Anonymous')
+
+    # notifications (email)
+    notifications = models.ManyToManyField(to="Notifications", default=None, blank=True)
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['password']
 
@@ -33,7 +40,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 class ReportImage(models.Model):
     image = models.ImageField()
-    owner = models.ForeignKey(to=CustomUser, on_delete=models.CASCADE)
+    owner = models.ForeignKey(to=CustomUser, on_delete=models.SET_NULL, null=True)
 
 
 # USER RELATED
@@ -46,6 +53,10 @@ class KeyValidator(models.Model):
 class RestPassword(models.Model):
     account = models.OneToOneField(to=CustomUser, on_delete=models.CASCADE)
     key = models.CharField(max_length=100)
+
+
+class Notifications(models.Model):
+    name = models.CharField(max_length=20, unique=True)
 
 
 # REPORTS RELATED
@@ -77,7 +88,7 @@ class Report(models.Model):
     annotation = models.ForeignKey(to="ReportAnnotation", on_delete=models.SET_NULL, null=True, default=None)
 
     def __str__(self):
-        return f'from {self.owner.first_name} at {self.timestamp_creation}'
+        return f'{self.timestamp_creation}'
 
 
 class ReportAnnotation(models.Model):
@@ -126,3 +137,15 @@ class AuthorizedMail(models.Model):
 
     def __str__(self):
         return self.email_hashed
+
+
+class Document(models.Model):
+    name = models.CharField(max_length=100)
+    content = models.JSONField(blank=True, default=list)
+    reports = models.ManyToManyField(to="Report", default=None, blank=True)
+    owner = models.ManyToManyField(to='Area', default=None, blank=True)
+    timestamp_creation = models.DateTimeField(auto_now_add=True)
+    timestamp_modification = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'[{self.pk}] {self.name} [{self.timestamp_creation}]'

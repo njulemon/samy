@@ -14,6 +14,8 @@ import {hideNewReportModal} from "../app/States";
 import FieldImageAutoUpload from "./FieldImageAutoUpload";
 
 import {useNavigate} from "react-router-dom";
+import {PostCsrf} from "../api/Csrf";
+import {urlServer} from "../def/Definitions";
 
 const FormStore = () => {
 
@@ -143,11 +145,21 @@ function FormReport() {
                         .then(
                             (response) => {
                                 if (response.status === 200) {
-                                    setErrorForm('')
-                                    dispatch(hideNewReportModal())
-                                    dispatch(clearNewReportForm())
-                                    // navigate(0)
-                                    dispatch(reload())
+                                    
+                                    // post annotation
+                                    const data = {area: formStore.values.area_id, status: 2}
+                                    PostCsrf(urlServer + `/api/report/new-annotation/?pk_report=${response.data.id}`, data)
+                                        .then(() => {
+                                            setErrorForm('')
+                                            dispatch(hideNewReportModal())
+                                            dispatch(clearNewReportForm())
+
+                                            dispatch(reload())
+                                        })
+                                        .catch(error => {
+                                            setErrorForm(error.toString)
+                                        })
+
                                 } else {
                                     setErrorForm('Le signalement n\'a pas pu être enregistré')
                                 }

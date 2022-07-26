@@ -6,7 +6,7 @@ from rest_framework.exceptions import ValidationError
 from api import Tools
 from api.enum import ReportUserType, ReportCategory1, ReportCategory2, ReportOperation
 from api.models import Report, CustomUser, Votes, RestPassword, ReportImage, AuthorizedMail, ReportAnnotation, Area, \
-    ReportAnnotationComment
+    ReportAnnotationComment, Notifications, Document
 
 
 class ReportImageSerializer(serializers.ModelSerializer):
@@ -53,17 +53,31 @@ class AreaHyperLinkSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class AreaSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Area
         fields = '__all__'
 
 
 class AreaSerializerName(serializers.ModelSerializer):
-
     class Meta:
         model = Area
         fields = ['id', 'name']
+
+
+class AreaIdSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Area
+        fields = ['id']
+
+
+class ReportAnnotationNoBoundaryHyperLinkSerializer(serializers.HyperlinkedModelSerializer):
+    comments = ReportAnnotationCommentHyperLinkSerializer(many=True)
+    area = AreaSerializerName()
+
+    class Meta:
+        model = ReportAnnotation
+        depth = 1
+        fields = '__all__'
 
 
 class ReportImageSerializerNoUser(serializers.ModelSerializer):
@@ -73,7 +87,7 @@ class ReportImageSerializerNoUser(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    coordinator_area = serializers.StringRelatedField(many=True, read_only=True)
+    coordinator_area = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = CustomUser
@@ -93,9 +107,21 @@ class NewUserSerializer(serializers.ModelSerializer):
                    'is_coordinator', 'coordinator_area']
 
 
+class UpdateUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['notifications', 'first_name', 'last_name', 'alias']
+
+
 class VotesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Votes
+        fields = '__all__'
+
+
+class NotificationsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notifications
         fields = '__all__'
 
 
@@ -104,7 +130,8 @@ class ReportSerializer(serializers.ModelSerializer):
     operation = serializers.CharField(source='get_operation_display')
     category_1 = serializers.CharField(source='get_category_1_display')
     category_2 = serializers.CharField(source='get_category_2_display')
-    owner = serializers.IntegerField(source='owner.id')
+    owner = serializers.IntegerField(source='owner.id', default=None)
+    owner_alias = serializers.CharField(source='owner.alias', read_only=True, default="Anonymous")
 
     class Meta:
         model = Report
@@ -135,17 +162,23 @@ class ReportSerializer(serializers.ModelSerializer):
 
         return instance
 
+class ReportIdSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Report
+        fields = ['id']
 
 class ReportSerializerHyperLink(serializers.HyperlinkedModelSerializer):
     user_type = serializers.CharField(source='get_user_type_display')
     operation = serializers.CharField(source='get_operation_display')
     category_1 = serializers.CharField(source='get_category_1_display')
     category_2 = serializers.CharField(source='get_category_2_display')
-    owner = serializers.IntegerField(source='owner.id')
+    owner = serializers.IntegerField(source='owner.id', default=None)
+    owner_alias = serializers.CharField(source='owner.alias', read_only=True, default="Anonymous")
     image = serializers.HyperlinkedRelatedField(view_name='report-image-detail', read_only=True)
     image_pk = serializers.PrimaryKeyRelatedField(source='image', allow_null=True, read_only=True)
     id = serializers.IntegerField(read_only=True)
-    annotation = ReportAnnotationHyperLinkSerializer()
+    annotation = ReportAnnotationNoBoundaryHyperLinkSerializer()
 
     class Meta:
         model = Report
@@ -331,3 +364,40 @@ class AuthorizedMailSerializerWrite(serializers.ModelSerializer):
         email_hashed = make_password(validated_data['email'])
         auth_mail = AuthorizedMail.objects.create(email_hashed=email_hashed)
         return auth_mail
+
+
+class DocumentSerializerHyperLink(serializers.HyperlinkedModelSerializer):
+    reports = ReportSerializerHyperLink(many=True)
+    owner = serializers.PrimaryKeyRelatedField(many=True, queryset=Area.objects.all())
+
+    class Meta:
+        model = Document
+        fields = '__all__'
+        depth = 1
+
+
+class DocumentSerializerPatch(serializers.ModelSerializer):
+
+    class Meta:
+        model = Document
+        fields = '__all__'
+
+
+class DocumentSerializerNoContentHyperLink(serializers.HyperlinkedModelSerializer):
+    reports = serializers.PrimaryKeyRelatedField(many=True, queryset=Report.objects.all())
+    owner = serializers.PrimaryKeyRelatedField(many=True, queryset=Area.objects.all())
+
+    class Meta:
+        model = Document
+        fields = ['id', 'name', 'owner', 'reports', 'url', 'timestamp_creation', 'timestamp_modification']
+        depth = 1
+
+
+class DocumentSerializerWithContentHyperLink(serializers.HyperlinkedModelSerializer):
+    reports = serializers.PrimaryKeyRelatedField(many=True, queryset=Report.objects.all())
+    owner = serializers.PrimaryKeyRelatedField(many=True, queryset=Area.objects.all())
+
+    class Meta:
+        model = Document
+        fields = ['id', 'name', 'owner', 'reports', 'content', 'url', 'timestamp_creation', 'timestamp_modification']
+        depth = 1

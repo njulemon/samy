@@ -104,7 +104,7 @@ function FormNewPassword({pk, key_reset}) {
                                                                 </Field>
                                                             </div>
 
-                                                            <div className="mb-1">
+                                                            <div className="mb-1 text-white">
                                                                 <label htmlFor="password">Mot de passe</label>
                                                                 <Field
                                                                     className={(formik.touched["password"] && formik.errors["password"]) ? 'form-control is-invalid' : 'form-control'}
@@ -120,7 +120,7 @@ function FormNewPassword({pk, key_reset}) {
                                                             </div>
 
 
-                                                            <div className="mb-1">
+                                                            <div className="mb-1 text-white">
                                                                 <label htmlFor="password_validation">Confirmation du mot passe</label>
                                                                 <Field
                                                                     className={(formik.touched["password_validation"] && formik.errors["password_validation"]) ? 'form-control is-invalid' : 'form-control'}

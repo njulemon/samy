@@ -24,7 +24,7 @@ export const stateSlice = createSlice({
             values: {
                 operation: 'LOCALE',
                 category_1: 'NONE_CAT_1',
-                category_2: 'NONE_CAT_2',
+                category_2: [],
                 latitude: 0.0,
                 longitude: 0.0,
                 picture_pk: null,
@@ -96,7 +96,7 @@ export const stateSlice = createSlice({
         clearNewReportForm: (state) => {
             state.form_report.values.operation = 'LOCALE'
             state.form_report.values.category_1 = 'NONE_CAT_1'
-            state.form_report.values.category_2 = 'NONE_CAT_2'
+            state.form_report.values.category_2 = []
             state.form_report.values.latitude = 0.0
             state.form_report.values.longitude = 0.0
         },

@@ -2,6 +2,8 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from multiselectfield import MultiSelectField
+from rest_framework import fields
 
 from . import enum
 from .enum import ReportUserType, ReportCategory1, ReportCategory2, ReportOperation, InCharge, ReportStatus
@@ -65,7 +67,7 @@ class Report(models.Model):
     user_type = models.IntegerField(choices=ReportUserType.get_model_choices())
     operation = models.IntegerField(choices=ReportOperation.get_model_choices(), default=1)
     category_1 = models.IntegerField(choices=ReportCategory1.get_model_choices())
-    category_2 = models.IntegerField(choices=ReportCategory2.get_model_choices())
+    category_2 = MultiSelectField(choices=ReportCategory2.get_model_choices_same())
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
     timestamp_creation = models.DateTimeField(auto_now_add=True)

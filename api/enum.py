@@ -16,6 +16,10 @@ class ModelEnum(Enum):
         return [(item.value, item.name) for item in cls]
 
     @classmethod
+    def get_model_choices_same(cls) -> List[Tuple[int, str]]:
+        return [(item.name, item.name) for item in cls]
+
+    @classmethod
     def get_name(cls, value: int) -> str:
         return cls(value)
 
@@ -91,7 +95,6 @@ class ReportCategory2(ModelEnum):
 
     ILLEGAL_PARKING = 17
 
-
 # ----------------------------------------------------------------------------------------------------------------------
 # CATEGORIES TREE
 map_category_1 = {
@@ -106,7 +109,6 @@ map_category_2 = {
     ReportOperation.LOCALE:
         {
             ReportCategory1.INFRASTRUCTURE: [
-                ReportCategory2.NONE_CAT_2,
                 ReportCategory2.LANE_HOLE,
                 ReportCategory2.LANE_POOR_CONDITION,
                 ReportCategory2.LANE_VANISHED_PAINT,
@@ -122,7 +124,6 @@ map_category_2 = {
                 ReportCategory2.SIGNAGE__BAD_CONDITION
             ],
             ReportCategory1.INCIDENT: [
-                ReportCategory2.NONE_CAT_2,
                 ReportCategory2.ILLEGAL_PARKING,
                 ReportCategory2.INCIDENT_GLASS_ON_LANE,
                 ReportCategory2.INCIDENT_NAILS_ON_LANE

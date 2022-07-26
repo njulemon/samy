@@ -16,6 +16,7 @@ import FieldImageAutoUpload from "./FieldImageAutoUpload";
 import {useNavigate} from "react-router-dom";
 import {PostCsrf} from "../api/Csrf";
 import {urlServer} from "../def/Definitions";
+import SelectReportField from "./SelectReportField";
 
 const FormStore = () => {
 
@@ -106,7 +107,7 @@ function FormReport() {
             errors.category_1 = 'Veuillez choisir une catégorie';
         }
 
-        if (values.category_2.includes("NONE")) {
+        if (values.category_2.length === 0) {
             errors.category_2 = 'Veuillez choisir une description du problème';
         }
 
@@ -194,11 +195,10 @@ function FormReport() {
                         }
 
                         {formStore.values.operation.includes("NONE") || formStore.values.category_1.includes("NONE") ? null :
-                            <FormReportField key="report-form-field-cat-2"
+                            <SelectReportField key="report-form-field-cat-2"
                                              formik={formik}
                                              field_name='category_2'
-                                             list_options={cat2}
-                                             first_option="Catégorie de problème ?"/>
+                                             list_options={cat2}/>
                         }
 
                         <div className="mb-3">

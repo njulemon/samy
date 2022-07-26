@@ -129,7 +129,7 @@ class ReportSerializer(serializers.ModelSerializer):
     user_type = serializers.CharField(source='get_user_type_display')
     operation = serializers.CharField(source='get_operation_display')
     category_1 = serializers.CharField(source='get_category_1_display')
-    category_2 = serializers.CharField(source='get_category_2_display')
+    category_2 = serializers.MultipleChoiceField(choices=ReportCategory2.get_model_choices_same())
     owner = serializers.IntegerField(source='owner.id', default=None)
     owner_alias = serializers.CharField(source='owner.alias', read_only=True, default="Anonymous")
 
@@ -138,11 +138,12 @@ class ReportSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
+        print(validated_data["category_2"])
         return Report.objects.create(
             user_type=ReportUserType.get_enum(validated_data["get_user_type_display"]).value,
             operation=ReportOperation.get_enum(validated_data["get_operation_display"]).value,
             category_1=ReportCategory1.get_enum(validated_data["get_category_1_display"]).value,
-            category_2=ReportCategory2.get_enum(validated_data["get_category_2_display"]).value,
+            category_2=validated_data["category_2"],
             owner=CustomUser.objects.get(id=validated_data["owner"]["id"]),
             latitude=validated_data["latitude"],
             longitude=validated_data["longitude"],
@@ -151,10 +152,11 @@ class ReportSerializer(serializers.ModelSerializer):
         )
 
     def update(self, instance, validated_data):
+        print(validated_data["category_2"])
         instance.user_type = ReportUserType.get_enum(validated_data["get_user_type_display"]).value
         instance.operation = ReportOperation.get_enum(validated_data["get_operation_display"]).value
         instance.category_1 = ReportCategory1.get_enum(validated_data["get_category_1_display"]).value
-        instance.category_2 = ReportCategory2.get_enum(validated_data["get_category_2_display"]).value
+        instance.category_2 = validated_data["category_2"]
         instance.image = validated_data.get('image', None)
         instance.comment = validated_data.get('comment', instance.comment)
 
@@ -172,7 +174,7 @@ class ReportSerializerHyperLink(serializers.HyperlinkedModelSerializer):
     user_type = serializers.CharField(source='get_user_type_display')
     operation = serializers.CharField(source='get_operation_display')
     category_1 = serializers.CharField(source='get_category_1_display')
-    category_2 = serializers.CharField(source='get_category_2_display')
+    category_2 = serializers.MultipleChoiceField(choices=ReportCategory2.get_model_choices_same())
     owner = serializers.IntegerField(source='owner.id', default=None)
     owner_alias = serializers.CharField(source='owner.alias', read_only=True, default="Anonymous")
     image = serializers.HyperlinkedRelatedField(view_name='report-image-detail', read_only=True)

@@ -23,7 +23,7 @@ const ReportFollowUp = ({reportPk}) => {
     return (
         <>
             <h5>{capitalize(_[report?.category_1])} <span className="fw-normal">[{report?.id}]</span></h5>
-            <h6>{capitalize(_[report?.category_2])}</h6>
+            <h6>{report?.category_2.map(item => (<div key={item}>{capitalize(_[item])}<br/></div>))}</h6>
 
             <hr/>
 

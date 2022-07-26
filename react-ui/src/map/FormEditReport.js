@@ -6,6 +6,7 @@ import FieldImageAutoUpload from "./FieldImageAutoUpload";
 
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
+import SelectReportField from "./SelectReportField";
 
 const FormStore = ({setOperationOptions, setCategory1Options, setCategory2Options, operation, category1, category2}) => {
 
@@ -98,7 +99,7 @@ function FormEditReport({pk, setEdit}) {
             errors.category_1 = 'Veuillez choisir une catégorie';
         }
 
-        if (values.category_2.includes("NONE")) {
+        if (values.category_2.length === 0) {
             errors.category_2 = 'Veuillez choisir une description du problème';
         }
 
@@ -174,11 +175,10 @@ function FormEditReport({pk, setEdit}) {
                             }
 
                             {formik.values.operation.includes("NONE") || formik.values.category_1.includes("NONE") ? null :
-                                <FormReportField key="report-form-field-cat-2"
+                                <SelectReportField key="report-form-field-cat-2"
                                                  formik={formik}
                                                  field_name='category_2'
-                                                 list_options={category2Options}
-                                                 first_option="Catégorie de problème ?"/>
+                                                 list_options={category2Options}/>
                             }
 
                             <div className="mb-3">

@@ -87,7 +87,7 @@ const ReportCard = ({id, fullSize=false}) => {
                                 <div className="row">
                                     <div className="col">
                                         <h5>
-                                            {capitalize(translation[reportDataDescription?.category_2])}
+                                            {reportDataDescription?.category_2.map(item => (<div key={item}>{capitalize(translation[item])}<br/></div>))}
                                         </h5>
                                         <p className="fw-lighter">
                                             Signalé

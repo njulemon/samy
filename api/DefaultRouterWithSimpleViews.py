@@ -1,6 +1,6 @@
 import inspect
 
-from django.conf.urls import url
+from django.urls import re_path
 from rest_framework import routers, viewsets
 from rest_framework.urlpatterns import format_suffix_patterns
 
@@ -45,7 +45,7 @@ class DefaultRouterWithSimpleViews(routers.DefaultRouter):
 
             # The view name has to have suffix "-list" due to specifics
             # of the DefaultRouter implementation.
-            ret.append(url(
+            ret.append(re_path(
                 regex, viewset,
                 name='{0}-list'.format(basename)
             ))

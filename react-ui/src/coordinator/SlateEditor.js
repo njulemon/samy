@@ -27,6 +27,7 @@ import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import TableViewIcon from '@mui/icons-material/TableView';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
+import MapIcon from '@mui/icons-material/Map';
 
 import {css} from '@emotion/css'
 import isUrl from 'is-url'
@@ -414,6 +415,14 @@ const SaveButton = ({slateState}) => {
             }}
         >
             <SaveIcon/>
+        </Button>
+    )
+}
+
+const ReportButton = ({id}) => {
+    return (
+        <Button>
+            <MapIcon/>
         </Button>
     )
 }

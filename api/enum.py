@@ -65,6 +65,7 @@ class ReportCategory1(ModelEnum):
     NONE_CAT_1 = 0
     INFRASTRUCTURE = 1
     INCIDENT = 2
+    CUSHIONS = 3
 
 
 class ReportCategory2(ModelEnum):
@@ -95,38 +96,26 @@ class ReportCategory2(ModelEnum):
 
     ILLEGAL_PARKING = 17
 
+    # CUSHIONS
+    CUSHION_PARKING_SIDE = 18
+    CUSHION_DAMAGED = 19
+
+
 # ----------------------------------------------------------------------------------------------------------------------
 # CATEGORIES TREE
 map_category_1 = {
     ReportOperation.LOCALE: [
         ReportCategory1.NONE_CAT_1,
-        ReportCategory1.INFRASTRUCTURE,
-        ReportCategory1.INCIDENT]
+        ReportCategory1.CUSHIONS]
     # set options for other operations here...
 }
 
 map_category_2 = {
     ReportOperation.LOCALE:
         {
-            ReportCategory1.INFRASTRUCTURE: [
-                ReportCategory2.LANE_HOLE,
-                ReportCategory2.LANE_POOR_CONDITION,
-                ReportCategory2.LANE_VANISHED_PAINT,
-                ReportCategory2.LANE_UNCLEAR_SIGNAGE,
-                ReportCategory2.LANE_BORDER_NEED_TO_BE_LOWERED,
-                ReportCategory2.LANE_SLIPPERY,
-                ReportCategory2.LANE_TOO_THIN,
-                ReportCategory2.LANE_CROSSING_DANGEROUS,
-                ReportCategory2.LANE_PRIORITY_NOT_RESPECTED_DANGEROUS,
-                ReportCategory2.NO_BICYCLE_PATH_DANGEROUS_SITUATION,
-                ReportCategory2.RACK_DAMAGED,
-                ReportCategory2.SIGNAGE__MISSING,
-                ReportCategory2.SIGNAGE__BAD_CONDITION
-            ],
-            ReportCategory1.INCIDENT: [
-                ReportCategory2.ILLEGAL_PARKING,
-                ReportCategory2.INCIDENT_GLASS_ON_LANE,
-                ReportCategory2.INCIDENT_NAILS_ON_LANE
+            ReportCategory1.CUSHIONS: [
+                ReportCategory2.CUSHION_PARKING_SIDE,
+                ReportCategory2.CUSHION_DAMAGED
             ]
         }
 }

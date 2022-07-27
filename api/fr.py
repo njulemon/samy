@@ -20,6 +20,7 @@ report_form_fr = {
     # cat 1
     ReportCategory1.INCIDENT.name: "incident",
     ReportCategory1.INFRASTRUCTURE.name: "infrastructure",
+    ReportCategory1.CUSHIONS.name: "coussins berlinois",
 
     # cat 2
     ReportCategory2.LANE_BORDER_NEED_TO_BE_LOWERED.name: "bordure sur piste cyclable trop abrupte",
@@ -38,6 +39,8 @@ report_form_fr = {
     ReportCategory2.INCIDENT_GLASS_ON_LANE.name: "Présence régulière de verre",
     ReportCategory2.INCIDENT_NAILS_ON_LANE.name: "Présence de clou ou équivalent",
     ReportCategory2.ILLEGAL_PARKING.name: "Parking sauvage régulier",
+    ReportCategory2.CUSHION_PARKING_SIDE.name: "Parking possible sur le côté",
+    ReportCategory2.CUSHION_DAMAGED.name: "Endommagé",
 
     # In charge
     InCharge.IC_IN_CHARGE_NONE.name: "Autoritée compétente non-définie",

@@ -403,3 +403,17 @@ $gradient-background-coordinator-c2: rgb(255, 255, 255);
 .profile-avatar {
   width: 200px;
 }
+
+
+.hidden-map-container {
+  overflow: hidden;
+  position: relative;
+}
+
+.hidden-map {
+  width: 640px;
+  height: 480px;
+  position: absolute;
+  right: -50px;
+  top: 50px;
+}

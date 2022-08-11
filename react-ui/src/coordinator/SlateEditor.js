@@ -28,10 +28,10 @@ import TableViewIcon from '@mui/icons-material/TableView';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
 import MapIcon from '@mui/icons-material/Map';
+import CopyAllIcon from '@mui/icons-material/CopyAll';
 
 import {css} from '@emotion/css'
 import isUrl from 'is-url'
-import useSlateState from "../hooks/useSlateState";
 
 
 const HOTKEYS = {
@@ -155,6 +155,20 @@ const InsertImageButton = () => {
     )
 }
 
+
+const CopyToClipboard = ({copyToClipBoard}) => {
+    return (
+        <Button
+            onMouseDown={event => {
+                event.preventDefault()
+                copyToClipBoard()
+            }}
+        >
+            <CopyAllIcon/>
+        </Button>
+    )
+}
+
 const isImageUrl = url => {
     if (!url) return false
     if (!isUrl(url)) return false
@@ -162,11 +176,10 @@ const isImageUrl = url => {
     return imageExtensions.includes(ext)
 }
 
-const SlateEditor = ({id, slateState}) => {
+const SlateEditor = ({id, slateState, copyToClipBoard}) => {
     const editor = useMemo(() => withImages(withHistory(withReact(createEditor()))), [])
     const renderLeaf = useCallback(props => <Leaf {...props} />, [])
     const renderElement = useCallback(props => <Element {...props}/>, [])
-
 
 
     useEffect(() => {
@@ -176,8 +189,7 @@ const SlateEditor = ({id, slateState}) => {
     useEffect(() => {
         if (slateState.isSaving) {
             ReactEditor.blur(editor)
-        }
-        else {
+        } else {
             ReactEditor.blur(editor)
         }
     }, [slateState.isSaving])
@@ -202,24 +214,28 @@ const SlateEditor = ({id, slateState}) => {
                 <BlockButton format="right" icon={(<FormatAlignRightIcon/>)}/>
                 <BlockButton format="justify" icon={(<FormatAlignJustifyIcon/>)}/>
                 <InsertImageButton/>
+                <CopyToClipboard copyToClipBoard={copyToClipBoard}/>
                 <SaveButton slateState={slateState}/>
+
             </Toolbar>
-            <Editable
-                renderElement={renderElement}
-                renderLeaf={renderLeaf}
-                placeholder="Commencer votre rapport... "
-                spellCheck
-                autoFocus
-                onKeyDown={event => {
-                    for (const hotkey in HOTKEYS) {
-                        if (isHotkey(hotkey, event)) {
-                            event.preventDefault()
-                            const mark = HOTKEYS[hotkey]
-                            toggleMark(editor, mark)
+            <div id="selection-node-slate">
+                <Editable
+                    renderElement={renderElement}
+                    renderLeaf={renderLeaf}
+                    placeholder="Commencer votre rapport... "
+                    spellCheck
+                    autoFocus
+                    onKeyDown={event => {
+                        for (const hotkey in HOTKEYS) {
+                            if (isHotkey(hotkey, event)) {
+                                event.preventDefault()
+                                const mark = HOTKEYS[hotkey]
+                                toggleMark(editor, mark)
+                            }
                         }
-                    }
-                }}
-            />
+                    }}
+                />
+            </div>
         </Slate>
     )
 }

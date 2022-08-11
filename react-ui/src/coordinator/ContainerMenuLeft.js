@@ -47,11 +47,11 @@ const ContainerMenuLeft = ({children, ...rest}) => {
                     </div>
                 </div>
 
-                <div className="row pb-2">
-                    <div className="col">
-                        <Info/>
-                    </div>
-                </div>
+                {/*<div className="row pb-2">*/}
+                {/*    <div className="col">*/}
+                {/*        <Info/>*/}
+                {/*    </div>*/}
+                {/*</div>*/}
 
                 {
                     !!rest.reportFilterHook

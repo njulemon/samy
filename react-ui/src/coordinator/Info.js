@@ -21,15 +21,15 @@ const Info = () => {
         <>
             <Card style={{width: '18rem'}}>
                 {/*<Card.Img src={avatar}/>*/}
-                <Card.Body>
-                    <Card.Text>
-                        {`${user?.first_name} ${user?.last_name}`} <br/>
-                        <span className="fw-light">
-                            {`Enregistré le ${(new Date(user?.date_joined)).toLocaleDateString()}`} <br/>
-                        </span>
+                {/*<Card.Body>*/}
+                {/*    <Card.Text>*/}
+                {/*        {`${user?.first_name} ${user?.last_name}`} <br/>*/}
+                {/*        <span className="fw-light">*/}
+                {/*            {`Enregistré le ${(new Date(user?.date_joined)).toLocaleDateString()}`} <br/>*/}
+                {/*        </span>*/}
 
-                    </Card.Text>
-                </Card.Body>
+                {/*    </Card.Text>*/}
+                {/*</Card.Body>*/}
                 <Card.Body>
                     <div className="fw-bold pb-2">
                         Responsable

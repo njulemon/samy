@@ -1,7 +1,7 @@
 asgiref==3.4.1
 boto3==1.21.8
 botocore==1.24.8
-Django==4.0.6
+Django==4.0.7
 django-cors-headers==3.10.1
 django-filter==21.1
 django-multiselectfield==0.1.12

@@ -91,7 +91,7 @@ const SlateAnnex = ({ids}) => {
 
             const process = async () => {
 
-                const response = await axios.get(`http://localhost:8000/api/report/${ids[counter]}/`, {withCredentials: true})
+                const response = await axios.get(`${urlServer}/api/report/${ids[counter]}/`, {withCredentials: true})
                 map.current.setView([response.data.latitude, response.data.longitude], 17, {animate: false})
                 if (!!marker.current) {
                     map.current.removeLayer(marker.current)

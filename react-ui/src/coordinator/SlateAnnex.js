@@ -1,10 +1,13 @@
 import React, {useEffect, useRef, useState} from "react";
-import L from "leaflet";
-import leafletImage from "node-leaflet-image";
+import L, {LatLng} from "leaflet";
+import leafletImage from "../Tools/LeafletIageFixed";
 import axios from "axios";
 import {urlServer} from "../def/Definitions";
 import {useAppSelector} from "../app/hooks";
 import LoadingAnnex from "./LoadingAnnex";
+import markerIcon from "../images/blue-dot.png"
+
+const HereDot = L.icon({iconUrl: markerIcon, iconSize: new L.Point(20, 20)});
 
 L.GridLayer.include({
     whenReady: function (callback, context) {
@@ -19,6 +22,11 @@ L.GridLayer.include({
 
 const SlateAnnex = ({ids}) => {
 
+    // const HereDot = L.icon({
+    //     iconUrl: marker_icon,
+    //     iconSize: new L.point(20, 20)
+    // });
+
     const map = useRef(null);
     const tileLayer = useRef(null);
     const [images, setImages] = useState({})  // temp images
@@ -28,7 +36,7 @@ const SlateAnnex = ({ids}) => {
     const [mapInit, setMapInit] = useState(false)
     const [reports, setReports] = useState({})
     const [done, setDone] = useState(false)
-    // const [progress, setProgress] = useState(0)
+    const marker = useRef(null)
 
     const _ = useAppSelector((state) => state.states.translation)
 
@@ -38,7 +46,7 @@ const SlateAnnex = ({ids}) => {
         axios.all(axiosRequests).then(responses => {
             let results = {}
             responses.forEach(item => {
-                results = {...results, [item.data.id]: item.data }
+                results = {...results, [item.data.id]: item.data}
             })
             return new Promise((res, rej) => res(results))
         })
@@ -47,11 +55,12 @@ const SlateAnnex = ({ids}) => {
 
 
     useEffect(() => {
+
         map.current = L.map('map-hidden', {
             center: [50.849727, 4.359414],
-            zoom: 16,
-            // preferCanvas: true
+            zoom: 17
         })
+
         tileLayer.current = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(map.current);
@@ -67,8 +76,6 @@ const SlateAnnex = ({ids}) => {
         }
     }, [])
 
-    useEffect(() => console.log(images_), [images_])
-
     useEffect(() => {
         if (Object.keys(images).length === ids.length) {
             setImages_(images)
@@ -78,97 +85,69 @@ const SlateAnnex = ({ids}) => {
     }, [images])
 
 
-    // useEffect(() => setProgress(Object.keys(images_).length / Object.keys(ids).length), [ids, images_])
+    useEffect(() => console.log(Object.keys(images_).length), [images_])
 
     useEffect(() => {
 
-        const process = async () => {
+            const process = async () => {
 
+                const response = await axios.get(`http://localhost:8000/api/report/${ids[counter]}/`, {withCredentials: true})
+                map.current.setView([response.data.latitude, response.data.longitude], 17, {animate: false})
+                if (!!marker.current) {
+                    map.current.removeLayer(marker.current)
+                    marker.current = null
+                }
 
-            // tileLayer.current.on('load', () => {
-            //     leafletImage(map.current, function (err, canvas) {
-            //         // now you have canvas
-            //         // example thing to do with that canvas:
-            //         // let img = document.createElement('img');
-            //         // let dimensions = map.current.getSize();
-            //         // img.width = dimensions.x;
-            //         // img.height = dimensions.y;
-            //         // console.log(dimensions)
-            //
-            //         // console.log(canvas.toDataURL())
-            //         images.current = {...images.current, [ids[counter]]: canvas.toDataURL()}
-            //
-            //         if (counter < ids.length) {
-            //             setCounter(counter + 1)
-            //         }
-            //
-            //         tileLayer.current.off()
-            //         map.current.off()
-            //     })
-            // })
+                marker.current = L.marker(new LatLng(response.data.latitude, response.data.longitude), {icon: HereDot}).addTo(map.current);
+                await sleep(300)
 
-            // sleep(1000).then(() => console.log('waiting 100'))
-
-            const response = await axios.get(`http://localhost:8000/api/report/${ids[counter]}/`, {withCredentials: true})
-            map.current.setView([response.data.latitude, response.data.longitude], 16)
-            await sleep(1000)
-
-            // map.current.once('moveend', () => {
-                //     map.current.off()
                 tileLayer.current.whenReady(() => {
-                    // while (tileLayer.current.isLoading()) {
-                    //     sleep(10).then(() => console.log('waiting'))
-                    // }
-                    //
-                    // if (counter === 0) {
-                    //     sleep(1000).then(() => console.log('waiting 1000'))
-                    // }
 
-                    tileLayer.current.off()
+                        tileLayer.current.off()
 
-                    leafletImage(map.current, function (err, canvas) {
+                        leafletImage(map.current, function (err, canvas) {
 
-                        console.log(`counter = ${counter}`)
+                            console.log(`counter = ${counter}`)
 
-                        if (counter <= ids.length - 1) {
-                            setImages({...images, [ids[counter]]: canvas.toDataURL()})
-                        }
+                            if (counter <= ids.length - 1) {
+                                setImages({...images, [ids[counter]]: canvas.toDataURL()})
+                            }
 
-                        if (counter < ids.length) {
-                            setCounter(counter + 1)
-                        }
-                    })
+                            if (counter < ids.length) {
+                                setCounter(counter + 1)
+                            }
+                        })
 
-                })
-            // })
-            // const response = await axios.get(`http://localhost:8000/api/report/${ids[counter]}/`, {withCredentials: true})
-            // map.current.setView([response.data.latitude, response.data.longitude], 16)
-            // sleep(1000)
-        }
+                    }
+                )
+            }
 
 
-        if (mapInit && counter < ids.length && Object.keys(reports).length > 0) {
-            process()
-        }
+            if (mapInit && counter < ids.length && Object.keys(reports).length > 0) {
+                process()
+            }
 
 
-    }, [counter, mapInit, images, ids, reports])
+        },
+        [counter, mapInit, images, ids, reports]
+    )
 
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    // useEffect(() => {
-    //     setDone(false)
-    //     setImages({})
-    //     setImages_({})
-    // }, [ids])
+// useEffect(() => {
+//     setDone(false)
+//     setImages({})
+//     setImages_({})
+// }, [ids])
 
     return (
         <div className="row">
             {done ?
                 (<div className="row">
                     <div className="col" id="selection-node-annex">
+                        <hr />
                         <h3>
                             {Object.keys(images_).length !== 0 && 'Annexes'}
                         </h3>
@@ -178,23 +157,34 @@ const SlateAnnex = ({ids}) => {
                                     Signalement {Object.keys(reports).length !== 0 && reports[key]?.id}
                                 </h4>
                                 <ul>
-                                    {Object.keys(reports).length !== 0 && reports[key]?.category_2.map(cat => (
-                                        <li key={cat}>{_[cat]}</li>))}
+                                    <li key={reports[key]?.timestamp_creation}>
+                                        Signalé le {(new Date(reports[key]?.timestamp_creation)).toLocaleDateString()} à
+                                        &nbsp;à {(new Date(reports[key]?.timestamp_creation)).toLocaleTimeString()}
+                                    </li>
+                                    <li key={reports[key]?.latitude}>[{reports[key]?.latitude.toFixed(6)}, {reports[key]?.longitude.toFixed(6)}]</li>
+                                    <li>
+                                        Liste des problèmes rencontrés :
+                                        <ul>
+                                            {Object.keys(reports).length !== 0 && reports[key]?.category_2.map(cat => (
+                                                <li key={cat}>{_[cat]}</li>))}
+                                        </ul>
+                                    </li>
                                 </ul>
 
                                 <img src={images_[key]}/>
                                 <br/>
                                 <br/>
+                                <hr />
                             </div>
                         ))}
                     </div>
                 </div>)
                 :
-                <LoadingAnnex progress={100 * Object.keys(images).length / Object.keys(ids).length} />
+                <LoadingAnnex progress={100 * Object.keys(images).length / Object.keys(ids).length}/>
             }
             <div className="row">
                 <div className="col">
-                    <div className={"hidden-map-container"}>
+                    <div className="hidden-map-container">
                         <div id={"map-hidden"} className="hidden-map"></div>
                     </div>
                 </div>

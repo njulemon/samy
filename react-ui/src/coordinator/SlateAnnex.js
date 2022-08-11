@@ -35,6 +35,7 @@ const SlateAnnex = ({ids}) => {
     const [counter, setCounter] = useState(0)
     const [mapInit, setMapInit] = useState(false)
     const [reports, setReports] = useState({})
+    const [imageIllu, setImageIllu] = useState({})
     const [done, setDone] = useState(false)
     const marker = useRef(null)
 
@@ -83,6 +84,24 @@ const SlateAnnex = ({ids}) => {
             // setProgress(0)
         }
     }, [images])
+
+
+    useEffect(() => {
+        console.log(imageIllu)
+    }, [imageIllu])
+
+    useEffect(() => {
+        const keyNonNull = Object.keys(reports).filter(key => !!reports[key].image)
+        const axiosRequest = Object.keys(reports).filter(key => !!reports[key].image).map(key => axios.get(`${reports[key].image}`, {withCredentials: true}))
+        axios.all(axiosRequest).then(responses => {
+            let results = {}
+            responses.forEach((item, idx) => {
+                results = {...results, [keyNonNull[idx]]: item.data.image}
+            })
+            return new Promise((res, rej) => res(results))
+        })
+            .then(results => setImageIllu(results))
+    }, [reports])
 
 
     useEffect(() => console.log(Object.keys(images_).length), [images_])
@@ -147,7 +166,7 @@ const SlateAnnex = ({ids}) => {
             {done ?
                 (<div className="row">
                     <div className="col" id="selection-node-annex">
-                        <hr />
+                        <hr/>
                         <h3>
                             {Object.keys(images_).length !== 0 && 'Annexes'}
                         </h3>
@@ -161,7 +180,19 @@ const SlateAnnex = ({ids}) => {
                                         Signalé le {(new Date(reports[key]?.timestamp_creation)).toLocaleDateString()} à
                                         &nbsp;à {(new Date(reports[key]?.timestamp_creation)).toLocaleTimeString()}
                                     </li>
-                                    <li key={reports[key]?.latitude}>[{reports[key]?.latitude.toFixed(6)}, {reports[key]?.longitude.toFixed(6)}]</li>
+                                    <li>
+                                        {reports[key]?.annotation?.area.name}
+                                    </li>
+                                    {!!reports[key]?.comment ?
+                                        (
+                                            <li>
+                                                Commentaire <br/><span
+                                                className="fst-italic">{reports[key]?.comment}</span>
+                                            </li>)
+                                        : null
+                                    }
+
+                                    <li key={reports[key]?.latitude}>{reports[key]?.latitude.toFixed(6)}, {reports[key]?.longitude.toFixed(6)}</li>
                                     <li>
                                         Liste des problèmes rencontrés :
                                         <ul>
@@ -170,11 +201,17 @@ const SlateAnnex = ({ids}) => {
                                         </ul>
                                     </li>
                                 </ul>
+                                <br/>
+                                <>
+                                    <img src={images_[key]}/>
+                                </>
 
-                                <img src={images_[key]}/>
-                                <br/>
-                                <br/>
-                                <hr />
+                                {Object.keys(imageIllu).includes(key) ?
+                                    <>
+                                        <br/><br/>
+                                        <img src={imageIllu[key]} className="mw-640"/>
+                                    </>
+                                    : null}
                             </div>
                         ))}
                     </div>

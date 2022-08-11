@@ -1,5 +1,5 @@
 import {useAppSelector} from "../app/hooks";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {deleteCsrf, PatchCsrf, PostCsrf} from "../api/Csrf";
 import {urlServer} from "../def/Definitions";
 import axios from "axios";
@@ -7,7 +7,7 @@ import {initialValue} from "./useSlateState";
 
 const urlListDossier = urlServer + '/api/document/'
 const urlCurrentDossier = id => `${urlServer}/api/document/${id}/`
-const urlAllReports = urlServer + '/api/report/'
+const urlAllReports = (ids) => urlServer + '/api/report/?' + ids.reduce((prev, next) => prev + `&area=${next}`, '')
 
 
 const useDossierHook = () => {
@@ -19,9 +19,13 @@ const useDossierHook = () => {
     const [currentReports, setCurrentReports] = useState([])
     const [errorNew, setErrorNew] = useState(null)
     const [errorList, setErrorList] = useState(null)
+    const [owners, setOwners] = useState([])
 
     // array containing the IDs of the AREA (coordinator)
     const listAreas = useAppSelector((state) => state.states.user.coordinator_area)
+
+
+    useEffect(() => fetchAllReports(), [fetchAllReports, owners])
 
     const valid = (areas) => areas.reduce((prev, current) => prev || listAreas.includes(current), false)
 
@@ -91,17 +95,23 @@ const useDossierHook = () => {
     const fetchDossier = id => {
         setErrorList(null)
         axios.get(urlCurrentDossier(id), {withCredentials: true})
-            .then(reponse => setCurrentReports(reponse.data.reports))
+            .then(response => {
+                setCurrentReports(response.data.reports)
+                setOwners(response.data.owner)
+            })
             .catch(() => setErrorList('La liste des rapports n\'a pas pu être extraite'))
     }
 
-    const fetchAllReports = () => {
+    const fetchAllReports = useCallback(() => {
         setErrorList(null)
-        axios.get(urlAllReports, {withCredentials: true})
-            // just take the list of records that belongs to the actual user
-            .then(reponse => setAllReports(reponse.data.filter(item => listAreas.includes(item.annotation.area.id))))
-            .catch(() => setErrorList('La liste des rapports n\'a pas pu être extraite'))
-    }
+        if (owners.length !== 0) {
+            axios.get(urlAllReports(owners), {withCredentials: true})
+                // just take the list of records that belongs to the actual user
+                .then(response => setAllReports(response.data))
+                .catch(() => setErrorList('La liste des rapports n\'a pas pu être extraite'))
+        }
+
+    }, [owners])
 
     const resetError = () => {
         setErrorList(null)

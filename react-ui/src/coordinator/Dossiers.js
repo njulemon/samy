@@ -19,6 +19,7 @@ const Dossiers = () => {
     const [lastReportClicked, setLastReportClicked] = useState(null)
     const [newContent, setNewContent] = useState(null)
     const [images, setImages] = useState({})
+    const [updateToggle, setUpdateToggle] = useState(false)
 
     const dossierHook = useDossierHook()
 
@@ -30,10 +31,13 @@ const Dossiers = () => {
     useEffect(() => setLastReportClicked(currentReportToAdd), [currentReportToAdd])
     useEffect(() => setLastReportClicked(currentReportToDelete), [currentReportToDelete])
 
+    const forceUpdate = () => {
+        setUpdateToggle(!updateToggle)
+    }
 
     return (
         <>
-            <SlateModal show={showModalQuill} setShow={setShowModalQuill} id={parseInt(dossierHook.currentDossier)}/>
+            <SlateModal show={showModalQuill} setShow={setShowModalQuill} id={parseInt(dossierHook.currentDossier)} forceUpdate={forceUpdate}/>
             <ModalNewDossier show={showModalNew} setShow={setShowModalNew} dossierHook={dossierHook}/>
             <ModalUpdateDossier show={showModalUpdate} setShow={setShowModalUpdate} dossierHook={dossierHook}/>
             <Card>
@@ -143,11 +147,6 @@ const Dossiers = () => {
                                     dossierHook.allReports.map(item => {
                                         return {latitude: item.latitude, longitude: item.longitude, id: item.id}
                                     })
-                                    // [
-                                    //     {latitude: 50.800478, longitude: 4.413564, id: 1},
-                                    //     {latitude: 51.0, longitude: 4.413564, id: 2},
-                                    //     {latitude: 51.800478, longitude: 3.413564, id: 3}
-                                    // ]
                                 }
                                 idMap={3}
                                 idsCurrent={dossierHook.currentReports.map(item => item.id)}/>

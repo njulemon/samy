@@ -32,6 +32,7 @@ import CopyAllIcon from '@mui/icons-material/CopyAll';
 
 import {css} from '@emotion/css'
 import isUrl from 'is-url'
+import {Alert, Toast} from "react-bootstrap";
 
 
 const HOTKEYS = {
@@ -156,12 +157,13 @@ const InsertImageButton = () => {
 }
 
 
-const CopyToClipboard = ({copyToClipBoard}) => {
+const CopyToClipboard = ({copyToClipBoard, setShowToast}) => {
     return (
         <Button
             onMouseDown={event => {
                 event.preventDefault()
                 copyToClipBoard()
+                setShowToast(true)
             }}
         >
             <CopyAllIcon/>
@@ -180,6 +182,13 @@ const SlateEditor = ({id, slateState, copyToClipBoard}) => {
     const editor = useMemo(() => withImages(withHistory(withReact(createEditor()))), [])
     const renderLeaf = useCallback(props => <Leaf {...props} />, [])
     const renderElement = useCallback(props => <Element {...props}/>, [])
+    const [showCopyToClipboardToast, setShowCopyToClipboardToast] = useState(false)
+
+    useEffect(() => {
+        if (showCopyToClipboardToast) {
+            setTimeout(() => setShowCopyToClipboardToast(false), 2000)
+        }
+    }, [showCopyToClipboardToast])
 
 
     useEffect(() => {
@@ -195,18 +204,28 @@ const SlateEditor = ({id, slateState, copyToClipBoard}) => {
     }, [slateState.isSaving])
 
     return (
+
+
         <Slate editor={editor}
                value={initialValue}
                onChange={value => onChange(value, editor, slateState.setContent)}
         >
+
+            {
+                showCopyToClipboardToast ?
+                    <Alert variant='info'>
+                        Le contenu du document a été copié dans le presse-papier.
+                    </Alert> :
+                    null
+            }
+
+
             <Toolbar>
                 <MarkButton format="bold" icon={(<FormatBoldIcon/>)} slateState={slateState}/>
                 <MarkButton format="italic" icon={(<FormatItalicIcon/>)} slateState={slateState}/>
                 <MarkButton format="underline" icon={(<FormatUnderlinedIcon/>)} slateState={slateState}/>
-                {/*<MarkButton format="code" icon={(<FormatBoldIcon/>)}/>*/}
                 <BlockButton format="heading-one" icon={(<LooksOneIcon/>)}/>
                 <BlockButton format="heading-two" icon={(<LooksTwoIcon/>)}/>
-                {/*<BlockButton format="block-quote" icon={(<FormatQuoteIcon/>)}/>*/}
                 <BlockButton format="numbered-list" icon={(<FormatListNumberedIcon/>)}/>
                 <BlockButton format="bulleted-list" icon={(<FormatListBulletedIcon/>)}/>
                 <BlockButton format="left" icon={(<FormatAlignLeftIcon/>)}/>
@@ -214,15 +233,16 @@ const SlateEditor = ({id, slateState, copyToClipBoard}) => {
                 <BlockButton format="right" icon={(<FormatAlignRightIcon/>)}/>
                 <BlockButton format="justify" icon={(<FormatAlignJustifyIcon/>)}/>
                 <InsertImageButton/>
-                <CopyToClipboard copyToClipBoard={copyToClipBoard}/>
+                <CopyToClipboard copyToClipBoard={copyToClipBoard} setShowToast={setShowCopyToClipboardToast}/>
                 <SaveButton slateState={slateState}/>
-
             </Toolbar>
+
+
             <div id="selection-node-slate">
                 <Editable
                     renderElement={renderElement}
                     renderLeaf={renderLeaf}
-                    placeholder="Commencer votre rapport... "
+                    placeholder="Tapez ici votre rapport... "
                     spellCheck
                     autoFocus
                     onKeyDown={event => {

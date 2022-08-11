@@ -6,7 +6,7 @@ import SlateAnnex from "./SlateAnnex";
 import axios from "axios";
 import {urlServer} from "../def/Definitions";
 
-const SlateModal = ({show, setShow, id}) => {
+const SlateModal = ({show, setShow, id, forceUpdate}) => {
 
     const slateState = useSlateState(id)
     const [reportIds, setReportsIds] = useState([])
@@ -45,7 +45,7 @@ const SlateModal = ({show, setShow, id}) => {
 
     useEffect(() => {
         axios.get(`${urlServer}/api/document/${id}/`, {withCredentials: true}).then(result => setReportsIds(result.data.reports.map(report => report.id)))
-    }, [id])
+    }, [id, forceUpdate])
 
     return (
         <Modal show={show}

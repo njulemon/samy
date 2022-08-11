@@ -3,10 +3,13 @@ import SlateEditor from "./SlateEditor";
 import useSlateState from "../hooks/useSlateState";
 import React, {useEffect, useState} from "react";
 import SlateAnnex from "./SlateAnnex";
+import axios from "axios";
+import {urlServer} from "../def/Definitions";
 
 const SlateModal = ({show, setShow, id}) => {
 
     const slateState = useSlateState(id)
+    const [reportIds, setReportsIds] = useState([])
     const [showAlertModifications, setShowAlertModifications] = useState(false)
 
     const onHide = () => {
@@ -39,6 +42,10 @@ const SlateModal = ({show, setShow, id}) => {
             setShowAlertModifications(false)
         }
     }, [slateState.hasChanged])
+
+    useEffect(() => {
+        axios.get(`${urlServer}/api/document/${id}/`, {withCredentials: true}).then(result => setReportsIds(result.data.reports.map(report => report.id)))
+    }, [id])
 
     return (
         <Modal show={show}
@@ -74,7 +81,7 @@ const SlateModal = ({show, setShow, id}) => {
                 }
 
                 <SlateEditor id={id} slateState={slateState} copyToClipBoard={copyToClipBoard}/>
-                <SlateAnnex ids={[1, 2, 3]}/>
+                <SlateAnnex ids={reportIds}/>
             </Modal.Body>
         </Modal>
     )

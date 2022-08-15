@@ -41,6 +41,9 @@ report_form_fr = {
     ReportCategory2.ILLEGAL_PARKING.name: "Parking sauvage régulier",
     ReportCategory2.CUSHION_PARKING_SIDE.name: "Parking possible sur le côté",
     ReportCategory2.CUSHION_DAMAGED.name: "Endommagé",
+    ReportCategory2.CUSHION_CYCLE_PATH_NOT_PROTECTED.name: "Piste cyclable non ou mal protégée",
+    ReportCategory2.CUSHION_POOR_VISIBILITY.name: "Mauvaise visibilité",
+    ReportCategory2.CUSHION_OTHER.name: "Autre (précisez en commentaire)",
 
     # In charge
     InCharge.IC_IN_CHARGE_NONE.name: "Autoritée compétente non-définie",

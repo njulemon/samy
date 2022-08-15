@@ -67,6 +67,9 @@ const ReportCard = ({id, fullSize=false}) => {
                             <div className="container-fluid">
                                 <div className="row">
                                     <div className="col-auto">
+                                        [{reportDataDescription?.id}]
+                                    </div>
+                                    <div className="col-auto">
                                         {reportDataDescription?.user_type === "PEDESTRIAN" ?
                                             <FontAwesomeIcon icon={faWalking} transform="grow-5"/>
                                             :

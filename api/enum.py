@@ -99,6 +99,9 @@ class ReportCategory2(ModelEnum):
     # CUSHIONS
     CUSHION_PARKING_SIDE = 18
     CUSHION_DAMAGED = 19
+    CUSHION_CYCLE_PATH_NOT_PROTECTED = 20
+    CUSHION_POOR_VISIBILITY = 21
+    CUSHION_OTHER = 22
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -115,7 +118,10 @@ map_category_2 = {
         {
             ReportCategory1.CUSHIONS: [
                 ReportCategory2.CUSHION_PARKING_SIDE,
-                ReportCategory2.CUSHION_DAMAGED
+                ReportCategory2.CUSHION_DAMAGED,
+                ReportCategory2.CUSHION_CYCLE_PATH_NOT_PROTECTED,
+                ReportCategory2.CUSHION_POOR_VISIBILITY,
+                ReportCategory2.CUSHION_OTHER
             ]
         }
 }

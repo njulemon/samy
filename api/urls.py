@@ -31,6 +31,7 @@ router.register(r'report-annotation', views.ReportAnnotationViewSet, 'reportanno
 router.register(r'area', views.AreaViewSet, 'area')
 router.register(r'document', views.DocumentViewSet, 'document')
 router.register(r'report-annotation-comment', views.ReportAnnotationCommentViewSet, 'reportannotationcomment')
+router.register(r'report-geojson', views.ReportGeoJsonViewSet, 'report-geojson')
 
 
 # The API URLs are now determined automatically by the router.

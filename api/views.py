@@ -1,5 +1,6 @@
 import json
 import os
+from collections import OrderedDict
 
 import rest_framework.mixins
 from django.contrib.auth import authenticate, login as django_internal_login, logout
@@ -25,8 +26,8 @@ from api import Tools
 from api.CustomPermissions import ActionBasedPermission, IsOwnerOrReadOnly, IsCoordinatorOrReadOnly, IsAdminOrReadOnly, \
     IsUser, IsLocalOwner
 from api.MultiSerializerViewSet import MultiSerializerViewSet
-from api.enum import ReportUserType, map_category_1, map_category_2, ReportOperation
-from api.filter import ReportFilter
+from api.enum import ReportUserType, map_category_1, map_category_2, ReportOperation, ReportCategory2
+from api.filter import ReportFilter, ReportFilterByAreaName
 from api.fr import report_form_fr, basic_terms
 from api.models import Report, Votes, CustomUser, KeyValidator, RestPassword, ReportImage, AuthorizedMail, \
     ReportAnnotation, Area, ReportAnnotationComment, Notifications, Document
@@ -117,6 +118,55 @@ class TranslationViewSet(viewsets.ViewSet):
             {'fr': 'français',
              'en': 'not implemented yet',
              'nl': 'not implemented yet'})
+
+
+class ReportGeoJsonViewSet(viewsets.ViewSet):
+    """
+    Allowed usage : `list` all report, `get` one report, `create` report, `delete`, `put` report.
+    """
+
+    filter_backends = [DjangoFilterBackend]
+
+    filterset_class = ReportFilter
+
+    queryset = Report.objects.all()
+
+    authentication_classes = [SessionAuthentication]
+
+    permission_classes = (AllowAny,)
+
+    def list(self, request):
+        areas_name = self.request.query_params.getlist('area')
+        areas = Area.objects.filter(name__in=areas_name).all()
+        if len(list(areas)) == 0:
+            return Response({'error': 'No Areas found'})
+        records = Report.objects.filter(annotation__area__in=areas).all()
+        final_json = list()
+        for record in records:
+            types = ''.join([f'o {report_form_fr[type]}\n' for type in record.category_2])
+            commune = ReportAnnotation.objects.get(id=record.id).area
+            final_json.append(
+                {
+                    "type": "FeatureCollection",
+                    "features": [
+                        {
+                            "type": "Feature",
+                            "properties": {
+                                "name": commune.name[0:4] + str(record.id),
+                                "description": f'# {commune.name[0:3] + str(record.id)} \n\n **Type** \n {types} \n {record.comment}'
+                            },
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": [
+                                    record.latitude, record.longitude
+                                ]
+                            }
+                        },
+                    ]
+                }
+            )
+
+        return Response(final_json)
 
 
 class ReportViewSet(MultiSerializerViewSet):
@@ -249,6 +299,40 @@ class ReportViewSet(MultiSerializerViewSet):
         except DatabaseError:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    # @action(detail=False, methods=['get'], url_path='geojson', url_name='geojson')
+    # def geojson(self, request):
+    #     areas_name = self.request.query_params.getlist('area')
+    #     areas = Area.objects.filter(name__in=areas_name).all()
+    #     if len(list(areas)) == 0:
+    #         return Response({'error': 'No Areas found'})
+    #     records = Report.objects.filter(annotation__area__in=areas).all()
+    #     final_json = list()
+    #     for record in records:
+    #         types = ''.join([f'o {report_form_fr[type]}\n' for type in record.category_2])
+    #         commune = ReportAnnotation.objects.get(id=record.id).area
+    #         final_json.append(
+    #             {
+    #                 "type": "FeatureCollection",
+    #                 "features": [
+    #                     {
+    #                         "type": "Feature",
+    #                         "properties": {
+    #                             "name": commune.name[0:4] + str(record.id),
+    #                             "description": f'# {commune.name[0:3] + str(record.id)} \n\n **Type** \n {types} \n {record.comment}'
+    #                         },
+    #                         "geometry": {
+    #                             "type": "Point",
+    #                             "coordinates": [
+    #                                 record.latitude, record.longitude
+    #                             ]
+    #                         }
+    #                     },
+    #                 ]
+    #             }
+    #         )
+
+        return Response(final_json)
+
 
 class ReportFormTree(viewsets.ViewSet):
     """
@@ -337,7 +421,8 @@ class UserViewSet(viewsets.GenericViewSet, CreateModelMixin):
 
 # ----------------------------------------------------------------------------------------------------------------------
 
-class UserDeleteViewSet(viewsets.GenericViewSet, rest_framework.mixins.DestroyModelMixin, rest_framework.mixins.ListModelMixin):
+class UserDeleteViewSet(viewsets.GenericViewSet, rest_framework.mixins.DestroyModelMixin,
+                        rest_framework.mixins.ListModelMixin):
     permission_classes = (IsAuthenticated,)
     authentication_classes = [SessionAuthentication]
 
@@ -347,6 +432,7 @@ class UserDeleteViewSet(viewsets.GenericViewSet, rest_framework.mixins.DestroyMo
     def destroy(self, request, *args, **kwargs):
         user = request.user
         user.delete()
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -366,6 +452,7 @@ class NotificationsViewSet(viewsets.GenericViewSet, ListModelMixin):
     serializer_class = NotificationsSerializer
     permission_classes = (IsUser,)
     authentication_classes = [SessionAuthentication]
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 class KeyValidationView(viewsets.GenericViewSet, rest_framework.mixins.RetrieveModelMixin, ListModelMixin):
@@ -666,7 +753,7 @@ class DocumentViewSet(MultiSerializerViewSet):
         'default': DocumentSerializerHyperLink,
         'list': DocumentSerializerNoContentHyperLink,
         'create': DocumentSerializerWithContentHyperLink,
-        'retrieve': DocumentSerializerHyperLink,  #DocumentSerializerHyperLink
+        'retrieve': DocumentSerializerHyperLink,  # DocumentSerializerHyperLink
         'update': DocumentSerializerPatch,
         'partial_update': DocumentSerializerPatch,
         'destroy': DocumentSerializerHyperLink

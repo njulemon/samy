@@ -16,6 +16,7 @@ report_form_fr = {
     # operation
     ReportOperation.NONE_OPERATION.name: "Signaler à",
     ReportOperation.LOCALE.name: "locale du GRACQ",
+    ReportOperation.BLACK_DOT_WALLONIA.name: "Points noirs Wallonie",
 
     # cat 1
     ReportCategory1.INCIDENT.name: "incident",
@@ -38,6 +39,15 @@ report_form_fr = {
     ReportCategory2.INCIDENT_GLASS_ON_LANE.name: "Présence régulière de verre",
     ReportCategory2.INCIDENT_NAILS_ON_LANE.name: "Présence de clou ou équivalent",
     ReportCategory2.ILLEGAL_PARKING.name: "Parking sauvage régulier",
+    ReportCategory2.WAL_DANGEROUS_CROSSING.name: "Traversée dangereuse",
+
+    ReportCategory2.WAL_CROWDED_PLACE.name: "Endroit fort fréquenté",
+    ReportCategory2.WAL_DEGRADED_ROAD.name: "Voirie dégradée",
+    ReportCategory2.WAL_PUDDLE_WATER.name: "Flaque d'eau",
+    ReportCategory2.WAL_LACK_PUBLIC_LIGHTING.name: "Manque d'éclairage public",
+    ReportCategory2.WAL_SIGNIFICANT_DROP_ELEVATION.name: "Dénivelé",
+    ReportCategory2.WAL_HIGH_SPEED.name: "Vitesse trop élevée",
+    ReportCategory2.OTHER_IN_COMMENT.name: "Autre (préciser)",
 
     # In charge
     InCharge.IC_IN_CHARGE_NONE.name: "Autoritée compétente non-définie",

@@ -17,7 +17,7 @@ http?(s)://*:*) url=$env ;;
   ;;
 esac
 
-echo "Building app with api url : $env"
+echo "Building app with api url : $url"
 
 export REACT_APP_HOST_PORT_COMPLETE=$url
 cd react-ui && npm run build

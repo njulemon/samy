@@ -122,7 +122,7 @@ class TranslationViewSet(viewsets.ViewSet):
 
 class ReportGeoJsonViewSet(viewsets.ViewSet):
     """
-    Allowed usage : `list` all report, `get` one report, `create` report, `delete`, `put` report.
+    Allowed usage : `list` reports in GeoJson format.
     """
 
     filter_backends = [DjangoFilterBackend]
@@ -136,37 +136,47 @@ class ReportGeoJsonViewSet(viewsets.ViewSet):
     permission_classes = (AllowAny,)
 
     def list(self, request):
-        areas_name = self.request.query_params.getlist('area')
-        areas = Area.objects.filter(name__in=areas_name).all()
-        if len(list(areas)) == 0:
-            return Response({'error': 'No Areas found'})
-        records = Report.objects.filter(annotation__area__in=areas).all()
-        final_json = list()
-        for record in records:
-            types = ''.join([f'o {report_form_fr[type]}\n' for type in record.category_2])
-            commune = ReportAnnotation.objects.get(id=record.id).area
-            final_json.append(
-                {
-                    "type": "FeatureCollection",
-                    "features": [
-                        {
-                            "type": "Feature",
-                            "properties": {
-                                "name": commune.name[0:4] + str(record.id),
-                                "description": f'# {commune.name[0:3] + str(record.id)} \n\n **Type** \n {types} \n {record.comment}'
+        try:
+            areas_name = self.request.query_params.getlist('area')
+            areas = Area.objects.filter(name__in=areas_name).all()
+            if len(list(areas)) == 0:
+                areas = Area.objects.filter(active=True).all()
+            records = Report.objects.filter(annotation__area__in=areas).all()
+            final_json = list()
+            for record in records:
+                try:
+                    types = ''.join([f'o {report_form_fr[type]}\n' for type in record.category_2])
+                except KeyError:
+                    return Response({'error: translation missing'})
+                try:
+                    report_annotation = ReportAnnotation.objects.get(id=record.annotation.id)
+                except ObjectDoesNotExist:
+                    return Response({f'error: no annotation for record id : {record.id}'})
+                commune = report_annotation.area
+                comment = '' if record.comment is None else record.comment
+                final_json.append(
+                    {
+                        "type": "FeatureCollection",
+                        "features": [
+                            {
+                                "type": "Feature",
+                                "properties": {
+                                    "name": commune.name[0:4] + str(record.id),
+                                    "description": f'# {commune.name[0:4] + str(record.id)} \n\n **Type** \n {types} \n {comment}'
+                                },
+                                "geometry": {
+                                    "type": "Point",
+                                    "coordinates": [
+                                        record.latitude, record.longitude
+                                    ]
+                                }
                             },
-                            "geometry": {
-                                "type": "Point",
-                                "coordinates": [
-                                    record.latitude, record.longitude
-                                ]
-                            }
-                        },
-                    ]
-                }
-            )
-
-        return Response(final_json)
+                        ]
+                    }
+                )
+            return Response(final_json)
+        except Exception as e:
+            return Response(str(e))
 
 
 class ReportViewSet(MultiSerializerViewSet):

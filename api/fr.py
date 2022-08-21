@@ -39,8 +39,8 @@ report_form_fr = {
     ReportCategory2.INCIDENT_GLASS_ON_LANE.name: "Présence régulière de verre",
     ReportCategory2.INCIDENT_NAILS_ON_LANE.name: "Présence de clou ou équivalent",
     ReportCategory2.ILLEGAL_PARKING.name: "Parking sauvage régulier",
-    ReportCategory2.WAL_DANGEROUS_CROSSING.name: "Traversée dangereuse",
 
+    ReportCategory2.WAL_DANGEROUS_CROSSING.name: "Traversée dangereuse",
     ReportCategory2.WAL_CROWDED_PLACE.name: "Endroit fort fréquenté",
     ReportCategory2.WAL_DEGRADED_ROAD.name: "Voirie dégradée",
     ReportCategory2.WAL_PUDDLE_WATER.name: "Flaque d'eau",

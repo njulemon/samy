@@ -26,7 +26,7 @@ from api import Tools
 from api.CustomPermissions import ActionBasedPermission, IsOwnerOrReadOnly, IsCoordinatorOrReadOnly, IsAdminOrReadOnly, \
     IsUser, IsLocalOwner
 from api.MultiSerializerViewSet import MultiSerializerViewSet
-from api.enum import ReportUserType, map_category_1, map_category_2, ReportOperation, ReportCategory2
+from api.enum import ReportUserType, map_category_1, map_category_2, ReportOperation, ReportCategory2, InCharge
 from api.filter import ReportFilter, ReportFilterByAreaName
 from api.fr import report_form_fr, basic_terms
 from api.models import Report, Votes, CustomUser, KeyValidator, RestPassword, ReportImage, AuthorizedMail, \
@@ -141,19 +141,32 @@ class ReportGeoJsonViewSet(viewsets.ViewSet):
             areas = Area.objects.filter(name__in=areas_name).all()
             if len(list(areas)) == 0:
                 areas = Area.objects.filter(active=True).all()
-            records = Report.objects.filter(annotation__area__in=areas).all()
+            reports = Report.objects.filter(annotation__area__in=areas).all()
             final_json = list()
-            for record in records:
+            for report in reports:
                 try:
-                    types = ''.join([f'o {report_form_fr[type]}\n' for type in record.category_2])
+                    types = ''.join([f'o {report_form_fr[type]}\n' for type in report.category_2]) + '\n'
                 except KeyError:
                     return Response({'error: translation missing'})
                 try:
-                    report_annotation = ReportAnnotation.objects.get(id=record.annotation.id)
+                    report_annotation = ReportAnnotation.objects.get(id=report.annotation.id)
                 except ObjectDoesNotExist:
-                    return Response({f'error: no annotation for record id : {record.id}'})
+                    return Response({f'error: no annotation for record id : {report.id}'})
+
                 commune = report_annotation.area
-                comment = '' if record.comment is None else record.comment
+                name = commune.name[0:2] + str(report.id)
+                in_charge = '**Responsable**\n' + report_form_fr[
+                    InCharge.get_name(report_annotation.in_charge).name] + ' \n ' if report_annotation.in_charge else ''
+                comment = '' if report.comment is None else str(report.comment) + ' \n \n'
+                image = '{{' + str(ReportImageSerializer(instance=report.image).data.get(
+                    'image')) + '}} \n \n' if report.image is not None else ''
+                votes = [vote.gravity for vote in Votes.objects.filter(report=report).all()]
+                severity = '**Séverité**\n' + str(round(sum(votes) / len(votes))) + ' \n \n' if len(votes) > 0 else ''
+                street_view = f'[[http://maps.google.com/maps?q=&layer=c&cbll={report.latitude},{report.longitude}|Lien StreetView]]\n '
+                list_follow_up = list(report_annotation.comments.all())
+                suivi = '**Suivi**\n' + ''.join(['o ' + item.comment + '\n' for item in list_follow_up]) if len(
+                    list_follow_up) else ''
+                permalink = f'[[https://www.samy-app.be/R/no-redirection/report/{report.id}|Lien vers le rapport]]\n'
                 final_json.append(
                     {
                         "type": "FeatureCollection",
@@ -161,13 +174,21 @@ class ReportGeoJsonViewSet(viewsets.ViewSet):
                             {
                                 "type": "Feature",
                                 "properties": {
-                                    "name": commune.name[0:4] + str(record.id),
-                                    "description": f'# {commune.name[0:4] + str(record.id)} \n\n **Type** \n {types} \n {comment}'
+                                    "name": name,
+                                    "description": f'{severity}'
+                                                   f'**Type** \n '
+                                                   f'{types} '
+                                                   f'{comment}'
+                                                   f'{image}'
+                                                   f'{in_charge}'
+                                                   f'{street_view}'
+                                                   f'{suivi}'
+                                                   f'{permalink}'
                                 },
                                 "geometry": {
                                     "type": "Point",
                                     "coordinates": [
-                                        record.latitude, record.longitude
+                                        report.longitude, report.latitude
                                     ]
                                 }
                             },
@@ -308,40 +329,6 @@ class ReportViewSet(MultiSerializerViewSet):
 
         except DatabaseError:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    # @action(detail=False, methods=['get'], url_path='geojson', url_name='geojson')
-    # def geojson(self, request):
-    #     areas_name = self.request.query_params.getlist('area')
-    #     areas = Area.objects.filter(name__in=areas_name).all()
-    #     if len(list(areas)) == 0:
-    #         return Response({'error': 'No Areas found'})
-    #     records = Report.objects.filter(annotation__area__in=areas).all()
-    #     final_json = list()
-    #     for record in records:
-    #         types = ''.join([f'o {report_form_fr[type]}\n' for type in record.category_2])
-    #         commune = ReportAnnotation.objects.get(id=record.id).area
-    #         final_json.append(
-    #             {
-    #                 "type": "FeatureCollection",
-    #                 "features": [
-    #                     {
-    #                         "type": "Feature",
-    #                         "properties": {
-    #                             "name": commune.name[0:4] + str(record.id),
-    #                             "description": f'# {commune.name[0:3] + str(record.id)} \n\n **Type** \n {types} \n {record.comment}'
-    #                         },
-    #                         "geometry": {
-    #                             "type": "Point",
-    #                             "coordinates": [
-    #                                 record.latitude, record.longitude
-    #                             ]
-    #                         }
-    #                     },
-    #                 ]
-    #             }
-    #         )
-
-        return Response(final_json)
 
 
 class ReportFormTree(viewsets.ViewSet):

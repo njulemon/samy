@@ -181,8 +181,8 @@ class ReportGeoJsonViewSet(viewsets.ViewSet):
                                                    f'{comment}'
                                                    f'{image}'
                                                    f'{in_charge}'
-                                                   f'{street_view}'
                                                    f'{suivi}'
+                                                   f'{street_view}'
                                                    f'{permalink}'
                                 },
                                 "geometry": {

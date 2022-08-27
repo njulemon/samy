@@ -167,9 +167,10 @@ function ModalReportDetail({id_report}) {
                                                                 </div>
                                                             </>
                                                             :
-                                                            null
+                                                            <div className="col-6">
+                                                            </div>
                                                         }
-                                                        <div className="col-3">
+                                                        <div className="col-3 align-react-icon">
                                                             <Link to={"/R/no-redirection/report/" + id_report}>
                                                                 <IconContext.Provider
                                                                     value={{className: "link-icon link-icon-shadow"}}>
@@ -179,7 +180,7 @@ function ModalReportDetail({id_report}) {
                                                         </div>
                                                         <div className="col-3">
                                                             <a href={`https://maps.google.com/maps?q=&layer=c&cbll=${reportDataDescription.latitude},${reportDataDescription.longitude}`}
-                                                                target="_blank">
+                                                               target="_blank">
                                                                 <IconContext.Provider
                                                                     value={{className: "link-icon link-icon-shadow"}}>
                                                                     <FaStreetView/>

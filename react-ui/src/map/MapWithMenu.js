@@ -31,6 +31,8 @@ import ModalProfile from "../profile/ModalProfile";
 import {faUser} from "@fortawesome/free-solid-svg-icons/faUser";
 
 let DefaultIcon = L.divIcon({className: 'circle', iconSize: [20, 20]});
+let GreenIcon = L.divIcon({className: 'circle-green', iconSize: [20, 20]});
+let BlueIcon = L.divIcon({className: 'circle-blue', iconSize: [20, 20]});
 let HereDot = L.divIcon({className: 'circle-here', iconSize: [20, 20]});
 let HighlightDot = L.divIcon({className: 'highlight-dot', iconSize: [20, 20]});
 const newMarkerIcon = L.icon({iconUrl: icon, shadowUrl: iconShadow, iconAnchor: new Point(12, 41)})
@@ -99,7 +101,10 @@ function MapWithMenu({areaHook}) {
     const lastRerportMarkerCoordinates = useRef(null)
 
     // list of the marker to keep in memory to delete -> update the map.
-    const listMarkers = useRef([]);
+    const listLayers = useRef([]);
+
+    // layer control
+    const layerControl = useRef(null)
 
     // dot showing current location
     const you_are_here_dot = useRef(new Marker(new LatLng(0, 0)));
@@ -110,7 +115,7 @@ function MapWithMenu({areaHook}) {
     const navigate = useNavigate();
 
     function onMapZoom() {
-        updateMarkers();
+        // updateMarkers();
 
         // record location
         const zoom = map.current.getZoom()
@@ -132,25 +137,53 @@ function MapWithMenu({areaHook}) {
             size_y_meter.current = map.current.distance(map.current.getBounds().getNorthEast(), map.current.getBounds().getSouthEast());
 
             // remove old markers.
-            listMarkers.current.forEach(
-                (marker) => {
-                    map.current?.removeLayer(marker);
+            listLayers.current.forEach(
+                (layer) => {
+                    map.current?.removeLayer(layer);
                 }
             )
 
-            // create new one.
+            // create new ones.
             if (map.current) {
+                // layers (local variables)
+                let layer_red = L.layerGroup([]).addTo(map.current)
+                let layer_green = L.layerGroup([]).addTo(map.current)
+                let layer_orange = L.layerGroup([]).addTo(map.current)
+
                 listReportCoordinates.current.forEach(
                     (coord, index) => {
+                        if ([0, 1, 2].includes(listReports.current[index].annotation.status)) {
 
-                        listMarkers.current.push(
                             // @ts-ignore
-                            L.marker(coord).addTo(map.current).on('click', () => {
+                            let marker = L.marker(coord).on('click', () => {
                                 setIdReportDetail(null)  // we need to force change if we click again on the same record.
                                 setIdReportDetail(listReports.current[index].id)
-                            }))
+                            })
+                            layer_red.addLayer(marker)
+                        } else if ([4, 6].includes(listReports.current[index].annotation.status)) {
+                            // @ts-ignore
+                            let marker = L.marker(coord, {icon: GreenIcon}).on('click', () => {
+                                setIdReportDetail(null)  // we need to force change if we click again on the same record.
+                                setIdReportDetail(listReports.current[index].id)
+                            })
+                            layer_green.addLayer(marker)
+                        } else if ([3, 5].includes(listReports.current[index].annotation.status)) {
+                            // @ts-ignore
+                            let marker = L.marker(coord, {icon: BlueIcon}).on('click', () => {
+                                setIdReportDetail(null)  // we need to force change if we click again on the same record.
+                                setIdReportDetail(listReports.current[index].id)
+                            })
+                            layer_orange.addLayer(marker)
+                        }
                     }
                 );
+
+                layerControl.current = L.control.layers({},{'Nouveaux': layer_red, 'En cours': layer_orange, 'Fini': layer_green},{position: 'topleft'}).addTo(map.current)
+
+                // store the the layers
+                listLayers.current.push(layer_red)
+                listLayers.current.push(layer_green)
+                listLayers.current.push(layer_orange)
             }
         }
     }
@@ -180,6 +213,7 @@ function MapWithMenu({areaHook}) {
         }
     }
 
+    // add new marker
     function addNewReportMarker() {
 
         console.log("addNewMarker")
@@ -242,6 +276,7 @@ function MapWithMenu({areaHook}) {
         }
     }
 
+    // move to the right dot on the map and highlight it.
     function highlightReport(lat, lng) {
         try {
             map.current?.removeLayer(dotHighlight.current)
@@ -395,7 +430,7 @@ function MapWithMenu({areaHook}) {
                 setHighlightReport={highlightReport}
             />
 
-            <ModalProfile />
+            <ModalProfile/>
 
             <div id='map'>
                 <div className="leaflet-top leaflet-right">

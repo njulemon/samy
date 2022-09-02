@@ -81,10 +81,30 @@ body {
 
 div.circle {
   background-color: rgba(215, 60, 33, 0.68);
-  border-color: red;
+  border-color: #f3a9a9;
   border-radius: 30px;
   border-style: solid;
-  border-width: 0px;
+  border-width: 2px;
+  width: 30px;
+  height: 30px;
+}
+
+div.circle-green {
+  background-color: rgba(47, 168, 25, 0.68);
+  border-color: #a9ec98;
+  border-radius: 30px;
+  border-style: solid;
+  border-width: 2px;
+  width: 30px;
+  height: 30px;
+}
+
+div.circle-blue {
+  background-color: rgba(23, 69, 184, 0.68);
+  border-color: #aecbf1;
+  border-radius: 30px;
+  border-style: solid;
+  border-width: 2px;
   width: 30px;
   height: 30px;
 }

@@ -1,11 +1,10 @@
 import {Card, Toast} from "react-bootstrap";
 import MultiMap from "./MultiMap";
 import ModalNewDossier from "./ModalNewDossier";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import useDossierHook from "../hooks/useDossierHook";
 import SlateModal from "./SlateModal";
 import ModalUpdateDossier from "./ModalUpdateDossier";
-import SlateAnnex from "./SlateAnnex";
 
 const Dossiers = () => {
 
@@ -17,8 +16,8 @@ const Dossiers = () => {
     const [currentReportToAdd, setCurrentReportToAdd] = useState(null)
     const [currentReportToDelete, setCurrentReportToDelete] = useState(null)
     const [lastReportClicked, setLastReportClicked] = useState(null)
-    const [newContent, setNewContent] = useState(null)
-    const [images, setImages] = useState({})
+    // const [newContent, setNewContent] = useState(null)
+    // const [images, setImages] = useState({})
     const [updateToggle, setUpdateToggle] = useState(false)
 
     const dossierHook = useDossierHook()

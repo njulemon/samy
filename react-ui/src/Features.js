@@ -1,6 +1,4 @@
 import MenuNavAndFooter from "./MenuNavAndFooter";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCirclePlus, faMapMarkerAlt} from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import mapExample from "./images/map-example.png"
 import mapFollow from "./images/coorindator-follow-example.png"
@@ -66,7 +64,7 @@ const Features = () => {
                         </p>
 
                         <p>
-                            <img src={mapExample} className="picture-page-vert rounded"/>
+                            <img src={mapExample} className="picture-page-vert rounded" alt="Exemple de carte"/>
                         </p>
 
                         <p>
@@ -142,8 +140,8 @@ const Features = () => {
                         <h4>Suvi des signalements</h4>
 
                         <p>
-                            <a href={mapFollow} target={"_blank"}>
-                                <img src={mapFollow} className="picture-page-hor rounded"/>
+                            <a href={mapFollow} target={"_blank"} rel="noreferrer">
+                                <img src={mapFollow} className="picture-page-hor rounded" alt="Illustration du suivi des signalements"/>
                             </a>
                         </p>
 

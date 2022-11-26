@@ -9,7 +9,7 @@ const FooterSamy = () => {
                     <div className="col">
                     </div>
                     <div className="col-auto text-center">
-                        <img src={logo_wb} className="logo-gracq-footer d-none d-sm-block shadow-lg"/>
+                        <img src={logo_wb} className="logo-gracq-footer d-none d-sm-block shadow-lg" alt="logo gracq"/>
                     </div>
                     <div className="col">
                     </div>

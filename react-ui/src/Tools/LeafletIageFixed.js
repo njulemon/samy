@@ -160,7 +160,7 @@ module.exports = function leafletImage(map, callback) {
             };
             im.onerror = function (e) {
                 // use canvas instead of errorTileUrl if errorTileUrl get 404
-                if (layer.options.errorTileUrl != '' && e.target.errorCheck === undefined) {
+                if (layer.options.errorTileUrl !== '' && e.target.errorCheck === undefined) {
                     e.target.errorCheck = true;
                     e.target.src = layer.options.errorTileUrl;
                 } else {

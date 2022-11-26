@@ -1,4 +1,3 @@
-import Info from "./Info";
 import MenuLeft from "./MenuLeft";
 import FilterReport from "./FilterReport";
 import {Card} from "react-bootstrap";
@@ -46,12 +45,6 @@ const ContainerMenuLeft = ({children, ...rest}) => {
                         <MenuLeft/>
                     </div>
                 </div>
-
-                {/*<div className="row pb-2">*/}
-                {/*    <div className="col">*/}
-                {/*        <Info/>*/}
-                {/*    </div>*/}
-                {/*</div>*/}
 
                 {
                     !!rest.reportFilterHook

@@ -52,7 +52,7 @@ const ReportCard = ({id, fullSize=false}) => {
                     .catch((error) => setError(error.toString()))
             }
         },
-        [idReport, dispatch]
+        [idReport, dispatch, fetchAnnotation]
     )
 
     return (

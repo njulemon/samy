@@ -1,7 +1,6 @@
 import {useEffect, useState} from "react";
 import {deleteImage, getImage, postImage} from "../api/PostImage";
 import {makeid} from "../Tools/KeyGenerator";
-import {urlMedia} from "../def/Definitions";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faTimes} from "@fortawesome/free-solid-svg-icons";
 

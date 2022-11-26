@@ -1,6 +1,5 @@
 import {Card, ListGroup} from "react-bootstrap";
 import {useAppSelector} from "../app/hooks";
-import avatar from '../images/avatar.png'
 import {useEffect, useState} from "react";
 import {urlServer} from "../def/Definitions";
 import axios from "axios";

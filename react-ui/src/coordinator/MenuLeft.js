@@ -1,7 +1,5 @@
 import {Card, ListGroup} from "react-bootstrap";
-import avatar from "../images/avatar.png";
-import {Link, useNavigate} from "react-router-dom";
-import {faToolbox} from "@fortawesome/free-solid-svg-icons/faToolbox";
+import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import React from "react";
 import {faMap} from "@fortawesome/free-solid-svg-icons/faMap";

@@ -1,5 +1,4 @@
 import L, {LatLng, Marker, Point} from 'leaflet';
-// import './App.css';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faMapMarkerAlt, faCirclePlus, faSignOutAlt} from '@fortawesome/free-solid-svg-icons'

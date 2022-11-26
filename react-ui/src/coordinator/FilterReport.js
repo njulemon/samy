@@ -1,6 +1,5 @@
 import {Card} from "react-bootstrap";
 import React from "react";
-import {useAppSelector} from "../app/hooks";
 import DatePicker from 'react-date-picker'
 import Select from "react-select";
 import makeAnimated from 'react-select/animated';

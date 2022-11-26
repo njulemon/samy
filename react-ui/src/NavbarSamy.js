@@ -1,6 +1,5 @@
-import {Nav, Navbar, NavDropdown, Offcanvas} from "react-bootstrap";
-import logo from './images/logo-samy.png'
-import {Link, useNavigate} from "react-router-dom";
+import {Nav, Navbar} from "react-bootstrap";
+import {useNavigate} from "react-router-dom";
 
 const NavbarSamy = ({setShowRegisterModal}) => {
 

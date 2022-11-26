@@ -1,6 +1,5 @@
 import {Col, Row} from "react-bootstrap";
 import {useAppSelector} from "../app/hooks";
-import avatar from "../images/avatar.png"
 import {useUserStatHook} from "../hooks/useUserStatHook";
 
 const Profile = () => {

@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import L from "leaflet";
 import {useAreaHook} from "../hooks/useAreaHook";
-import ModalReportDetail from "../map/ModalReportDetail";
 import ModalReportSimple from "./ModalReportSimple";
 
 let HereDot = L.divIcon({className: 'circle-here-no-highlight', iconSize: [20, 20]});

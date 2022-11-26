@@ -77,7 +77,7 @@ const ModalRanking = ({show, setShow, listReports, setHighlightReport}) => {
                     .map(row => {
                         return {
                             category_1: capitalize(translation[row.category_1]),
-                            category_2: row.category_2.map(item => (<>{capitalize(translation[item])}<br /></>)),
+                            category_2: row.category_2.map(item => (<div key={item}>{capitalize(translation[item])}<br /></div>)),
                             image: row.image,
                             comment: capitalize(row.comment),
                             date: (new Date(row.timestamp_creation).toLocaleDateString()),

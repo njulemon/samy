@@ -27,10 +27,12 @@ import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import TableViewIcon from '@mui/icons-material/TableView';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
+import MapIcon from '@mui/icons-material/Map';
+import CopyAllIcon from '@mui/icons-material/CopyAll';
 
 import {css} from '@emotion/css'
 import isUrl from 'is-url'
-import useSlateState from "../hooks/useSlateState";
+import {Alert, Toast} from "react-bootstrap";
 
 
 const HOTKEYS = {
@@ -154,6 +156,21 @@ const InsertImageButton = () => {
     )
 }
 
+
+const CopyToClipboard = ({copyToClipBoard, setShowToast}) => {
+    return (
+        <Button
+            onMouseDown={event => {
+                event.preventDefault()
+                copyToClipBoard()
+                setShowToast(true)
+            }}
+        >
+            <CopyAllIcon/>
+        </Button>
+    )
+}
+
 const isImageUrl = url => {
     if (!url) return false
     if (!isUrl(url)) return false
@@ -161,11 +178,17 @@ const isImageUrl = url => {
     return imageExtensions.includes(ext)
 }
 
-const SlateEditor = ({id, slateState}) => {
+const SlateEditor = ({id, slateState, copyToClipBoard}) => {
     const editor = useMemo(() => withImages(withHistory(withReact(createEditor()))), [])
     const renderLeaf = useCallback(props => <Leaf {...props} />, [])
     const renderElement = useCallback(props => <Element {...props}/>, [])
+    const [showCopyToClipboardToast, setShowCopyToClipboardToast] = useState(false)
 
+    useEffect(() => {
+        if (showCopyToClipboardToast) {
+            setTimeout(() => setShowCopyToClipboardToast(false), 2000)
+        }
+    }, [showCopyToClipboardToast])
 
 
     useEffect(() => {
@@ -175,25 +198,34 @@ const SlateEditor = ({id, slateState}) => {
     useEffect(() => {
         if (slateState.isSaving) {
             ReactEditor.blur(editor)
-        }
-        else {
+        } else {
             ReactEditor.blur(editor)
         }
     }, [slateState.isSaving])
 
     return (
+
+
         <Slate editor={editor}
                value={initialValue}
                onChange={value => onChange(value, editor, slateState.setContent)}
         >
+
+            {
+                showCopyToClipboardToast ?
+                    <Alert variant='info'>
+                        Le contenu du document a été copié dans le presse-papier.
+                    </Alert> :
+                    null
+            }
+
+
             <Toolbar>
                 <MarkButton format="bold" icon={(<FormatBoldIcon/>)} slateState={slateState}/>
                 <MarkButton format="italic" icon={(<FormatItalicIcon/>)} slateState={slateState}/>
                 <MarkButton format="underline" icon={(<FormatUnderlinedIcon/>)} slateState={slateState}/>
-                {/*<MarkButton format="code" icon={(<FormatBoldIcon/>)}/>*/}
                 <BlockButton format="heading-one" icon={(<LooksOneIcon/>)}/>
                 <BlockButton format="heading-two" icon={(<LooksTwoIcon/>)}/>
-                {/*<BlockButton format="block-quote" icon={(<FormatQuoteIcon/>)}/>*/}
                 <BlockButton format="numbered-list" icon={(<FormatListNumberedIcon/>)}/>
                 <BlockButton format="bulleted-list" icon={(<FormatListBulletedIcon/>)}/>
                 <BlockButton format="left" icon={(<FormatAlignLeftIcon/>)}/>
@@ -201,24 +233,29 @@ const SlateEditor = ({id, slateState}) => {
                 <BlockButton format="right" icon={(<FormatAlignRightIcon/>)}/>
                 <BlockButton format="justify" icon={(<FormatAlignJustifyIcon/>)}/>
                 <InsertImageButton/>
+                <CopyToClipboard copyToClipBoard={copyToClipBoard} setShowToast={setShowCopyToClipboardToast}/>
                 <SaveButton slateState={slateState}/>
             </Toolbar>
-            <Editable
-                renderElement={renderElement}
-                renderLeaf={renderLeaf}
-                placeholder="Commencer votre rapport... "
-                spellCheck
-                autoFocus
-                onKeyDown={event => {
-                    for (const hotkey in HOTKEYS) {
-                        if (isHotkey(hotkey, event)) {
-                            event.preventDefault()
-                            const mark = HOTKEYS[hotkey]
-                            toggleMark(editor, mark)
+
+
+            <div id="selection-node-slate">
+                <Editable
+                    renderElement={renderElement}
+                    renderLeaf={renderLeaf}
+                    placeholder="Tapez ici votre rapport... "
+                    spellCheck
+                    autoFocus
+                    onKeyDown={event => {
+                        for (const hotkey in HOTKEYS) {
+                            if (isHotkey(hotkey, event)) {
+                                event.preventDefault()
+                                const mark = HOTKEYS[hotkey]
+                                toggleMark(editor, mark)
+                            }
                         }
-                    }
-                }}
-            />
+                    }}
+                />
+            </div>
         </Slate>
     )
 }
@@ -414,6 +451,14 @@ const SaveButton = ({slateState}) => {
             }}
         >
             <SaveIcon/>
+        </Button>
+    )
+}
+
+const ReportButton = ({id}) => {
+    return (
+        <Button>
+            <MapIcon/>
         </Button>
     )
 }

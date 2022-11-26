@@ -59,6 +59,7 @@ class ReportOperation(ModelEnum):
     NONE_OPERATION = 0
     LOCALE = 1
     # set other type of operations.
+    BLACK_DOT_WALLONIA = 2
 
 
 class ReportCategory1(ModelEnum):
@@ -95,13 +96,29 @@ class ReportCategory2(ModelEnum):
 
     ILLEGAL_PARKING = 17
 
+    # Wallonia black dot
+    WAL_DANGEROUS_CROSSING = 18
+    WAL_CROWDED_PLACE = 19
+    WAL_DEGRADED_ROAD = 20
+    WAL_PUDDLE_WATER = 21
+    WAL_LACK_PUBLIC_LIGHTING = 22
+    WAL_SIGNIFICANT_DROP_ELEVATION = 23
+    WAL_HIGH_SPEED = 24
+
+    OTHER_IN_COMMENT = 25
+
+
 # ----------------------------------------------------------------------------------------------------------------------
 # CATEGORIES TREE
 map_category_1 = {
     ReportOperation.LOCALE: [
         ReportCategory1.NONE_CAT_1,
         ReportCategory1.INFRASTRUCTURE,
-        ReportCategory1.INCIDENT]
+        ReportCategory1.INCIDENT],
+    # set options for other operations here...
+    ReportOperation.BLACK_DOT_WALLONIA: [
+        ReportCategory1.NONE_CAT_1,
+        ReportCategory1.INFRASTRUCTURE]
     # set options for other operations here...
 }
 
@@ -127,6 +144,20 @@ map_category_2 = {
                 ReportCategory2.ILLEGAL_PARKING,
                 ReportCategory2.INCIDENT_GLASS_ON_LANE,
                 ReportCategory2.INCIDENT_NAILS_ON_LANE
+            ]
+        },
+    ReportOperation.BLACK_DOT_WALLONIA:
+        {
+            ReportCategory1.INFRASTRUCTURE: [
+                ReportCategory2.WAL_DANGEROUS_CROSSING,
+                ReportCategory2.WAL_CROWDED_PLACE,
+                ReportCategory2.WAL_DEGRADED_ROAD,
+                ReportCategory2.WAL_PUDDLE_WATER,
+                ReportCategory2.SIGNAGE__MISSING,
+                ReportCategory2.WAL_LACK_PUBLIC_LIGHTING,
+                ReportCategory2.WAL_SIGNIFICANT_DROP_ELEVATION,
+                ReportCategory2.WAL_HIGH_SPEED,
+                ReportCategory2.OTHER_IN_COMMENT
             ]
         }
 }

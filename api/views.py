@@ -1,5 +1,6 @@
 import json
 import os
+from collections import OrderedDict
 
 import rest_framework.mixins
 from django.contrib.auth import authenticate, login as django_internal_login, logout
@@ -25,8 +26,8 @@ from api import Tools
 from api.CustomPermissions import ActionBasedPermission, IsOwnerOrReadOnly, IsCoordinatorOrReadOnly, IsAdminOrReadOnly, \
     IsUser, IsLocalOwner
 from api.MultiSerializerViewSet import MultiSerializerViewSet
-from api.enum import ReportUserType, map_category_1, map_category_2, ReportOperation
-from api.filter import ReportFilter
+from api.enum import ReportUserType, map_category_1, map_category_2, ReportOperation, ReportCategory2, InCharge
+from api.filter import ReportFilter, ReportFilterByAreaName
 from api.fr import report_form_fr, basic_terms
 from api.models import Report, Votes, CustomUser, KeyValidator, RestPassword, ReportImage, AuthorizedMail, \
     ReportAnnotation, Area, ReportAnnotationComment, Notifications, Document
@@ -117,6 +118,86 @@ class TranslationViewSet(viewsets.ViewSet):
             {'fr': 'français',
              'en': 'not implemented yet',
              'nl': 'not implemented yet'})
+
+
+class ReportGeoJsonViewSet(viewsets.ViewSet):
+    """
+    Allowed usage : `list` reports in GeoJson format.
+    """
+
+    filter_backends = [DjangoFilterBackend]
+
+    filterset_class = ReportFilter
+
+    queryset = Report.objects.all()
+
+    authentication_classes = [SessionAuthentication]
+
+    permission_classes = (AllowAny,)
+
+    def list(self, request):
+        try:
+            areas_name = self.request.query_params.getlist('area')
+            areas = Area.objects.filter(name__in=areas_name).all()
+            if len(list(areas)) == 0:
+                areas = Area.objects.filter(active=True).all()
+            reports = Report.objects.filter(annotation__area__in=areas).all()
+            final_json = list()
+            for report in reports:
+                try:
+                    types = ''.join([f'o {report_form_fr[type]}\n' for type in report.category_2]) + '\n'
+                except KeyError:
+                    return Response({'error: translation missing'})
+                try:
+                    report_annotation = ReportAnnotation.objects.get(id=report.annotation.id)
+                except ObjectDoesNotExist:
+                    return Response({f'error: no annotation for record id : {report.id}'})
+
+                commune = report_annotation.area
+                name = commune.name[0:2] + str(report.id)
+                in_charge = '**Responsable**\n' + report_form_fr[
+                    InCharge.get_name(report_annotation.in_charge).name] + ' \n ' if report_annotation.in_charge else ''
+                comment = '' if report.comment is None else str(report.comment) + ' \n \n'
+                image = '{{' + str(ReportImageSerializer(instance=report.image).data.get(
+                    'image')) + '}} \n \n' if report.image is not None else ''
+                votes = [vote.gravity for vote in Votes.objects.filter(report=report).all()]
+                severity = '**Séverité**\n' + str(round(sum(votes) / len(votes))) + ' \n \n' if len(votes) > 0 else ''
+                street_view = f'[[http://maps.google.com/maps?q=&layer=c&cbll={report.latitude},{report.longitude}|Lien StreetView]]\n '
+                list_follow_up = list(report_annotation.comments.all())
+                suivi = '**Suivi**\n' + ''.join(['o ' + item.comment + '\n' for item in list_follow_up]) if len(
+                    list_follow_up) else ''
+                permalink = f'[[https://www.samy-app.be/R/no-redirection/report/{report.id}|Lien vers le rapport]]\n'
+                final_json.append(
+                    {
+                        "type": "FeatureCollection",
+                        "features": [
+                            {
+                                "type": "Feature",
+                                "properties": {
+                                    "name": name,
+                                    "description": f'{severity}'
+                                                   f'**Type** \n '
+                                                   f'{types} '
+                                                   f'{comment}'
+                                                   f'{image}'
+                                                   f'{in_charge}'
+                                                   f'{suivi}'
+                                                   f'{street_view}'
+                                                   f'{permalink}'
+                                },
+                                "geometry": {
+                                    "type": "Point",
+                                    "coordinates": [
+                                        report.longitude, report.latitude
+                                    ]
+                                }
+                            },
+                        ]
+                    }
+                )
+            return Response(final_json)
+        except Exception as e:
+            return Response(str(e))
 
 
 class ReportViewSet(MultiSerializerViewSet):
@@ -337,7 +418,8 @@ class UserViewSet(viewsets.GenericViewSet, CreateModelMixin):
 
 # ----------------------------------------------------------------------------------------------------------------------
 
-class UserDeleteViewSet(viewsets.GenericViewSet, rest_framework.mixins.DestroyModelMixin, rest_framework.mixins.ListModelMixin):
+class UserDeleteViewSet(viewsets.GenericViewSet, rest_framework.mixins.DestroyModelMixin,
+                        rest_framework.mixins.ListModelMixin):
     permission_classes = (IsAuthenticated,)
     authentication_classes = [SessionAuthentication]
 
@@ -347,6 +429,7 @@ class UserDeleteViewSet(viewsets.GenericViewSet, rest_framework.mixins.DestroyMo
     def destroy(self, request, *args, **kwargs):
         user = request.user
         user.delete()
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -366,6 +449,7 @@ class NotificationsViewSet(viewsets.GenericViewSet, ListModelMixin):
     serializer_class = NotificationsSerializer
     permission_classes = (IsUser,)
     authentication_classes = [SessionAuthentication]
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 class KeyValidationView(viewsets.GenericViewSet, rest_framework.mixins.RetrieveModelMixin, ListModelMixin):
@@ -666,7 +750,7 @@ class DocumentViewSet(MultiSerializerViewSet):
         'default': DocumentSerializerHyperLink,
         'list': DocumentSerializerNoContentHyperLink,
         'create': DocumentSerializerWithContentHyperLink,
-        'retrieve': DocumentSerializerHyperLink,  #DocumentSerializerHyperLink
+        'retrieve': DocumentSerializerHyperLink,  # DocumentSerializerHyperLink
         'update': DocumentSerializerPatch,
         'partial_update': DocumentSerializerPatch,
         'destroy': DocumentSerializerHyperLink

@@ -10,6 +10,8 @@ import {capitalize} from "../Tools/String";
 import {deleteCsrf, PatchCsrf, PostCsrf} from "../api/Csrf";
 import {Rating} from "@mui/material";
 import {MdModeEditOutline, MdDeleteForever, MdLink} from 'react-icons/md';
+import {FaStreetView} from 'react-icons/fa'
+
 import {IconContext} from 'react-icons'
 import FormEditReport from "./FormEditReport";
 import {Link, useNavigate, useParams} from "react-router-dom";
@@ -149,14 +151,14 @@ function ModalReportDetail({id_report}) {
                                                     <div className="row">
                                                         {(reportDataDescription?.owner === user?.id || user?.is_staff) ?
                                                             <>
-                                                                <div className="col-4 align-react-icon">
+                                                                <div className="col-3 align-react-icon">
                                                                     <IconContext.Provider
                                                                         value={{className: "edit-icon edit-icon-shadow"}}>
                                                                         <MdModeEditOutline
                                                                             onClick={() => handlerEdit()}/>
                                                                     </IconContext.Provider>
                                                                 </div>
-                                                                <div className="col-4">
+                                                                <div className="col-3">
                                                                     <IconContext.Provider
                                                                         value={{className: "delete-icon delete-icon-shadow"}}>
                                                                         <MdDeleteForever
@@ -165,15 +167,25 @@ function ModalReportDetail({id_report}) {
                                                                 </div>
                                                             </>
                                                             :
-                                                            null
+                                                            <div className="col-6">
+                                                            </div>
                                                         }
-                                                        <div className="col-4">
+                                                        <div className="col-3 align-react-icon">
                                                             <Link to={"/R/no-redirection/report/" + id_report}>
                                                                 <IconContext.Provider
                                                                     value={{className: "link-icon link-icon-shadow"}}>
                                                                     <MdLink/>
                                                                 </IconContext.Provider>
                                                             </Link>
+                                                        </div>
+                                                        <div className="col-3">
+                                                            <a href={`https://maps.google.com/maps?q=&layer=c&cbll=${reportDataDescription.latitude},${reportDataDescription.longitude}`}
+                                                               target="_blank">
+                                                                <IconContext.Provider
+                                                                    value={{className: "link-icon link-icon-shadow"}}>
+                                                                    <FaStreetView/>
+                                                                </IconContext.Provider>
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -213,7 +225,9 @@ function ModalReportDetail({id_report}) {
                                                         <div className="col">
                                                             <h5>
                                                                 {/*{capitalize(translation[reportDataDescription.category_2])}*/}
-                                                                {reportDataDescription.category_2.map(item => (<div key={item}>{capitalize(translation[item])}<br /></div>))}
+                                                                {reportDataDescription.category_2.map(item => (
+                                                                    <div key={item}>{capitalize(translation[item])}<br/>
+                                                                    </div>))}
                                                             </h5>
                                                             <p className="fw-lighter">
                                                                 Signalé
@@ -292,7 +306,8 @@ function ModalReportDetail({id_report}) {
                                                                     </Accordion.Header>
                                                                     <Accordion.Body>
                                                                         {statesAnnotation?.comments?.map(row =>
-                                                                            <div className="row" key={"comment" + row.id}>
+                                                                            <div className="row"
+                                                                                 key={"comment" + row.id}>
                                                                                 <div className="col-10">
                                                                                     <div className="fw-light">
                                                                                         {(new Date(row.date_modified)).toLocaleDateString() + " " + (new Date(row.date_modified)).toLocaleTimeString()}

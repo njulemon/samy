@@ -1,10 +1,8 @@
-import Info from "./Info";
 import Unassigned from "./Unassigned";
 import FollowUp from "./FollowUp";
 import {useEffect, useState} from "react";
 import {checkAccessAndGetUser} from "../app/States";
 import {useAppDispatch, useAppSelector} from "../app/hooks";
-import MenuLeft from "./MenuLeft";
 import ContainerMenuLeft from "./ContainerMenuLeft";
 import {useReportFilter} from "../hooks/useReportFilter";
 import Dossiers from "./Dossiers";

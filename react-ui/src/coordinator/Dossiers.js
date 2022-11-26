@@ -1,7 +1,7 @@
 import {Card, Toast} from "react-bootstrap";
 import MultiMap from "./MultiMap";
 import ModalNewDossier from "./ModalNewDossier";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import useDossierHook from "../hooks/useDossierHook";
 import SlateModal from "./SlateModal";
 import ModalUpdateDossier from "./ModalUpdateDossier";
@@ -16,6 +16,9 @@ const Dossiers = () => {
     const [currentReportToAdd, setCurrentReportToAdd] = useState(null)
     const [currentReportToDelete, setCurrentReportToDelete] = useState(null)
     const [lastReportClicked, setLastReportClicked] = useState(null)
+    // const [newContent, setNewContent] = useState(null)
+    // const [images, setImages] = useState({})
+    const [updateToggle, setUpdateToggle] = useState(false)
 
     const dossierHook = useDossierHook()
 
@@ -27,9 +30,13 @@ const Dossiers = () => {
     useEffect(() => setLastReportClicked(currentReportToAdd), [currentReportToAdd])
     useEffect(() => setLastReportClicked(currentReportToDelete), [currentReportToDelete])
 
+    const forceUpdate = () => {
+        setUpdateToggle(!updateToggle)
+    }
+
     return (
         <>
-            <SlateModal show={showModalQuill} setShow={setShowModalQuill} id={parseInt(dossierHook.currentDossier)}/>
+            <SlateModal show={showModalQuill} setShow={setShowModalQuill} id={parseInt(dossierHook.currentDossier)} forceUpdate={forceUpdate}/>
             <ModalNewDossier show={showModalNew} setShow={setShowModalNew} dossierHook={dossierHook}/>
             <ModalUpdateDossier show={showModalUpdate} setShow={setShowModalUpdate} dossierHook={dossierHook}/>
             <Card>
@@ -139,11 +146,6 @@ const Dossiers = () => {
                                     dossierHook.allReports.map(item => {
                                         return {latitude: item.latitude, longitude: item.longitude, id: item.id}
                                     })
-                                    // [
-                                    //     {latitude: 50.800478, longitude: 4.413564, id: 1},
-                                    //     {latitude: 51.0, longitude: 4.413564, id: 2},
-                                    //     {latitude: 51.800478, longitude: 3.413564, id: 3}
-                                    // ]
                                 }
                                 idMap={3}
                                 idsCurrent={dossierHook.currentReports.map(item => item.id)}/>
@@ -159,7 +161,8 @@ const Dossiers = () => {
                         <div className="col-4">
                             <label htmlFor="listReports" className="form-label">Liste des signalements</label>
 
-                            <select className="form-select" size={12} id="listReports" onChange={event => setCurrentReportToAdd(parseInt(event.target.value))}>
+                            <select className="form-select" size={12} id="listReports"
+                                    onChange={event => setCurrentReportToAdd(parseInt(event.target.value))}>
                                 {dossierHook.allReports.map(item => <option key={item.id}
                                                                             value={item.id}>Report {item.id}</option>)}
                             </select>
@@ -174,26 +177,23 @@ const Dossiers = () => {
                         <div className="col-4">
                             <label htmlFor="listReportsLinked" className="form-label">Liste des signalements
                                 associés</label>
-                            <select className="form-select" size={12} onChange={event => setCurrentReportToDelete(parseInt(event.target.value))}>
+                            <select className="form-select" size={12}
+                                    onChange={event => setCurrentReportToDelete(parseInt(event.target.value))}>
                                 {dossierHook.allReports.filter(item => dossierHook.currentReports.map(rep => rep.id).includes(item.id)).map(item => {
                                     return (<option key={item.id} value={item.id}>Report {item.id}</option>)
                                 })}
                             </select>
-                            <button className="btn btn-outline-danger mt-2 mb-3" onClick={() => dossierHook.deleteReport(currentReportToDelete)}>X</button>
+                            <button className="btn btn-outline-danger mt-2 mb-3"
+                                    onClick={() => dossierHook.deleteReport(currentReportToDelete)}>X
+                            </button>
                         </div>
 
                         <div className="col-4">
                             <MultiMap
                                 lat_lng={
                                     dossierHook.allReports.map(item => {
-                                        return {latitude: item.latitude, longitude: item.longitude, id: item.id}})}
-                                // lat_lng={
-                                //     [
-                                //         {latitude: 50.800478, longitude: 4.413564, id: 1},
-                                //         {latitude: 51.0, longitude: 4.413564, id: 2},
-                                //         {latitude: 51.800478, longitude: 3.413564, id: 3}
-                                //     ]
-                                // }
+                                        return {latitude: item.latitude, longitude: item.longitude, id: item.id}
+                                    })}
                                 idMap={4}
                                 idsCurrent={[lastReportClicked]}/>
                         </div>

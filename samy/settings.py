@@ -40,8 +40,10 @@ CSRF_COOKIE_HTTPONLY = True
 
 try:
     ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.0.55', os.environ['HOST']]
+    CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000', 'http://localhost:3000', 'http://192.168.0.55:3000', 'https://' + os.environ['HOST']]
 except:
     ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.0.55']
+    CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000', 'http://localhost:3000', 'http://192.168.0.55:3000']
 
 DJANGO_SUPERUSER_USERNAME = os.environ['DJANGO_SUPERUSER_USERNAME']
 DJANGO_SUPERUSER_PASSWORD = os.environ['DJANGO_SUPERUSER_PASSWORD']
@@ -94,8 +96,6 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:8000',
     'http://127.0.0.1:3000',
-    'http://192.168.0.55:3000',
-    'http://192.168.0.55:8000'
 ]
 
 CORS_ALLOW_CREDENTIALS = True

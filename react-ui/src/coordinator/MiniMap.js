@@ -50,9 +50,7 @@ const MiniMap = ({lat, lng, zoom, id}) => {
             if (!!id) {
                 map.current = L.map('mini-map' + id, {attributionControl: false, zoomControl: true})
 
-
                 map.current.setView([lat, lng], zoom);
-
 
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'

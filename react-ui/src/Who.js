@@ -17,7 +17,7 @@ const Who = () => {
                                             <h3>Le GRACQ</h3>
 
                                             <p>
-                                                Pour tout savoir sur le GRACQ : <a className="link-white"
+                                                Pour tout savoir sur le GRACQ : <a className="link-white" rel="noreferrer"
                                                                                    href="https://www.gracq.org/"
                                                                                    target="_blank">https://www.gracq.org/</a>.
                                             </p>
@@ -39,7 +39,7 @@ const Who = () => {
                                             <p>
                                                 La plateforme est ouverte à tous. Le code sur lequel cette plateforme
                                                 est basée est open source et
-                                                disponible ici : <a className="link-white"
+                                                disponible ici : <a className="link-white" rel="noreferrer"
                                                                     href="https://github.com/njulemon/samy"
                                                                     target="_blank">https://github.com/njulemon/samy</a>
                                             </p>
@@ -55,7 +55,7 @@ const Who = () => {
                                             <br/>
                                             Facebook : <a className="link-white"
                                                              href="https://www.facebook.com/gracqwb/"
-                                                             target="_blank">https://www.facebook.com/gracqwb/</a></p>
+                                                             target="_blank" rel="noreferrer">https://www.facebook.com/gracqwb/</a></p>
                                         </div>
                                     </div>
                                 </div>

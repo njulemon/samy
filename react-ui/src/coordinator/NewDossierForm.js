@@ -2,7 +2,6 @@ import {Formik} from 'formik';
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {urlServer} from "../def/Definitions";
-import {PostCsrf} from "../api/Csrf";
 import Select from "react-select";
 import makeAnimated from 'react-select/animated';
 

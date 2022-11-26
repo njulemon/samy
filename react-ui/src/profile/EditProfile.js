@@ -1,6 +1,5 @@
 import {Field, Form, Formik} from "formik";
 import {useState} from "react";
-import {PatchCsrf} from "../api/Csrf";
 import {useUserDataEditHook} from "../hooks/useUserDataEditHook";
 import {Col, Row} from "react-bootstrap";
 

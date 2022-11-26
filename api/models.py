@@ -85,6 +85,7 @@ class Report(models.Model):
         null=True,
         default=None
     )
+
     comment = models.CharField(max_length=2000, blank=True, null=True)
 
     annotation = models.ForeignKey(to="ReportAnnotation", on_delete=models.SET_NULL, null=True, default=None)

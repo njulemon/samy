@@ -315,7 +315,7 @@ function MapWithMenu({areaHook}) {
 
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | Samy v-1.4.4'
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | Samy v-1.4.5'
             }).addTo(map.current);
 
             L.control.attribution({position: 'bottomleft'}).addTo(map.current);

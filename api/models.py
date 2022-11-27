@@ -67,7 +67,7 @@ class Report(models.Model):
     user_type = models.IntegerField(choices=ReportUserType.get_model_choices())
     operation = models.IntegerField(choices=ReportOperation.get_model_choices(), default=1)
     category_1 = models.IntegerField(choices=ReportCategory1.get_model_choices())
-    category_2 = MultiSelectField(choices=ReportCategory2.get_model_choices_same())
+    category_2 = MultiSelectField(choices=ReportCategory2.get_model_choices_same(), max_length=500)
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
     timestamp_creation = models.DateTimeField(auto_now_add=True)

@@ -1,0 +1,9 @@
+La politique de protection des données de notre site web vise à assurer la confidentialité et la sécurité des informations personnelles de nos utilisateurs. Nous sommes soumis au GDPR et nous nous engageons à respecter les règles de protection de la vie privée de nos utilisateurs.
+
+Nous ne collectons que les informations nécessaires à l'utilisation de notre site, à savoir le nom, le prénom et l'adresse e-mail de nos utilisateurs. Ces informations ne sont pas accessibles aux autres utilisateurs de l'application et ne sont utilisées que pour éviter des signalements intempestifs.
+
+Nous n'utilisons pas les données personnelles de nos utilisateurs à des fins de marketing ou de vente. Nous ne partageons pas non plus ces données avec des tiers. Nous nous servons uniquement de votre adresse e-mail pour vous envoyer une newsletter et vous notifier le suivi de vos signalements. Vous pouvez à tout moment modifier les préférences de type d'e-mail que vous recevez de notre part.
+
+Vous pouvez supprimer votre compte en accédant à la page suivante : https://www.samy-app.be/unsubscribe/. Nous supprimerons alors toutes vos données personnelles de notre base de données.
+
+Nous prenons toutes les mesures nécessaires pour protéger vos données personnelles contre tout accès non autorisé ou toute utilisation abusive. Si vous avez des questions concernant notre politique de protection des données, n'hésitez pas à nous contacter.

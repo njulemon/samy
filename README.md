@@ -1,4 +1,4 @@
-# SAMY
+# SAMY [1.4.4.t]
 
 ## Introduction
 Samy is a geo-tagging web application for cyclists. 

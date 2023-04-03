@@ -24,7 +24,7 @@ from templated_email import send_templated_mail
 
 from api import Tools
 from api.CustomPermissions import ActionBasedPermission, IsOwnerOrReadOnly, IsCoordinatorOrReadOnly, IsAdminOrReadOnly, \
-    IsUser, IsLocalOwner
+    IsUser, IsLocalOwner, IsOwnerIsCoordinatorOrReadOnly
 from api.MultiSerializerViewSet import MultiSerializerViewSet
 from api.enum import ReportUserType, map_category_1, map_category_2, ReportOperation, ReportCategory2, InCharge
 from api.filter import ReportFilter, ReportFilterByAreaName
@@ -225,7 +225,7 @@ class ReportViewSet(MultiSerializerViewSet):
         'new_annotation_comment': ReportAnnotationCommentHyperLinkSerializer
     }
 
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsOwnerIsCoordinatorOrReadOnly]
     authentication_classes = [SessionAuthentication]
 
     # to get csrf token
@@ -252,7 +252,7 @@ class ReportViewSet(MultiSerializerViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         # ownership check (owner or admin)
-        if not (request.user.id == instance.owner.pk or request.user.is_staff):
+        if not (request.user.id == instance.owner.pk or request.user.is_staff or instance.annotation.area.id in [item.id for item in request.user.coordinator_area.all()]):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         serializer = ReportSerializer(data=request.data, instance=instance, partial=True)

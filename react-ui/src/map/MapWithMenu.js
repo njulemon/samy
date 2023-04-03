@@ -18,7 +18,7 @@ import {
     setCoordinatesNewReport,
     showReportDetailModal, setNewReportArea, showProfileModal
 } from "../app/States";
-import {getReports} from "../api/Report";
+import {getReports, getReportsMap} from "../api/Report";
 import {logout} from "../api/Access";
 import ModalReportDetail from "./ModalReportDetail";
 import {faStar} from "@fortawesome/free-regular-svg-icons/faStar";
@@ -316,7 +316,7 @@ function MapWithMenu({areaHook}) {
 
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | Samy v-1.4.4.t'
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | Samy v-1.4.5'
             }).addTo(map.current);
 
             L.control.attribution({position: 'bottomleft'}).addTo(map.current);
@@ -346,7 +346,7 @@ function MapWithMenu({areaHook}) {
 
             // download all the reports and keep them in memory.
             const downloadReportAndDisplay = () => {
-                getReports()
+                getReportsMap()
                     .then(
                         (response) => {
                             if (response.status === 200) {

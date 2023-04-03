@@ -164,11 +164,12 @@ class ReportSerializer(serializers.ModelSerializer):
 
         return instance
 
-class ReportIdSerializer(serializers.ModelSerializer):
 
+class ReportIdSerializer(serializers.ModelSerializer):
     class Meta:
         model = Report
         fields = ['id']
+
 
 class ReportSerializerHyperLink(serializers.HyperlinkedModelSerializer):
     user_type = serializers.CharField(source='get_user_type_display')
@@ -186,6 +187,20 @@ class ReportSerializerHyperLink(serializers.HyperlinkedModelSerializer):
         model = Report
         fields = '__all__'
         depth = 2
+
+
+class ReportSerializerHyperLinkSimple(serializers.HyperlinkedModelSerializer):
+    # user_type = serializers.CharField(source='get_user_type_display')
+    # operation = serializers.CharField(source='get_operation_display')
+    id = serializers.IntegerField(read_only=True)
+    annotation = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Report
+        fields = ['latitude', 'longitude', 'id', 'annotation']
+
+    def get_annotation(self, obj):
+        return {'status': obj.annotation.status}
 
 
 class RestPasswordSerializer(serializers.Serializer):
@@ -379,7 +394,6 @@ class DocumentSerializerHyperLink(serializers.HyperlinkedModelSerializer):
 
 
 class DocumentSerializerPatch(serializers.ModelSerializer):
-
     class Meta:
         model = Document
         fields = '__all__'

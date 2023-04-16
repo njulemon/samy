@@ -24,7 +24,7 @@ const EditStatusForm = ({reportPk}) => {
         setReportStatus,
         setReportInCharge] = useAnnotationHook(reportPk)
 
-    const [newTextComment, setNewTextComment] = useState(null)
+    const [newTextComment, setNewTextComment] = useState("")
 
     // translation
     const _ = useAppSelector(state => state.states.translation)
@@ -34,12 +34,15 @@ const EditStatusForm = ({reportPk}) => {
 
         setSaveEnabled(false)
 
-        const data_ = {
-            status: Number(data.status),
-            in_charge: Number(data.in_charge)
+        let data_ = {}
+
+        if (!!(data.status)){
+            data_ = {...data_, status: Number(data.status)}
         }
 
-        console.log(data_)
+        if (!!(data.in_charge)){
+            data_ = {...data_, in_charge: Number(data.in_charge)}
+        }
 
         PatchCsrf(statesAnnotation?.url, data_)
             .then(() => {
@@ -74,7 +77,7 @@ const EditStatusForm = ({reportPk}) => {
                                 className="form-control form-select"
                                 disabled={!editStatus}
                                 onChange={event => setReportStatus(event.target.value)}
-                                value={statesAnnotation?.status ? statesAnnotation.status : ''}>
+                                value={statesAnnotation?.status ? statesAnnotation.status : 0}>
                             {options &&
                                 options.status.map(row =>
                                     <option key={row.value} value={row.value}>{_[row.display_name]}</option>)
@@ -87,7 +90,7 @@ const EditStatusForm = ({reportPk}) => {
                                 className="form-control form-select"
                                 disabled={!editStatus}
                                 onChange={event => setReportInCharge(event.target.value)}
-                                value={statesAnnotation?.in_charge ? statesAnnotation.in_charge : ''}>
+                                value={statesAnnotation?.in_charge ? statesAnnotation.in_charge : 0}>
                             {options &&
                                 options.in_charge.map(row =>
                                     <option key={row.value} value={row.value}>{_[row.display_name]}</option>)
@@ -146,11 +149,13 @@ const EditStatusForm = ({reportPk}) => {
                 </div>
 
                 <div className="col-6">
-                    <textarea type="text" className="form-control mb-2" rows="4" ref={newTextComment}
+                    <textarea type="text" className="form-control mb-2" rows="4"
+                              onChange={event => setNewTextComment(event.target.value)}
+                              value={newTextComment}
                               placeholder={"Entrez ici une nouvelle annotation, puis -> ajouter"}/>
                     <button className="btn btn-primary" onClick={() => {
-                        addAnnotationComment(newTextComment.current.value);
-                        newTextComment.current.value = ""
+                        addAnnotationComment(newTextComment);
+                        setNewTextComment("")
                     }}>Ajouter annotation
                     </button>
                 </div>

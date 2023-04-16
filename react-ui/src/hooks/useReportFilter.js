@@ -98,7 +98,5 @@ export const useReportFilter = (areas, initOptions) => {
         fetchReports()
     }, [dates])
 
-    useEffect(() => {console.log(optionsStatus)}, [optionsStatus])
-
     return {reports, optionsStatus, filter, setArea, toggleStatus, setDateFrom, setDateTo, dates, setReports}
 }

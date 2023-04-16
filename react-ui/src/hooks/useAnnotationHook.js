@@ -55,10 +55,25 @@ const useAnnotationHook = (reportPk) => {
             .catch(error => setError(error.toString()))
     }
 
+    const setReportStatus = status => {
+        if (!!status) {
+            console.log(status)
+        }
+        setStates({...states, status: status})
+    }
+
+    const setReportInCharge = inCharge => {
+        if (!!inCharge) {
+            console.log(!!inCharge)
+            setStates({...states, in_charge: inCharge})
+        }
+
+    }
+
     useEffect(() => fetchAnnotation(), [options])
     useEffect(() => getOptions(), [reportPk])
 
-    return [states, error, options, fetchAnnotation, addAnnotationComment, deleteAnnotationComment]
+    return [states, error, options, fetchAnnotation, addAnnotationComment, deleteAnnotationComment, setReportStatus, setReportInCharge]
 }
 
 export default useAnnotationHook

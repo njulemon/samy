@@ -175,6 +175,10 @@ class ReportGeoJsonViewSet(viewsets.ViewSet):
                                 "type": "Feature",
                                 "properties": {
                                     "name": name,
+                                    "severity": severity,
+                                    "image": str(ReportImageSerializer(instance=report.image).data.get('image')) if report.image is not None else None,
+                                    "permalink": permalink,
+                                    "types": [type for type in report.category_2],
                                     "description": f'{severity}'
                                                    f'**Type** \n '
                                                    f'{types} '

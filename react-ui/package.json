@@ -1,6 +1,6 @@
 {
   "name": "samy",
-  "version": "1.4.4.t",
+  "version": "1.4.10",
   "private": true,
   "dependencies": {
     "@date-io/date-fns": "^2.16.0",
@@ -43,6 +43,7 @@
     "react-bootstrap": "^2.6.0",
     "react-date-picker": "^9.1.0",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.43.9",
     "react-icons": "^4.6.0",
     "react-rating-stars-component": "^2.2.0",
     "react-redux": "^8.0.5",

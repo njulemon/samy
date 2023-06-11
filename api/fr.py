@@ -17,6 +17,7 @@ report_form_fr = {
     ReportOperation.NONE_OPERATION.name: "Signaler à",
     ReportOperation.LOCALE.name: "locale du GRACQ",
     ReportOperation.BLACK_DOT_WALLONIA.name: "Points noirs Wallonie",
+    ReportOperation.PEDESTRIAN_ISSUES.name: "Problème piéton",
 
     # cat 1
     ReportCategory1.INCIDENT.name: "incident",
@@ -49,6 +50,10 @@ report_form_fr = {
     ReportCategory2.WAL_HIGH_SPEED.name: "Vitesse trop élevée",
     ReportCategory2.OTHER_IN_COMMENT.name: "Autre (préciser)",
 
+    ReportCategory2.OBSTACLE_ON_THE_SIDEWALK.name: "Obstacle sur le trottoir",
+    ReportCategory2.CURB_PEDESTRIAN_CROSSING_TOO_HIGH.name: "Bordure passage pour piéton trop haute",
+    ReportCategory2.MISSING_PEDESTRIAN_CROSSING.name: "Passage piéton nécessaire",
+
     # In charge
     InCharge.IC_IN_CHARGE_NONE.name: "Autoritée compétente non-définie",
     InCharge.IC_MUNICIPALITY.name: "Commune",
@@ -62,6 +67,7 @@ report_form_fr = {
     ReportStatus.RS_NOT_RELEVANT.name: "Classé sans suite",
     ReportStatus.RS_REPORT_IN_PROGRESS.name: "Intégration dans un rapport",
     ReportStatus.RS_SOLVED.name: "Solutionné",
+    ReportStatus.RS_CHECK_ON_THE_FIELD.name: "Visite terrain nécessaire",
 
     # notifications
     Notifications.NOT_NEWSLETTER.name: "Abonnement Newsletter",

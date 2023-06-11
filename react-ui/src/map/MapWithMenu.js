@@ -18,7 +18,7 @@ import {
     setCoordinatesNewReport,
     showReportDetailModal, setNewReportArea, showProfileModal
 } from "../app/States";
-import {getReports} from "../api/Report";
+import {getReports, getReportsMap} from "../api/Report";
 import {logout} from "../api/Access";
 import ModalReportDetail from "./ModalReportDetail";
 import {faStar} from "@fortawesome/free-regular-svg-icons/faStar";
@@ -32,6 +32,7 @@ import {faUser} from "@fortawesome/free-solid-svg-icons/faUser";
 let DefaultIcon = L.divIcon({className: 'circle', iconSize: [20, 20]});
 let GreenIcon = L.divIcon({className: 'circle-green', iconSize: [20, 20]});
 let BlueIcon = L.divIcon({className: 'circle-blue', iconSize: [20, 20]});
+let YellowIcon = L.divIcon({className: 'circle-yellow', iconSize: [20, 20]});
 let HereDot = L.divIcon({className: 'circle-here', iconSize: [20, 20]});
 let HighlightDot = L.divIcon({className: 'highlight-dot', iconSize: [20, 20]});
 const newMarkerIcon = L.icon({iconUrl: icon, shadowUrl: iconShadow, iconAnchor: new Point(12, 41)})
@@ -148,7 +149,8 @@ function MapWithMenu({areaHook}) {
                 // layers (local variables)
                 let layer_red = L.layerGroup([]).addTo(map.current)
                 let layer_green = L.layerGroup([]).addTo(map.current)
-                let layer_orange = L.layerGroup([]).addTo(map.current)
+                let layer_blue = L.layerGroup([]).addTo(map.current)
+                let layer_yellow = L.layerGroup([]).addTo(map.current)
 
                 listReportCoordinates.current.forEach(
                     (coord, index) => {
@@ -173,17 +175,25 @@ function MapWithMenu({areaHook}) {
                                 setIdReportDetail(listReports.current[index].id)
                                 dispatch(showReportDetailModal())
                             })
-                            layer_orange.addLayer(marker)
+                            layer_blue.addLayer(marker)
+                        } else if ([7].includes(listReports.current[index].annotation.status)) {
+                            // @ts-ignore
+                            let marker = L.marker(coord, {icon: YellowIcon}).on('click', () => {
+                                setIdReportDetail(listReports.current[index].id)
+                                dispatch(showReportDetailModal())
+                            })
+                            layer_yellow.addLayer(marker)
                         }
                     }
                 );
 
-                layerControl.current = L.control.layers({},{'Nouveaux': layer_red, 'En cours': layer_orange, 'Fini': layer_green},{position: 'topleft'}).addTo(map.current)
+                layerControl.current = L.control.layers({},{'Nouveaux': layer_red, 'En cours': layer_blue, 'Fini': layer_green, 'A voir': layer_yellow},{position: 'topleft'}).addTo(map.current)
 
                 // store the layers
                 listLayers.current.push(layer_red)
                 listLayers.current.push(layer_green)
-                listLayers.current.push(layer_orange)
+                listLayers.current.push(layer_blue)
+                listLayers.current.push(layer_yellow)
             }
         }
     }
@@ -316,7 +326,7 @@ function MapWithMenu({areaHook}) {
 
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | Samy v-1.4.4.t'
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | Samy v-1.4.9'
             }).addTo(map.current);
 
             L.control.attribution({position: 'bottomleft'}).addTo(map.current);
@@ -346,7 +356,7 @@ function MapWithMenu({areaHook}) {
 
             // download all the reports and keep them in memory.
             const downloadReportAndDisplay = () => {
-                getReports()
+                getReportsMap()
                     .then(
                         (response) => {
                             if (response.status === 200) {

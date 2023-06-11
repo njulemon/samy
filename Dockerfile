@@ -1,4 +1,4 @@
-FROM debian:latest
+FROM python:3.10-bullseye
 
 ENV DJANGO_SUPERUSER_USERNAME XXX
 ENV DJANGO_SUPERUSER_PASSWORD XXX
@@ -23,17 +23,17 @@ RUN apt-get update -y
 RUN apt-get upgrade -y
 RUN apt-get install wget software-properties-common build-essential libnss3-dev zlib1g-dev libgdbm-dev libncurses5-dev   libssl-dev libffi-dev libreadline-dev libsqlite3-dev libbz2-dev -y
 RUN apt-get install default-libmysqlclient-dev -y
-RUN wget https://www.python.org/ftp/python/3.9.10/Python-3.9.10.tgz
-RUN tar xvf Python-3.9.10.tgz
-RUN ./Python-3.9.10/configure --enable-optimizations
-RUN make altinstall
-RUN /usr/local/bin/python3.9 -m pip install --upgrade pip
+RUN #wget https://www.python.org/ftp/python/3.9.10/Python-3.9.10.tgz
+RUN #tar xvf Python-3.9.10.tgz
+RUN #./Python-3.9.10/configure --enable-optimizations
+RUN #make altinstall
+RUN /usr/local/bin/python3 -m pip install --upgrade pip
 RUN apt-get install nginx -y
 RUN apt-get install supervisor -y
 
 WORKDIR /var/www
 
-RUN python3.9 -m pip install -r requirements.txt
+RUN python3 -m pip install -r requirements.txt
 RUN cp -ar react-ui/build/. react/
 
 RUN cp /var/www/config/nginx.conf /etc/nginx/nginx.conf

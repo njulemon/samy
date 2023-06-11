@@ -6,6 +6,7 @@ import {Accordion} from "react-bootstrap";
 import {MdDeleteForever} from "react-icons/md";
 import {IconContext} from "react-icons";
 import {urlify} from "../Tools/Urlify";
+import {useForm} from "react-hook-form";
 
 const EditStatusForm = ({reportPk}) => {
 
@@ -13,42 +14,50 @@ const EditStatusForm = ({reportPk}) => {
     const [saveEnabled, setSaveEnabled] = useState(true)
     const [errorMsg, setErrorMsg] = useState(null)
 
-    const [statesAnnotation, error, options, fetchAnnotation, addAnnotationComment, deleteAnnotationComment] = useAnnotationHook(reportPk)
+    const [
+        statesAnnotation,
+        error,
+        options,
+        fetchAnnotation,
+        addAnnotationComment,
+        deleteAnnotationComment,
+        setReportStatus,
+        setReportInCharge] = useAnnotationHook(reportPk)
 
-    const status = useRef(null)
-    const in_charge = useRef(null)
-    const new_text_comment = useRef(null)
+    const [newTextComment, setNewTextComment] = useState("")
 
     // translation
     const _ = useAppSelector(state => state.states.translation)
 
-    const saveStatus = () => {
+    const {register, handleSubmit, formState: {errors}} = useForm();
+    const onSubmit = data => {
 
         setSaveEnabled(false)
 
-        const data = {
-            status: Number(status.current.value),
-            in_charge: Number(in_charge.current.value)
+        let data_ = {}
+
+        if (!!(data.status)){
+            data_ = {...data_, status: Number(data.status)}
         }
 
-        PatchCsrf(statesAnnotation?.url, data)
+        if (!!(data.in_charge)){
+            data_ = {...data_, in_charge: Number(data.in_charge)}
+        }
+
+        PatchCsrf(statesAnnotation?.url, data_)
             .then(() => {
                 setEditStatus(false)
                 setSaveEnabled(true)
                 setErrorMsg(null)
+                fetchAnnotation()
             })
             .catch(error => {
                 setEditStatus(true)
                 setSaveEnabled(true)
                 setErrorMsg(error.toString())
+                fetchAnnotation()
             })
-
     }
-
-    useEffect(() => {
-        in_charge.current.value = statesAnnotation.in_charge
-        status.current.value = statesAnnotation.status
-    }, [statesAnnotation.status, statesAnnotation.in_charge])
 
     return (
 
@@ -60,40 +69,52 @@ const EditStatusForm = ({reportPk}) => {
                     </div>
                 </div>
             </div>
-            <div className="row">
-                <div className="col-3">
-                    <select className="form-control form-select"
-                            disabled={!editStatus}
-                            ref={status}>
-                        {options &&
-                        options.status.map(row =>
-                            <option key={row.value} value={row.value}>{_[row.display_name]}</option>)
-                        }
-                    </select>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="row">
+
+                    <div className="col-3">
+                        <select {...register("status")}
+                                className="form-control form-select"
+                                disabled={!editStatus}
+                                onChange={event => setReportStatus(event.target.value)}
+                                value={statesAnnotation?.status ? statesAnnotation.status : 0}>
+                            {options &&
+                                options.status.map(row =>
+                                    <option key={row.value} value={row.value}>{_[row.display_name]}</option>)
+                            }
+                        </select>
+                    </div>
+
+                    <div className="col-3">
+                        <select {...register("in_charge")}
+                                className="form-control form-select"
+                                disabled={!editStatus}
+                                onChange={event => setReportInCharge(event.target.value)}
+                                value={statesAnnotation?.in_charge ? statesAnnotation.in_charge : 0}>
+                            {options &&
+                                options.in_charge.map(row =>
+                                    <option key={row.value} value={row.value}>{_[row.display_name]}</option>)
+                            }
+                        </select>
+                    </div>
+
+                    <div className="col-auto">
+                        <button className="btn btn-primary me-4" onClick={() => setEditStatus(true)}
+                                disabled={editStatus}>Éditer
+                        </button>
+                    </div>
+
+                    <div className="col-auto">
+                        <button className="btn btn-primary me-4"
+                                type="submit"
+                                hidden={!editStatus}
+                                disabled={!saveEnabled}>
+                            Sauver
+                        </button>
+                    </div>
                 </div>
-                <div className="col-3">
-                    <select
-                        className="form-control form-select"
-                        disabled={!editStatus}
-                        ref={in_charge}>
-                        {options &&
-                        options.in_charge.map(row =>
-                            <option key={row.value} value={row.value}>{_[row.display_name]}</option>)
-                        }
-                    </select>
-                </div>
-                <div className="col">
-                    <button className="btn btn-primary me-4" onClick={() => setEditStatus(true)}
-                            disabled={editStatus}>Éditer
-                    </button>
-                    <button className="btn btn-primary me-4"
-                            onClick={() => saveStatus()}
-                            hidden={!editStatus}
-                            disabled={!saveEnabled}>
-                        Sauver
-                    </button>
-                </div>
-            </div>
+            </form>
+
             <div className="row mt-4">
                 <div className="col-6">
                     <Accordion>
@@ -128,8 +149,15 @@ const EditStatusForm = ({reportPk}) => {
                 </div>
 
                 <div className="col-6">
-                    <textarea type="text" className="form-control mb-2" rows="4" ref={new_text_comment} placeholder={"Entrez ici une nouvelle annotation, puis -> ajouter"}/>
-                    <button className="btn btn-primary" onClick={() => {addAnnotationComment(new_text_comment.current.value); new_text_comment.current.value = ""}}>Ajouter annotation</button>
+                    <textarea type="text" className="form-control mb-2" rows="4"
+                              onChange={event => setNewTextComment(event.target.value)}
+                              value={newTextComment}
+                              placeholder={"Entrez ici une nouvelle annotation, puis -> ajouter"}/>
+                    <button className="btn btn-primary" onClick={() => {
+                        addAnnotationComment(newTextComment);
+                        setNewTextComment("")
+                    }}>Ajouter annotation
+                    </button>
                 </div>
             </div>
         </div>

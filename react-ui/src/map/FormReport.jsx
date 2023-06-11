@@ -131,7 +131,7 @@ function FormReport() {
                     setIsSubmitting(true)
 
                     const data = {
-                        'user_type': 'CYCLIST',
+                        'user_type': values.operation === 'PEDESTRIAN_ISSUES' ? 'PEDESTRIAN' : 'CYCLIST',
                         'operation': values.operation,
                         'category_1': values.category_1,
                         'category_2': values.category_2,
@@ -140,7 +140,6 @@ function FormReport() {
                         'image': pk_picture,
                         'comment': values.comment
                     }
-                    console.log(data)
 
                     postReport(data)
                         .then(

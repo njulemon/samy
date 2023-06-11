@@ -61,6 +61,8 @@ class ReportOperation(ModelEnum):
     # set other type of operations.
     BLACK_DOT_WALLONIA = 2
 
+    PEDESTRIAN_ISSUES = 3
+
 
 class ReportCategory1(ModelEnum):
     NONE_CAT_1 = 0
@@ -107,6 +109,11 @@ class ReportCategory2(ModelEnum):
 
     OTHER_IN_COMMENT = 25
 
+    # add for pedestrians
+    OBSTACLE_ON_THE_SIDEWALK = 26
+    CURB_PEDESTRIAN_CROSSING_TOO_HIGH = 27
+    MISSING_PEDESTRIAN_CROSSING = 28
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 # CATEGORIES TREE
@@ -118,8 +125,11 @@ map_category_1 = {
     # set options for other operations here...
     ReportOperation.BLACK_DOT_WALLONIA: [
         ReportCategory1.NONE_CAT_1,
-        ReportCategory1.INFRASTRUCTURE]
+        ReportCategory1.INFRASTRUCTURE],
     # set options for other operations here...
+    ReportOperation.PEDESTRIAN_ISSUES: [
+        ReportCategory1.NONE_CAT_1,
+        ReportCategory1.INFRASTRUCTURE]
 }
 
 map_category_2 = {
@@ -159,6 +169,16 @@ map_category_2 = {
                 ReportCategory2.WAL_HIGH_SPEED,
                 ReportCategory2.OTHER_IN_COMMENT
             ]
+        },
+    ReportOperation.PEDESTRIAN_ISSUES:
+        {
+            ReportCategory1.INFRASTRUCTURE: [
+                ReportCategory2.CURB_PEDESTRIAN_CROSSING_TOO_HIGH,
+                ReportCategory2.OBSTACLE_ON_THE_SIDEWALK,
+                ReportCategory2.LANE_CROSSING_DANGEROUS,
+                ReportCategory2.ILLEGAL_PARKING,
+                ReportCategory2.MISSING_PEDESTRIAN_CROSSING,
+            ]
         }
 }
 
@@ -181,6 +201,7 @@ class ReportStatus(ModelEnum):
     RS_NOT_RELEVANT = 4
     RS_REPORT_IN_PROGRESS = 5
     RS_SOLVED = 6
+    RS_CHECK_ON_THE_FIELD = 7
 
 
 # ----------------------------------------------------------------------------------------------------------------------

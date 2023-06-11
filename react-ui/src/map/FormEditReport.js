@@ -124,7 +124,7 @@ function FormEditReport({pk, setEdit}) {
 
                         setIsSubmitting(true)
                         const data = {
-                            'user_type': 'CYCLIST',
+                            'user_type': values.operation === 'PEDESTRIAN_ISSUES' ? 'PEDESTRIAN' : 'CYCLIST',
                             'operation': values.operation,
                             'category_1': values.category_1,
                             'category_2': values.category_2,

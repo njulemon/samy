@@ -37,7 +37,7 @@ from api.serializers import ReportSerializer, VotesSerializer, UserSerializer, N
     ReportAnnotationHyperLinkSerializer, AreaHyperLinkSerializer, ReportAnnotationSerializer, \
     ReportAnnotationCommentSerializer, ReportAnnotationCommentHyperLinkSerializer, AreaSerializer, AreaSerializerName, \
     UpdateUserSerializer, NotificationsSerializer, DocumentSerializerHyperLink, DocumentSerializerNoContentHyperLink, \
-    DocumentSerializerWithContentHyperLink, DocumentSerializerPatch
+    DocumentSerializerWithContentHyperLink, DocumentSerializerPatch, ReportSerializerHyperLinkSimple
 
 
 class VoteViewSetReport(viewsets.ModelViewSet):
@@ -238,6 +238,12 @@ class ReportViewSet(MultiSerializerViewSet):
         csrf_token = get_token(request)  # provided by Middleware csrf
         # send csrf middle ware token
         return Response({'csrf_token': csrf_token})
+
+    @action(methods=['get'], detail=False)
+    def map(self, request):
+
+        # send csrf middle ware token
+        return Response(ReportSerializerHyperLinkSimple(Report.objects.prefetch_related('annotation'), many=True, context={'request': request}).data)
 
     # to post
     def create(self, request, *args, **kwargs):

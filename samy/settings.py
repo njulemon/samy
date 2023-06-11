@@ -40,7 +40,8 @@ CSRF_COOKIE_HTTPONLY = True
 
 try:
     ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.0.55', os.environ['HOST']]
-    CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000', 'http://localhost:3000', 'http://192.168.0.55:3000', 'https://' + os.environ['HOST']]
+    CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000', 'http://localhost:3000', 'http://192.168.0.55:3000',
+                            'https://' + os.environ['HOST']]
 except:
     ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.0.55']
     CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000', 'http://localhost:3000', 'http://192.168.0.55:3000']
@@ -57,9 +58,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     'rest_framework',
     'corsheaders',
-    # 'api.apps.ApiConfig',
     'api',
     'storages',
     'django_filters'
@@ -68,6 +69,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'corsheaders.middleware.CorsMiddleware',  # Note that this needs to be placed above CommonMiddleware
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -225,3 +227,6 @@ AWS_QUERYSTRING_AUTH = False
 # AWS_QUERYSTRING_EXPIRE = 10 * 365 * 24 * 60 * 60
 AWS_S3_REGION_NAME = 'eu-central-1'
 AWS_DEFAULT_ACL = 'public-read'
+
+if DEBUG:
+    INTERNAL_IPS = ["127.0.0.1", "localhost"]

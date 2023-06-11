@@ -52,6 +52,7 @@ report_form_fr = {
 
     ReportCategory2.OBSTACLE_ON_THE_SIDEWALK.name: "Obstacle sur le trottoir",
     ReportCategory2.CURB_PEDESTRIAN_CROSSING_TOO_HIGH.name: "Bordure passage pour piéton trop haute",
+    ReportCategory2.MISSING_PEDESTRIAN_CROSSING.name: "Passage piéton nécessaire",
 
     # In charge
     InCharge.IC_IN_CHARGE_NONE.name: "Autoritée compétente non-définie",
@@ -66,6 +67,7 @@ report_form_fr = {
     ReportStatus.RS_NOT_RELEVANT.name: "Classé sans suite",
     ReportStatus.RS_REPORT_IN_PROGRESS.name: "Intégration dans un rapport",
     ReportStatus.RS_SOLVED.name: "Solutionné",
+    ReportStatus.RS_CHECK_ON_THE_FIELD.name: "Visite terrain nécessaire",
 
     # notifications
     Notifications.NOT_NEWSLETTER.name: "Abonnement Newsletter",

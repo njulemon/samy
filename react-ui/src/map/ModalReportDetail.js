@@ -149,7 +149,7 @@ function ModalReportDetail({id_report}) {
                                                 </div>
                                                 <div className="col-auto">
                                                     <div className="row">
-                                                        {(reportDataDescription?.owner === user?.id || user?.is_staff) ?
+                                                        {(reportDataDescription?.owner === user?.id || user?.is_staff || user?.coordinator_area?.some(item => item === reportDataDescription?.annotation.area.id)) ?
                                                             <>
                                                                 <div className="col-3 align-react-icon">
                                                                     <IconContext.Provider

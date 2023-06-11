@@ -1,4 +1,4 @@
-import logo_wb from "./images/gracq-wb.jpg"
+import logo_wb from "./images/gracq.jpg"
 
 const FooterSamy = () => {
 

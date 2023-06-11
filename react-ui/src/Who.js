@@ -23,7 +23,7 @@ const Who = () => {
                                             </p>
 
                                             <h3>
-                                                Notre locale (Watermael-Boitsfort)
+                                                Samy
                                             </h3>
 
                                             <p>

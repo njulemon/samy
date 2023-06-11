@@ -73,6 +73,7 @@ const filterCommuneNotActive = geoJsonFeature => {
 function MapWithMenu({areaHook}) {
 
     const user = useAppSelector((state) => state.states.user)
+    const showEventDetail = useAppSelector((state) => state.states.modales.modal_event_detail)
 
     // initial map parameters
     const map = useRef(null);
@@ -155,22 +156,22 @@ function MapWithMenu({areaHook}) {
 
                             // @ts-ignore
                             let marker = L.marker(coord).on('click', () => {
-                                setIdReportDetail(null)  // we need to force change if we click again on the same record.
                                 setIdReportDetail(listReports.current[index].id)
+                                dispatch(showReportDetailModal())
                             })
                             layer_red.addLayer(marker)
                         } else if ([4, 6].includes(listReports.current[index].annotation.status)) {
                             // @ts-ignore
                             let marker = L.marker(coord, {icon: GreenIcon}).on('click', () => {
-                                setIdReportDetail(null)  // we need to force change if we click again on the same record.
                                 setIdReportDetail(listReports.current[index].id)
+                                dispatch(showReportDetailModal())
                             })
                             layer_green.addLayer(marker)
                         } else if ([3, 5].includes(listReports.current[index].annotation.status)) {
                             // @ts-ignore
                             let marker = L.marker(coord, {icon: BlueIcon}).on('click', () => {
-                                setIdReportDetail(null)  // we need to force change if we click again on the same record.
                                 setIdReportDetail(listReports.current[index].id)
+                                dispatch(showReportDetailModal())
                             })
                             layer_orange.addLayer(marker)
                         }
@@ -179,7 +180,7 @@ function MapWithMenu({areaHook}) {
 
                 layerControl.current = L.control.layers({},{'Nouveaux': layer_red, 'En cours': layer_orange, 'Fini': layer_green},{position: 'topleft'}).addTo(map.current)
 
-                // store the the layers
+                // store the layers
                 listLayers.current.push(layer_red)
                 listLayers.current.push(layer_green)
                 listLayers.current.push(layer_orange)
@@ -315,7 +316,7 @@ function MapWithMenu({areaHook}) {
 
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | Samy v-1.4.4'
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | Samy v-1.4.4.t'
             }).addTo(map.current);
 
             L.control.attribution({position: 'bottomleft'}).addTo(map.current);
@@ -378,16 +379,6 @@ function MapWithMenu({areaHook}) {
             }
 
         }, [mapCreated]
-    )
-
-    // when id of event is changed (clicked)
-    useEffect(
-        () => {
-            if (idReportDetail) {
-                dispatch(showReportDetailModal())
-            }
-        },
-        [idReportDetail, dispatch]
     )
 
     useEffect(() => {

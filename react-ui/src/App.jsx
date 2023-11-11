@@ -19,6 +19,7 @@ import MapWaitSwitch from "./map/MapWaitSwitch";
 import Who from "./Who";
 import Features from "./Features";
 import ReportFullScreen from "./ReportFullScreen";
+import NotificationsPreferencesFullScreen from "./NotificationAlone/NotificationPreferencesFullScreen";
 
 require('dotenv').config()
 
@@ -80,6 +81,7 @@ function App() {
                     <Route path="/R/wait" element={<Wait/>}/>
                     <Route path="/R/coordinator" element={<PageCoordinator/>}/>
                     <Route path="/R/no-redirection/report/:idReport" element={<ReportFullScreen/>}/>
+                    <Route path="/R/no-redirection/notifications-preferences/:token" element={<NotificationsPreferencesFullScreen/>}/>
                 </Routes>
         </div>
 );

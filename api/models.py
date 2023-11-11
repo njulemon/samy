@@ -152,3 +152,12 @@ class Document(models.Model):
 
     def __str__(self):
         return f'[{self.pk}] {self.name} [{self.timestamp_creation}]'
+
+
+class TokenURL(models.Model):
+    token = models.CharField(max_length=100, default=None, blank=False, primary_key=True)
+    user = models.ForeignKey(to=CustomUser, on_delete=models.CASCADE, default=None, blank=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.token}, user id : {self.user.id}'

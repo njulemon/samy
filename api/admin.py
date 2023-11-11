@@ -5,7 +5,7 @@ from django.contrib.auth.admin import UserAdmin
 
 from api.forms import CustomUserCreationForm, CustomUserChangeForm
 from api.models import CustomUser, Report, Votes, KeyValidator, RestPassword, ReportImage, AuthorizedMail, Area, \
-    ReportAnnotation, ReportAnnotationComment, Notifications, Document
+    ReportAnnotation, ReportAnnotationComment, Notifications, Document, TokenURL
 
 
 class CustomUserAdmin(UserAdmin):
@@ -45,3 +45,5 @@ admin.site.register(ReportAnnotation)
 admin.site.register(ReportAnnotationComment)
 admin.site.register(Notifications)
 admin.site.register(Document)
+admin.site.register(TokenURL)
+

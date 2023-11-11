@@ -23,6 +23,7 @@ from rest_framework.response import Response
 from templated_email import send_templated_mail
 
 from api import Tools
+from api.CustomAuthentication import TokenURLAuthentication
 from api.CustomPermissions import ActionBasedPermission, IsOwnerOrReadOnly, IsCoordinatorOrReadOnly, IsAdminOrReadOnly, \
     IsUser, IsLocalOwner, IsOwnerIsCoordinatorOrReadOnly
 from api.MultiSerializerViewSet import MultiSerializerViewSet
@@ -447,7 +448,7 @@ class UserUpdateViewSet(viewsets.GenericViewSet, UpdateModelMixin, ListModelMixi
     queryset = CustomUser.objects.all()
     serializer_class = UpdateUserSerializer
     permission_classes = (IsUser,)
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [SessionAuthentication, TokenURLAuthentication]
 
     def list(self, request, *args, **kwargs):
         return (Response('This end point only allows to patch current user data'))
@@ -457,8 +458,8 @@ class UserUpdateViewSet(viewsets.GenericViewSet, UpdateModelMixin, ListModelMixi
 class NotificationsViewSet(viewsets.GenericViewSet, ListModelMixin):
     queryset = Notifications.objects.all()
     serializer_class = NotificationsSerializer
-    permission_classes = (IsUser,)
-    authentication_classes = [SessionAuthentication]
+    permission_classes = (AllowAny,)
+    # authentication_classes = [SessionAuthentication, TokenURLAuthentication]
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -608,6 +609,7 @@ def has_access(request):
 # ----------------------------------------------------------------------------------------------------------------------
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+@authentication_classes([TokenURLAuthentication, SessionAuthentication])
 def get_user(request):
     return Response(UserSerializer(request.user).data)
 

@@ -29,6 +29,8 @@ try:
     # MEDIA_URL = 'media/'
     # STATIC_ROOT = './static/'
     STATIC_URL = 'static/'
+    # CSRF_COOKIE_SECURE = False
+    # SESSION_COOKIE_SECURE = False
 except KeyError:
     MEDIA_ROOT = './static/media/'
     MEDIA_URL = 'media/'

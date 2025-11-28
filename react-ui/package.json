@@ -81,5 +81,6 @@
     "is-hotkey": "^0.2.0",
     "node-leaflet-image": "^0.4.3",
     "quill-image-resize-module": "^3.0.0"
-  }
+  },
+   "proxy": "http://localhost:8000"
 }

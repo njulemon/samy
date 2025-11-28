@@ -21,8 +21,6 @@ import Features from "./Features";
 import ReportFullScreen from "./ReportFullScreen";
 import NotificationsPreferencesFullScreen from "./NotificationAlone/NotificationPreferencesFullScreen";
 
-require('dotenv').config()
-
 function App() {
 
     const isLogged = useAppSelector((state) => state.states.isLogged)

@@ -27,7 +27,7 @@ echo "Zipping files to be uploaded on AWS BeansTalk"
 
 if [[ "$env" == "dev" || "$env" == "prod" ]]
 then
-  zip -r "aws_$env.zip" . -x "aws_dev.zip" "aws_prod.zip" "aws_schaerbeek.zip" "react-ui/node_modules/*" "react-ui/src/*" "venv/*" ".idea/*" ".git/*" db.sqlite3 "api/__pycache__/*" "ssh_bitbucket/*" "static/*"
+  zip -r "aws_$env.zip" . -x "aws_dev.zip" "aws_prod.zip" "aws_schaerbeek.zip" "react-ui/node_modules/*" "react-ui/src/*" ".venv/*" "venv/*" ".idea/*" ".git/*" "samy/__pycache__/" db.sqlite3 "api/__pycache__/*" "ssh_bitbucket/*" "static/*"
 fi
 
 exit 0

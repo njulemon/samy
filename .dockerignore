@@ -1,6 +1,7 @@
 react-ui/node_modules
 react-ui/src
 react-ui/public
+.venv/
 venv
 .dockerignore
 .dockerignore.swp

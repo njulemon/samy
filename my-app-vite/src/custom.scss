@@ -1,0 +1,474 @@
+// Override default variables before the import
+
+$app-primary: #003049;
+$app-secondary: #f77f00;
+$app-tertiary: #d62828;
+$app-success: rgb(57, 144, 65);
+$app-info: rgb(217, 145, 63);
+$app-warning: rgb(234, 210, 53);
+$app-danger: rgb(226, 5, 5);
+$app-light: rgba(103, 136, 210, 0.66);
+$app-dark: rgb(0, 0, 0);
+
+// Import Bootstrap and its default variables
+//@import '~bootstrap/scss/bootstrap.scss';
+@use "bootstrap/scss/bootstrap" with (
+  $primary: $app-primary,
+  $secondary: $app-secondary,
+  $success: $app-success,
+  $info: $app-info,
+  $warning: $app-warning,
+  $danger: $app-danger,
+  $light: $app-light,
+  $dark: $app-dark,
+);
+
+$primary: $app-primary;
+$secondary: $app-secondary;
+$tertiary: $app-tertiary;
+$success: $app-success;
+$info: $app-info;
+$warning: $app-warning;
+$danger: $app-danger;
+$light: $app-light;
+$dark: $app-dark;
+
+$primary-light: rgba(103, 136, 210, 0.66);
+$primary-lighter: rgba(239, 242, 252, 0.29);
+
+$gradient: linear-gradient(-5deg, $primary-light, $primary-light, $primary-light, $app-primary);
+$input-bg: $primary-lighter;
+
+
+html {
+  height: 100%;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+}
+
+.container-map {
+  height: 100%;
+  width: 100vw;
+}
+
+#map {
+  height: 100%;
+  width: 100vw;
+}
+
+.mini-map-container {
+  height: 100%;
+  width: 100%;
+  min-height: 400px;
+}
+
+.mini-map {
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+}
+
+
+.multi-map-container {
+  height: 100%;
+  width: 100%;
+  min-height: 300px;
+}
+
+.multi-map {
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+}
+
+#root {
+  height: 100%;
+  width: 100vw;
+}
+
+.App {
+  height: 100%;
+  width: 100vw;
+}
+
+body {
+  //background-image: var(--bs-gradient);
+  background-color: $app-primary;
+  height: 100%;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+}
+
+div.circle {
+  background-color: rgba(215, 60, 33, 0.68);
+  border-color: #f3a9a9;
+  border-radius: 30px;
+  border-style: solid;
+  border-width: 2px;
+  width: 30px;
+  height: 30px;
+}
+
+div.circle-green {
+  background-color: rgba(47, 168, 25, 0.68);
+  border-color: #a9ec98;
+  border-radius: 30px;
+  border-style: solid;
+  border-width: 2px;
+  width: 30px;
+  height: 30px;
+}
+
+div.circle-blue {
+  background-color: rgba(23, 69, 184, 0.68);
+  border-color: #aecbf1;
+  border-radius: 30px;
+  border-style: solid;
+  border-width: 2px;
+  width: 30px;
+  height: 30px;
+}
+
+div.circle-yellow {
+  background-color: rgba(255, 236, 19, 0.77);
+  border-color: rgba(248, 230, 0, 0.32);
+  border-radius: 30px;
+  border-style: solid;
+  border-width: 2px;
+  width: 30px;
+  height: 30px;
+}
+
+div.circle-here {
+  background-color: rgb(60, 140, 213);
+  border-color: #ffffff;
+  border-radius: 30px;
+  border-style: solid;
+  border-width: 3px;
+  width: 35px;
+  height: 35px;
+  box-shadow: 0 0 0 40px rgba(105, 132, 196, 0.15);
+}
+
+div.circle-current {
+  background-color: rgb(206, 15, 15);
+  border-color: #ffffff;
+  border-radius: 30px;
+  border-style: solid;
+  border-width: 3px;
+  width: 35px;
+  height: 35px;
+  box-shadow: 0 0 0 40px rgba(105, 132, 196, 0.15);
+}
+
+div.circle-here-no-highlight {
+  background-color: rgb(60, 140, 213);
+  border-color: #ffffff;
+  border-radius: 30px;
+  border-style: solid;
+  border-width: 3px;
+  width: 35px;
+  height: 35px;
+  //box-shadow: 0 0 0 40px rgba(105, 132, 196, 0.15);
+}
+
+div.circle-current-no-highlight {
+  background-color: rgb(206, 15, 15);
+  border-color: #ffffff;
+  border-radius: 30px;
+  border-style: solid;
+  border-width: 3px;
+  width: 35px;
+  height: 35px;
+  //box-shadow: 0 0 0 40px rgba(105, 132, 196, 0.15);
+}
+
+div.highlight-dot {
+  background-color: rgba(22, 101, 175, 0);
+  border-color: rgba(27, 131, 226, 0);
+  border-radius: 30px;
+  border-style: solid;
+  border-width: 0;
+  width: 35px;
+  height: 35px;
+  box-shadow: 0 0 0 5px rgba(105, 132, 196, 0.15);
+  animation: wobble 1s ease-in forwards infinite;
+}
+
+@keyframes wobble {
+  0% {
+    box-shadow: 0 0 0 5px rgba(105, 132, 196, 0.25);
+  }
+  100% {
+    box-shadow: 0 0 0 90px rgba(105, 132, 196, 0.05);
+  }
+}
+
+.here-icon {
+  font-size: 35px;
+  color: rgb(47, 120, 182);
+  margin: 8px 4px 4px;
+  pointer-events: auto;
+  padding: 0;
+}
+
+.new-icon {
+  font-size: 35px;
+  color: rgb(47, 120, 182);
+  margin: 4px 4px 8px;
+  pointer-events: auto;
+  padding: 0;
+}
+
+.modal-button {
+  pointer-events: auto;
+}
+
+.alert-button {
+  pointer-events: auto;
+}
+
+.logout-button {
+  font-size: 35px;
+  color: rgb(47, 120, 182);
+  margin: 10px 4px 4px;
+  pointer-events: auto;
+  padding: 0;
+  vertical-align: middle
+}
+
+.form-button {
+  pointer-events: auto;
+}
+
+.leaflet-container {
+  line-height: 1;
+}
+
+$gradient-background-menu-c1: rgba(184, 184, 184, 0.18);
+$gradient-background-menu-c2: rgba(255, 255, 255, 0.42);
+
+.background-leaflet-buttons {
+  margin: 6px;
+  padding: 0;
+  border-radius: 5px;
+  border: 1px solid #bf4a4a;
+  //box-shadow: 2px 2px 2px 0 rgba(3, 3, 3, 0.71);
+  background: linear-gradient(0deg, $gradient-background-menu-c1, $gradient-background-menu-c2);
+  backdrop-filter: blur(8px) opacity(85%);
+  background-size: 100px 300px;
+}
+
+$gradient-background-coordinator-c1: rgb(234, 234, 234);
+$gradient-background-coordinator-c2: rgb(255, 255, 255);
+
+.background-coordinator {
+  margin: 0;
+  padding: 0;
+  //box-shadow: 2px 2px 2px 0 rgba(3, 3, 3, 0.71);
+  background: linear-gradient(-30deg, $gradient-background-coordinator-c1, $gradient-background-coordinator-c2);
+  background-size: 100% 100%;
+}
+
+.scroller-coordinator-container {
+  width: 100%;
+  height: 95vh;
+  overflow-y: auto;
+}
+
+.scroller-coordinator {
+  width: 100%;
+  height: auto;
+}
+
+
+.login-vertical-center {
+  margin-top: 100px;
+
+}
+
+.fill-height {
+  min-height: 100vh;
+}
+
+.image-uploaded {
+  width: 100%;
+  max-height: 300px;
+  border-radius: 10px;
+}
+
+.image-report {
+  max-width: 100%;
+  border-radius: 15px;
+  //max-height: 350px;
+}
+
+.image-report-cross {
+  z-index: 3;
+  position: absolute;
+  transform: translate(-120%, 20%);
+  width: 21px;
+  height: 21px;
+  color: white;
+  background-color: rgba(241, 6, 36, 0.85);
+  border-radius: 4px;
+}
+
+.image-report-cross-absolute {
+  position: relative;
+  width: fit-content;
+  height: fit-content;
+}
+
+.border-comment {
+  border-style: solid;
+  border-radius: 5px;
+  border-color: black;
+  border-width: thin;
+}
+
+.text-justify {
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.edit-icon {
+  color: #6f6e6e;
+  vertical-align: text-top;
+}
+
+.align-react-icon {
+
+}
+
+.edit-icon:hover {
+  filter: drop-shadow(0 0 2px #a7a7a7) brightness(90%);
+}
+
+.delete-icon {
+  color: #e72d2d;
+  vertical-align: text-top;
+}
+
+.delete-icon-shadow:hover {
+  filter: drop-shadow(0 0 1px rgba(231, 45, 45, 0.49)) brightness(95%);
+}
+
+.link-icon {
+  color: #466ad4;
+  vertical-align: text-top;
+}
+
+.link-icon:hover {
+  filter: drop-shadow(0 0 2px #466ad4) brightness(90%);
+}
+
+.container-scroll {
+  position: relative;
+  height: 200px;
+  width: 100%;
+  overflow-y: scroll;
+}
+
+.logo-samy-navbar {
+  color: white;
+}
+
+
+.logo-gracq-footer {
+  border-radius: 100px;
+  width: 7em;
+}
+
+.parent-container-scroll {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+}
+
+.container-login-scroll {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  background-image: var(--bs-gradient);
+}
+
+.container-wait {
+  //position: relative;
+  height: 100%;
+  width: 100%;
+  background-image: var(--bs-gradient);
+}
+
+.footer {
+  min-height: 20px;
+  margin-top: auto;
+  background-color: $app-primary;
+  color: white;
+  text-align: center;
+  //position: fixed;
+  //left: 0;
+  //bottom: 0;
+  //width: 100%;
+  //background-color: $primary;
+  //color: white;
+  //text-align: center;
+}
+
+.link-white {
+  color: white;
+}
+
+.link-white:hover {
+  color: $light;
+}
+
+.main-page-footer-header {
+  display: flex;
+  flex-direction: column;
+  height: 95vh;
+}
+
+.icon-inline {
+  display: inline; /* the default for span */
+  width: 30px;
+  height: 30px;
+  padding: 3px;
+  background-color: yellow;
+}
+
+.picture-page-vert {
+  max-width: 350px;
+}
+
+.picture-page-hor {
+  max-width: 400px;
+}
+
+.pointer {cursor: pointer;}
+
+// profile
+.profile-avatar {
+  width: 200px;
+}
+
+
+.hidden-map-container {
+  overflow: hidden;
+  position: relative;
+}
+
+.hidden-map {
+  width: 640px;
+  height: 480px;
+  position: absolute;
+  right: -50px;
+  top: 50px;
+}
+
+.mw-640 {
+  max-width: 640px;
+}

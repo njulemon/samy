@@ -1,4 +1,4 @@
-export const urlServer = ''//import.meta.env.REACT_APP_HOST_PORT_COMPLETE
+export const urlServer = process.env.REACT_APP_HOST_PORT_COMPLETE
 export const uriReport = '/api/report/'
 export const uriReportMap = '/api/report/map/'
 export const uriReportCsrf = '/api/report/csrf/'

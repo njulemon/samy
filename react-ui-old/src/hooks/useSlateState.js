@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {PatchCsrf} from "../api/Csrf.js";
+import {PatchCsrf} from "../api/Csrf";
 import {urlServer} from "../def/Definitions";
 import axios from "axios";
 

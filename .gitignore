@@ -2,26 +2,26 @@
 venv/
 
 # dependencies
-/react-ui/node_modules
-/react-ui/.pnp
-/react-ui/.pnp.js
+/react-ui-old/node_modules
+/react-ui-old/.pnp
+/react-ui-old/.pnp.js
 
 # testing
-/react-ui/coverage
+/react-ui-old/coverage
 
 # production
-/react-ui/build
+/react-ui-old/build
 
 # misc
-/react-ui/.DS_Store
-/react-ui/.env.local
-/react-ui/.env.development.local
-/react-ui/.env.test.local
-/react-ui/.env.production.local
+/react-ui-old/.DS_Store
+/react-ui-old/.env.local
+/react-ui-old/.env.development.local
+/react-ui-old/.env.test.local
+/react-ui-old/.env.production.local
 
-/react-ui/npm-debug.log*
-/react-ui/yarn-debug.log*
-/react-ui/yarn-error.log*
+/react-ui-old/npm-debug.log*
+/react-ui-old/yarn-debug.log*
+/react-ui-old/yarn-error.log*
 
 __pycache__/
 samy/__pycache__/*

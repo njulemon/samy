@@ -34,7 +34,7 @@ RUN apt-get install supervisor -y
 WORKDIR /var/www
 
 RUN python3 -m pip install -r requirements.txt
-RUN cp -ar react-ui/build/. react/
+RUN cp -ar react-ui/dist/. react/
 
 RUN cp /var/www/config/nginx.conf /etc/nginx/nginx.conf
 RUN cp /var/www/config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf

@@ -1,13 +1,12 @@
 /* global L */
 
-// var queue = require('d3-queue').queue;
-import { queue } from 'd3-queue';
+var queue = require('d3-queue').queue;
 
 var cacheBusterDate = +new Date();
 
 // leaflet-image
-// module.exports = function leafletImage(map, callback) {
-export default function leafletImage(map, callback) {
+module.exports = function leafletImage(map, callback) {
+
     var hasMapbox = !!L.mapbox;
 
     var dimensions = map.getSize(),

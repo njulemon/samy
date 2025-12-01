@@ -9,20 +9,17 @@ import {useEffect} from "react";
 import axios from "axios";
 import {uriTranslationFr, urlServer} from "./def/Definitions";
 import {setNewReportFormTranslation} from "./app/States";
-import ConfirmReportSaved from "./map/ConfirmReportSaved.jsx";
+import ConfirmReportSaved from "./map/ConfirmReportSaved";
 import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
-import ResetPassword from "./register_password/ResetPassword.jsx";
-import PageCoordinator from "./coordinator/PageCoordinator.jsx";
-
-// import * as localforage from "localforage";
-import localforage from 'localforage';
-
-import Wait from "./Wait.jsx";
-import MapWaitSwitch from "./map/MapWaitSwitch.jsx";
-import Who from "./Who.jsx";
-import Features from "./Features.jsx";
-import ReportFullScreen from "./ReportFullScreen.jsx";
-import NotificationsPreferencesFullScreen from "./NotificationAlone/NotificationPreferencesFullScreen.jsx";
+import ResetPassword from "./register_password/ResetPassword";
+import PageCoordinator from "./coordinator/PageCoordinator";
+import * as localforage from "localforage";
+import Wait from "./Wait";
+import MapWaitSwitch from "./map/MapWaitSwitch";
+import Who from "./Who";
+import Features from "./Features";
+import ReportFullScreen from "./ReportFullScreen";
+import NotificationsPreferencesFullScreen from "./NotificationAlone/NotificationPreferencesFullScreen";
 
 function App() {
 
@@ -55,8 +52,7 @@ function App() {
     useEffect(
         () => {
             if (!location.pathname.includes('no-redirection'))
-
-                Object.keys(translation || {}).length < 1 ?
+                translation === {} ?
                     navigate('/R/wait')
                     :
                     isLogged ?

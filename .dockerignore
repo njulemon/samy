@@ -1,6 +1,6 @@
-react-ui/node_modules
-react-ui/src
-react-ui/public
+react-ui-old/node_modules
+react-ui-old/src
+react-ui-old/public
 .venv/
 venv
 .dockerignore

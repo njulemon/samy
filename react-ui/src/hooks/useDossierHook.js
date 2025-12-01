@@ -1,6 +1,6 @@
 import {useAppSelector} from "../app/hooks";
 import {useCallback, useEffect, useState} from "react";
-import {deleteCsrf, PatchCsrf, PostCsrf} from "../api/Csrf";
+import {deleteCsrf, PatchCsrf, PostCsrf} from "../api/Csrf.js";
 import {urlServer} from "../def/Definitions";
 import axios from "axios";
 import {initialValue} from "./useSlateState";
@@ -24,6 +24,16 @@ const useDossierHook = () => {
     // array containing the IDs of the AREA (coordinator)
     const listAreas = useAppSelector((state) => state.states.user.coordinator_area)
 
+    const fetchAllReports = useCallback(() => {
+        setErrorList(null)
+        if (owners.length !== 0) {
+            axios.get(urlAllReports(owners), {withCredentials: true})
+                // just take the list of records that belongs to the actual user
+                .then(response => setAllReports(response.data))
+                .catch(() => setErrorList('La liste des rapports n\'a pas pu être extraite'))
+        }
+
+    }, [owners])
 
     useEffect(() => fetchAllReports(), [fetchAllReports, owners])
 
@@ -101,17 +111,6 @@ const useDossierHook = () => {
             })
             .catch(() => setErrorList('La liste des rapports n\'a pas pu être extraite'))
     }
-
-    const fetchAllReports = useCallback(() => {
-        setErrorList(null)
-        if (owners.length !== 0) {
-            axios.get(urlAllReports(owners), {withCredentials: true})
-                // just take the list of records that belongs to the actual user
-                .then(response => setAllReports(response.data))
-                .catch(() => setErrorList('La liste des rapports n\'a pas pu être extraite'))
-        }
-
-    }, [owners])
 
     const resetError = () => {
         setErrorList(null)

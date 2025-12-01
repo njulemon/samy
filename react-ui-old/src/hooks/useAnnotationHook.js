@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {urlServer} from "../def/Definitions";
-import {deleteCsrf, PostCsrf} from "../api/Csrf.js";
+import {deleteCsrf, PostCsrf} from "../api/Csrf";
 
 const useAnnotationHook = (reportPk) => {
 

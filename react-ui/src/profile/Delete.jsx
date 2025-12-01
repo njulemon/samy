@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Alert} from "react-bootstrap";
-import {deleteCsrf} from "../api/Csrf";
+import {deleteCsrf} from "../api/Csrf.js";
 import {useNavigate} from "react-router-dom";
 
 const Delete = () => {

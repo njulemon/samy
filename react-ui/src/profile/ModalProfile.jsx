@@ -1,11 +1,11 @@
 import Modal from "react-bootstrap/Modal";
 import {useAppDispatch, useAppSelector} from "../app/hooks";
 import {Col, Nav, Row, Tab} from "react-bootstrap";
-import Profile from "./Profile";
-import EditProfile from "./EditProfile";
+import Profile from "./Profile.jsx";
+import EditProfile from "./EditProfile.jsx";
 import {hideProfileModal} from "../app/States";
-import Notifications from "./Notifications";
-import Delete from "./Delete";
+import Notifications from "./Notifications.jsx";
+import Delete from "./Delete.jsx";
 
 const ModalProfile = () => {
 

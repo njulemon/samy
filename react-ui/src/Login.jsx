@@ -1,12 +1,12 @@
 import {useAppDispatch} from "./app/hooks";
 import {Formik, Form, Field} from "formik";
 import {uriLogin, urlServer} from "./def/Definitions";
-import {PostCsrf} from "./api/Csrf";
+import {PostCsrf} from "./api/Csrf.js";
 import {checkAccessAndGetUser, denyAccess} from "./app/States";
 import {useEffect, useState} from "react";
 import {logout} from "./api/Access";
-import ModalResetPassword from "./register_password/ModalResetPassword";
-import MenuNavAndFooter from "./MenuNavAndFooter";
+import ModalResetPassword from "./register_password/ModalResetPassword.jsx";
+import MenuNavAndFooter from "./MenuNavAndFooter.jsx";
 
 function Login() {
 

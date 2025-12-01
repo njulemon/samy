@@ -1,22 +1,44 @@
 // Override default variables before the import
 
-$primary: #003049;
-$secondary: #f77f00;
-$tertiary: #d62828;
-$success: rgb(57, 144, 65);
-$info: rgb(217, 145, 63);
-$warning: rgb(234, 210, 53);
-$danger: rgb(226, 5, 5);
-$light: rgba(103, 136, 210, 0.66);
-$dark: rgb(0, 0, 0);
+$app-primary: #003049;
+$app-secondary: #f77f00;
+$app-tertiary: #d62828;
+$app-success: rgb(57, 144, 65);
+$app-info: rgb(217, 145, 63);
+$app-warning: rgb(234, 210, 53);
+$app-danger: rgb(226, 5, 5);
+$app-light: rgba(103, 136, 210, 0.66);
+$app-dark: rgb(0, 0, 0);
+
+// Import Bootstrap and its default variables
+//@import '~bootstrap/scss/bootstrap.scss';
+@use "bootstrap/scss/bootstrap" with (
+  $primary: $app-primary,
+  $secondary: $app-secondary,
+  $success: $app-success,
+  $info: $app-info,
+  $warning: $app-warning,
+  $danger: $app-danger,
+  $light: $app-light,
+  $dark: $app-dark,
+);
+
+$primary: $app-primary;
+$secondary: $app-secondary;
+$tertiary: $app-tertiary;
+$success: $app-success;
+$info: $app-info;
+$warning: $app-warning;
+$danger: $app-danger;
+$light: $app-light;
+$dark: $app-dark;
+
 $primary-light: rgba(103, 136, 210, 0.66);
 $primary-lighter: rgba(239, 242, 252, 0.29);
 
 $gradient: linear-gradient(-5deg, $primary-light, $primary-light, $primary-light, $primary);
 $input-bg: $primary-lighter;
 
-// Import Bootstrap and its default variables
-@import '~bootstrap/scss/bootstrap.scss';
 
 html {
   height: 100%;
@@ -72,7 +94,7 @@ html {
 
 body {
   //background-image: var(--bs-gradient);
-  background-color: $primary;
+  background-color: $app-primary;
   height: 100%;
   width: 100vw;
   margin: 0;
@@ -384,7 +406,7 @@ $gradient-background-coordinator-c2: rgb(255, 255, 255);
 .footer {
   min-height: 20px;
   margin-top: auto;
-  background-color: $primary;
+  background-color: $app-primary;
   color: white;
   text-align: center;
   //position: fixed;

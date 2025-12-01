@@ -9,14 +9,14 @@ import {
     setNewReportFields,
     setNewReportFormTouched
 } from "../app/States";
-import FormReportField from "./FormReportField.jsx";
+import FormReportField from "./FormReportField";
 import {hideNewReportModal} from "../app/States";
-import FieldImageAutoUpload from "./FieldImageAutoUpload.jsx";
+import FieldImageAutoUpload from "./FieldImageAutoUpload";
 
 import {useNavigate} from "react-router-dom";
-import {PostCsrf} from "../api/Csrf.js";
+import {PostCsrf} from "../api/Csrf";
 import {urlServer} from "../def/Definitions";
-import SelectReportField from "./SelectReportField.jsx";
+import SelectReportField from "./SelectReportField";
 
 const FormStore = () => {
 

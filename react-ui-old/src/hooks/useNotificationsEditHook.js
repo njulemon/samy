@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import {urlServer} from "../def/Definitions";
 import {useAppDispatch, useAppSelector} from "../app/hooks";
-import {PatchCsrf} from "../api/Csrf.js";
+import {PatchCsrf} from "../api/Csrf";
 import {checkAccessAndGetUser} from "../app/States";
 
 export const useNotificationsEditHook = () => {

@@ -56,7 +56,7 @@ function App() {
         () => {
             if (!location.pathname.includes('no-redirection'))
 
-                Object.keys(translation || {}).length ?
+                Object.keys(translation || {}).length < 1 ?
                     navigate('/R/wait')
                     :
                     isLogged ?

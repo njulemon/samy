@@ -4,6 +4,9 @@ import DatePicker from 'react-date-picker'
 import Select from "react-select";
 import makeAnimated from 'react-select/animated';
 
+import 'react-date-picker/dist/DatePicker.css';
+import 'react-calendar/dist/Calendar.css';
+
 
 const FilterReport = ({reportFilterHook}) => {
 

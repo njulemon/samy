@@ -18,7 +18,7 @@ const FooterSamy = () => {
                 <div className="row">
                     <div className="col-12 text-center mb-2">
                         Samy permet de signaler les problèmes sur votre trajet quotidien et est accessible à toutes les
-                        locales du GRACQ sur simple demande à <a className="link-white" href="mailto:watermael-boitsfort@gracq.org">watermael-boitsfort@gracq.org</a>.
+                        locales de Avello sur simple demande à <a className="link-white" href="mailto:nicolas.julemont@gmail.com">nicolas.julemont@gmail.com</a>.
                     </div>
                 </div>
             </div>

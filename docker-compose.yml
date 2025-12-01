@@ -1,0 +1,10 @@
+services:
+  samy:
+    image: samy:latest          # your image tag
+    container_name: samy
+    env_file:
+      - /Users/nj/Documents/SECRETS/samy/dev.dev                    # load environment variables from .env
+    ports:
+      - "80:80"             # adapt to your app port
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # helps on Linux, harmless on Mac

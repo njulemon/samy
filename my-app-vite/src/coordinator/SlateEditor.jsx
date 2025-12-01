@@ -104,17 +104,17 @@ const Image = ({attributes, children, element}) => {
             <div
                 contentEditable={false}
                 className={css`
-          position: relative;
-        `}
+                    position: relative;
+                `}
             >
                 <img
                     src={element.url}
                     className={css`
-            display: block;
-            max-width: 100%;
-            max-height: 20em;
-            box-shadow: ${selected && focused ? '0 0 0 3px #B4D5FF' : 'none'};
-          `}
+                        display: block;
+                        max-width: 100%;
+                        max-height: 20em;
+                        box-shadow: ${selected && focused ? '0 0 0 3px #B4D5FF' : 'none'};
+                    `}
                 />
                 <Button
                     active="true"
@@ -122,12 +122,12 @@ const Image = ({attributes, children, element}) => {
                         Transforms.removeNodes(editor, {at: path})
                     }}
                     className={css`
-            display: ${selected && focused ? 'inline' : 'none'};
-            position: absolute;
-            top: 0.5em;
-            left: 0.5em;
-            background-color: white;
-          `}
+                        display: ${selected && focused ? 'inline' : 'none'};
+                        position: absolute;
+                        top: 0.5em;
+                        left: 0.5em;
+                        background-color: white;
+                    `}
                 >
                     <DeleteIcon/>
                 </Button>
@@ -184,6 +184,15 @@ const SlateEditor = ({id, slateState, copyToClipBoard}) => {
     const renderElement = useCallback(props => <Element {...props}/>, [])
     const [showCopyToClipboardToast, setShowCopyToClipboardToast] = useState(false)
 
+    const initialValue = [
+        {
+            type: 'paragraph',
+            children: [
+                {text: ''}
+            ],
+        }
+    ]
+
     useEffect(() => {
         if (showCopyToClipboardToast) {
             setTimeout(() => setShowCopyToClipboardToast(false), 2000)
@@ -207,7 +216,7 @@ const SlateEditor = ({id, slateState, copyToClipBoard}) => {
 
 
         <Slate editor={editor}
-               value={initialValue}
+               initialValue={initialValue}
                onChange={value => onChange(value, editor, slateState.setContent)}
         >
 
@@ -463,14 +472,6 @@ const ReportButton = ({id}) => {
     )
 }
 
-const initialValue = [
-    {
-        type: 'paragraph',
-        children: [
-            {text: ''}
-        ],
-    }
-]
 //     {
 //         type: 'paragraph',
 //         children: [

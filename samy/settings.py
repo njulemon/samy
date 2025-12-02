@@ -24,19 +24,22 @@ SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 DEBUG = True
 try:
     os.environ['DEV']
+
     DEBUG = True
-    # MEDIA_ROOT = './static/media/'
-    # MEDIA_URL = 'media/'
-    # STATIC_ROOT = './static/'
-    STATIC_URL = 'static/'
-    # CSRF_COOKIE_SECURE = False
-    # SESSION_COOKIE_SECURE = False
-except KeyError:
+
     MEDIA_ROOT = './static/media/'
     MEDIA_URL = 'media/'
     STATIC_ROOT = './static/'
     STATIC_URL = 'static/'
+    # CSRF_COOKIE_SECURE = False
+    # SESSION_COOKIE_SECURE = False
+except KeyError:
     DEBUG = False
+
+    MEDIA_ROOT = './static/media/'
+    MEDIA_URL = 'media/'
+    STATIC_ROOT = './static/'
+    STATIC_URL = 'static/'
 
 CSRF_COOKIE_HTTPONLY = True
 
@@ -102,6 +105,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:8000',
     'http://127.0.0.1:3000',
+    'http://localhost',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -222,17 +226,7 @@ try:
 except KeyError:
     print('MySql DB NAME is not present in the environment.')
 
-# S3 FILE storage
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-# AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
-# AWS_S3_ACCESS_KEY_ID = os.environ['AWS_S3_ACCESS_KEY_ID']
-# AWS_S3_SECRET_ACCESS_KEY = os.environ['AWS_S3_SECRET_ACCESS_KEY']
-# AWS_QUERYSTRING_AUTH = False
-# AWS_QUERYSTRING_EXPIRE = 10 * 365 * 24 * 60 * 60
-# AWS_S3_REGION_NAME = 'eu-central-1'
-# AWS_DEFAULT_ACL = 'public-read'
-
-# S3 FILE storage
+# storage
 STORAGES = {
     "staticfiles": {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",

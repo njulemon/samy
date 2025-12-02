@@ -42,11 +42,13 @@ CSRF_COOKIE_HTTPONLY = True
 
 try:
     ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.0.55', os.environ['HOST']]
-    CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000', 'http://localhost:3000', 'http://192.168.0.55:3000', 'http://localhost',
+    CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000', 'http://localhost:3000', 'http://192.168.0.55:3000',
+                            'http://localhost',
                             'https://' + os.environ['HOST']]
 except:
     ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.0.55']
-    CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000', 'http://localhost:3000', 'http://192.168.0.55:3000', 'http://localhost']
+    CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000', 'http://localhost:3000', 'http://192.168.0.55:3000',
+                            'http://localhost']
 
 DJANGO_SUPERUSER_USERNAME = os.environ['DJANGO_SUPERUSER_USERNAME']
 DJANGO_SUPERUSER_PASSWORD = os.environ['DJANGO_SUPERUSER_PASSWORD']
@@ -221,14 +223,32 @@ except KeyError:
     print('MySql DB NAME is not present in the environment.')
 
 # S3 FILE storage
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
-AWS_S3_ACCESS_KEY_ID = os.environ['AWS_S3_ACCESS_KEY_ID']
-AWS_S3_SECRET_ACCESS_KEY = os.environ['AWS_S3_SECRET_ACCESS_KEY']
-AWS_QUERYSTRING_AUTH = False
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
+# AWS_S3_ACCESS_KEY_ID = os.environ['AWS_S3_ACCESS_KEY_ID']
+# AWS_S3_SECRET_ACCESS_KEY = os.environ['AWS_S3_SECRET_ACCESS_KEY']
+# AWS_QUERYSTRING_AUTH = False
 # AWS_QUERYSTRING_EXPIRE = 10 * 365 * 24 * 60 * 60
-AWS_S3_REGION_NAME = 'eu-central-1'
-AWS_DEFAULT_ACL = 'public-read'
+# AWS_S3_REGION_NAME = 'eu-central-1'
+# AWS_DEFAULT_ACL = 'public-read'
+
+# S3 FILE storage
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            'access_key': os.environ['AWS_S3_ACCESS_KEY_ID'],
+            'secret_key': os.environ['AWS_S3_SECRET_ACCESS_KEY'],
+            'bucket_name': os.environ['AWS_STORAGE_BUCKET_NAME'],
+            'querystring_auth': False,
+            'region_name': 'eu-central-1',
+            'default_acl': 'public-read'
+        },
+    },
+}
 
 if DEBUG:
     INTERNAL_IPS = ["127.0.0.1", "localhost"]

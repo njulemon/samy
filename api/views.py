@@ -143,7 +143,7 @@ class ReportGeoJsonViewSet(viewsets.ViewSet):
             if len(list(areas)) == 0:
                 areas = Area.objects.filter(active=True).all()
             reports = Report.objects.filter(annotation__area__in=areas).all()
-            final_json = list()
+            features = list()
             for report in reports:
                 try:
                     types = ''.join([f'o {report_form_fr[type]}\n' for type in report.category_2]) + '\n'
@@ -168,38 +168,38 @@ class ReportGeoJsonViewSet(viewsets.ViewSet):
                 suivi = '**Suivi**\n' + ''.join(['o ' + item.comment + '\n' for item in list_follow_up]) if len(
                     list_follow_up) else ''
                 permalink = f'[[https://www.samy-app.be/R/no-redirection/report/{report.id}|Lien vers le rapport]]\n'
-                final_json.append(
+                features.append(
                     {
-                        "type": "FeatureCollection",
-                        "features": [
-                            {
-                                "type": "Feature",
-                                "properties": {
-                                    "name": name,
-                                    "severity": severity,
-                                    "image": str(ReportImageSerializer(instance=report.image).data.get('image')) if report.image is not None else None,
-                                    "permalink": permalink,
-                                    "types": [type for type in report.category_2],
-                                    "description": f'{severity}'
-                                                   f'**Type** \n '
-                                                   f'{types} '
-                                                   f'{comment}'
-                                                   f'{image}'
-                                                   f'{in_charge}'
-                                                   f'{suivi}'
-                                                   f'{street_view}'
-                                                   f'{permalink}'
-                                },
-                                "geometry": {
-                                    "type": "Point",
-                                    "coordinates": [
-                                        report.longitude, report.latitude
-                                    ]
-                                }
-                            },
-                        ]
-                    }
+                        "type": "Feature",
+                        "properties": {
+                            "name": name,
+                            "severity": severity,
+                            "image": str(ReportImageSerializer(instance=report.image).data.get(
+                                'image')) if report.image is not None else None,
+                            "permalink": permalink,
+                            "types": [type for type in report.category_2],
+                            "description": f'{severity}'
+                                           f'**Type** \n '
+                                           f'{types} '
+                                           f'{comment}'
+                                           f'{image}'
+                                           f'{in_charge}'
+                                           f'{suivi}'
+                                           f'{street_view}'
+                                           f'{permalink}'
+                        },
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                report.longitude, report.latitude
+                            ]
+                        }
+                    },
                 )
+            final_json = {
+                "type": "FeatureCollection",
+                "features": features
+            }
             return Response(final_json)
         except Exception as e:
             return Response(str(e))
@@ -244,7 +244,8 @@ class ReportViewSet(MultiSerializerViewSet):
     def map(self, request):
 
         # send csrf middle ware token
-        return Response(ReportSerializerHyperLinkSimple(Report.objects.prefetch_related('annotation'), many=True, context={'request': request}).data)
+        return Response(ReportSerializerHyperLinkSimple(Report.objects.prefetch_related('annotation'), many=True,
+                                                        context={'request': request}).data)
 
     # to post
     def create(self, request, *args, **kwargs):
@@ -263,7 +264,10 @@ class ReportViewSet(MultiSerializerViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         # ownership check (owner or admin)
-        if not (request.user.id == instance.owner.pk or request.user.is_staff or instance.annotation.area.id in [item.id for item in request.user.coordinator_area.all()]):
+        if not (request.user.id == instance.owner.pk or request.user.is_staff or instance.annotation.area.id in [item.id
+                                                                                                                 for
+                                                                                                                 item in
+                                                                                                                 request.user.coordinator_area.all()]):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         serializer = ReportSerializer(data=request.data, instance=instance, partial=True)

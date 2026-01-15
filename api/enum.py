@@ -97,6 +97,7 @@ class ReportCategory2(ModelEnum):
     INCIDENT_NAILS_ON_LANE = 16
 
     ILLEGAL_PARKING = 17
+    OBSTACLE_ON_THE_CYLEWAY = 29
 
     # Wallonia black dot
     WAL_DANGEROUS_CROSSING = 18
@@ -149,6 +150,7 @@ map_category_2 = {
                 ReportCategory2.RACK_DAMAGED,
                 ReportCategory2.SIGNAGE__MISSING,
                 ReportCategory2.SIGNAGE__BAD_CONDITION
+                ReportCategory2.OBSTACLE_ON_THE_CYLEWAY
             ],
             ReportCategory1.INCIDENT: [
                 ReportCategory2.ILLEGAL_PARKING,

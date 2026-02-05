@@ -31,14 +31,14 @@ from api.enum import ReportUserType, map_category_1, map_category_2, ReportOpera
 from api.filter import ReportFilter, ReportFilterByAreaName
 from api.fr import report_form_fr, basic_terms
 from api.models import Report, Votes, CustomUser, KeyValidator, RestPassword, ReportImage, AuthorizedMail, \
-    ReportAnnotation, Area, ReportAnnotationComment, Notifications, Document
+    ReportAnnotation, Area, ReportAnnotationComment, Notifications, Document, Alert
 from api.serializers import ReportSerializer, VotesSerializer, UserSerializer, NewUserSerializer, \
     CreateResetPasswordSerializer, UserPasswordSerializer, ReportImageSerializer, ReportSerializerHyperLink, \
     ReportImageSerializerNoUser, AuthorizedMailSerializerRead, AuthorizedMailSerializerWrite, UserSerializerHyperLink, \
     ReportAnnotationHyperLinkSerializer, AreaHyperLinkSerializer, ReportAnnotationSerializer, \
     ReportAnnotationCommentSerializer, ReportAnnotationCommentHyperLinkSerializer, AreaSerializer, AreaSerializerName, \
     UpdateUserSerializer, NotificationsSerializer, DocumentSerializerHyperLink, DocumentSerializerNoContentHyperLink, \
-    DocumentSerializerWithContentHyperLink, DocumentSerializerPatch, ReportSerializerHyperLinkSimple
+    DocumentSerializerWithContentHyperLink, DocumentSerializerPatch, ReportSerializerHyperLinkSimple, AlertSerializer
 
 
 class VoteViewSetReport(viewsets.ModelViewSet):
@@ -465,6 +465,12 @@ class NotificationsViewSet(viewsets.GenericViewSet, ListModelMixin):
     permission_classes = (AllowAny,)
     # authentication_classes = [SessionAuthentication, TokenURLAuthentication]
 
+class AlertViewSet(viewsets.ModelViewSet):
+    serializer_class = AlertSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Alert.objects.filter(user=self.request.user)
 
 # ----------------------------------------------------------------------------------------------------------------------
 class KeyValidationView(viewsets.GenericViewSet, rest_framework.mixins.RetrieveModelMixin, ListModelMixin):

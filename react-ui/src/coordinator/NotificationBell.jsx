@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import AlertList from "./AlertList.jsx";
+import Badge from "@mui/material/Badge";
+import IconButton from "@mui/material/IconButton";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 
 const NotificationBell = ({ alerts, unreadCount, markAsRead }) => {
     const [open, setOpen] = useState(false);
     const ref = useRef(null);
 
-    // Fermer le modal au clic extérieur
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (ref.current && !ref.current.contains(e.target)) {
@@ -18,18 +20,13 @@ const NotificationBell = ({ alerts, unreadCount, markAsRead }) => {
 
     return (
         <div ref={ref} style={{ position: "relative" }}>
-            <button
-                className="btn btn-link position-relative"
-                onClick={() => setOpen(!open)}
-                aria-label="Notifications"
-            >
-                <i className="bi bi-bell" style={{ fontSize: "1.4rem" }}></i>
-                {unreadCount > 0 && (
-                    <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        {unreadCount > 99 ? "99+" : unreadCount}
-                    </span>
-                )}
-            </button>
+
+
+        <IconButton onClick={() => setOpen(!open)} aria-label="Notifications">
+            <Badge badgeContent={unreadCount} color="error" max={99}>
+                <NotificationsIcon />
+            </Badge>
+        </IconButton>
 
             {open && (
                 <div

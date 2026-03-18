@@ -440,7 +440,7 @@ function MapWithMenu({areaHook}) {
                                 <FontAwesomeIcon icon={faSignOutAlt} className="logout-button pointer"
                                                  onClick={() => {
                                                      logout().then(() => dispatch(denyAccess()))
-                                                 }} fixedWidth/>
+                                                 }} />
 
                             </div>
 
@@ -449,7 +449,7 @@ function MapWithMenu({areaHook}) {
                             <div className="row m-0 p-0">
                                 <FontAwesomeIcon icon={faStar} className="new-icon mt-1 pointer"
                                                  onClick={() => setShowModalRanking(true)}
-                                                 fixedWidth/>
+                                                 />
                             </div>
 
                             <hr className="m-0 p-0"/>
@@ -457,7 +457,7 @@ function MapWithMenu({areaHook}) {
                             <div className="row m-0 p-0">
                                 <FontAwesomeIcon icon={faUser} className="new-icon mt-1 pointer"
                                                  onClick={() => dispatch(showProfileModal())}
-                                                 fixedWidth/>
+                                                 />
                             </div>
 
                             {user?.is_coordinator ?
@@ -468,7 +468,7 @@ function MapWithMenu({areaHook}) {
                                             <FontAwesomeIcon icon={faToolbox}
                                                              className="new-icon mt-1 d-none d-lg-block pointer"
                                                              onClick={() => navigate('/R/coordinator')}
-                                                             fixedWidth/>
+                                                             />
                                         </div>
                                     </>
                                 )

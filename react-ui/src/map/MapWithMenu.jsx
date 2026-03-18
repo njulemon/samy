@@ -187,7 +187,12 @@ function MapWithMenu({areaHook}) {
                     }
                 );
 
-                layerControl.current = L.control.layers({},{'Nouveaux': layer_red, 'En cours': layer_blue, 'Fini': layer_green, 'A voir': layer_yellow},{position: 'topleft'}).addTo(map.current)
+                layerControl.current = L.control.layers({}, {
+                    'Nouveaux': layer_red,
+                    'En cours': layer_blue,
+                    'Fini': layer_green,
+                    'A voir': layer_yellow
+                }, {position: 'topleft'}).addTo(map.current)
 
                 // store the layers
                 listLayers.current.push(layer_red)
@@ -435,44 +440,43 @@ function MapWithMenu({areaHook}) {
             <div id='map'>
                 <div className="leaflet-top leaflet-right">
                     <div className="background-leaflet-buttons">
-                        <div className="container-fluid m-0 p-0">
-                            <div className="row m-0 p-0">
+                        <div className="d-flex flex-column align-items-center py-0">
+
+                            {/* Logout Icon */}
+                            <div className="py-0">
                                 <FontAwesomeIcon icon={faSignOutAlt} className="logout-button pointer"
                                                  onClick={() => {
                                                      logout().then(() => dispatch(denyAccess()))
-                                                 }} />
-
+                                                 }}/>
                             </div>
 
-                            <hr className="m-0 p-0"/>
+                            <hr className="w-100 m-0 p-0 border-secondary"/>
 
-                            <div className="row m-0 p-0">
-                                <FontAwesomeIcon icon={faStar} className="new-icon mt-1 pointer"
-                                                 onClick={() => setShowModalRanking(true)}
-                                                 />
+                            {/* Star Icon */}
+                            <div className="py-0">
+                                <FontAwesomeIcon icon={faStar} className="new-icon pointer"
+                                                 onClick={() => setShowModalRanking(true)}/>
                             </div>
 
-                            <hr className="m-0 p-0"/>
+                            <hr className="w-100 m-0 p-0 border-secondary"/>
 
-                            <div className="row m-0 p-0">
-                                <FontAwesomeIcon icon={faUser} className="new-icon mt-1 pointer"
-                                                 onClick={() => dispatch(showProfileModal())}
-                                                 />
+                            {/* User Profile Icon */}
+                            <div className="py-0">
+                                <FontAwesomeIcon icon={faUser} className="new-icon pointer"
+                                                 onClick={() => dispatch(showProfileModal())}/>
                             </div>
 
-                            {user?.is_coordinator ?
-                                (
-                                    <>
-                                        <hr className="m-0 p-0"/>
-                                        <div className="row m-0 p-0">
-                                            <FontAwesomeIcon icon={faToolbox}
-                                                             className="new-icon mt-1 d-none d-lg-block pointer"
-                                                             onClick={() => navigate('/R/coordinator')}
-                                                             />
-                                        </div>
-                                    </>
-                                )
-                                : null}
+                            {/* Coordinator Tools Icon */}
+                            {user?.is_coordinator && (
+                                <>
+                                    <hr className="w-100 m-0 p-0 border-secondary"/>
+                                    <div className="py-0 d-none d-lg-block">
+                                        <FontAwesomeIcon icon={faToolbox}
+                                                         className="new-icon pointer"
+                                                         onClick={() => navigate('/R/coordinator')}/>
+                                    </div>
+                                </>
+                            )}
 
                         </div>
                     </div>
@@ -480,13 +484,14 @@ function MapWithMenu({areaHook}) {
 
                 <div className="leaflet-bottom leaflet-right">
                     <div className="background-leaflet-buttons">
-                        <div className="container-fluid m-0 p-0">
-                            <div className="row m-0 p-0">
+                        <div className="d-flex flex-column align-items-center py-0">
+                            <div className="py-0">
                                 <FontAwesomeIcon icon={faMapMarkerAlt} className="here-icon pointer"
                                                  onClick={updateLocation}
                                                  fixedWidth/>
                             </div>
-                            <div className="row m-0 p-0">
+                            <hr className="w-100 m-0 p-0 border-secondary"/>
+                            <div className="py-0">
                                 <FontAwesomeIcon icon={faCirclePlus} className="new-icon pointer"
                                                  onClick={addNewReportMarker}
                                                  fixedWidth/>

@@ -54,6 +54,8 @@ report_form_fr = {
     ReportCategory2.CURB_PEDESTRIAN_CROSSING_TOO_HIGH.name: "Bordure passage pour piéton trop haute",
     ReportCategory2.MISSING_PEDESTRIAN_CROSSING.name: "Passage piéton nécessaire",
 
+    ReportCategory2.LANE_OBSTACLE.name: "Mobilier urbain gênant le passage des cyclistes",
+
     # In charge
     InCharge.IC_IN_CHARGE_NONE.name: "Autoritée compétente non-définie",
     InCharge.IC_MUNICIPALITY.name: "Commune",

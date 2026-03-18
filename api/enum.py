@@ -114,6 +114,9 @@ class ReportCategory2(ModelEnum):
     CURB_PEDESTRIAN_CROSSING_TOO_HIGH = 27
     MISSING_PEDESTRIAN_CROSSING = 28
 
+    # add for Liège
+    LANE_OBSTACLE = 29
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 # CATEGORIES TREE
@@ -148,7 +151,8 @@ map_category_2 = {
                 ReportCategory2.NO_BICYCLE_PATH_DANGEROUS_SITUATION,
                 ReportCategory2.RACK_DAMAGED,
                 ReportCategory2.SIGNAGE__MISSING,
-                ReportCategory2.SIGNAGE__BAD_CONDITION
+                ReportCategory2.SIGNAGE__BAD_CONDITION,
+                ReportCategory2.LANE_OBSTACLE
             ],
             ReportCategory1.INCIDENT: [
                 ReportCategory2.ILLEGAL_PARKING,

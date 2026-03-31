@@ -6,6 +6,7 @@ from rest_framework.routers import DefaultRouter
 
 from api import views
 from api.DefaultRouterWithSimpleViews import DefaultRouterWithSimpleViews
+from api.views import AlertViewSet
 
 router = DefaultRouterWithSimpleViews()
 router.register(r'report', views.ReportViewSet)
@@ -17,6 +18,7 @@ router.register(r'csrf', views.csrf, 'csrf')
 router.register(r'translation', views.TranslationViewSet, 'translation')
 router.register(r'votes', views.VoteViewSetReport, 'votes')
 router.register(r'notifications', views.NotificationsViewSet, 'notifications')
+router.register(r'alerts', AlertViewSet, 'alerts')
 router.register(r'user', views.UserViewSet, 'user')  # create user
 router.register(r'user-del', views.UserDeleteViewSet, 'user-del')  # destroy user
 router.register(r'get-user', views.get_user, 'get-user')  # get infos on user

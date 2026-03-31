@@ -6,7 +6,7 @@ from rest_framework.exceptions import ValidationError
 from api import Tools
 from api.enum import ReportUserType, ReportCategory1, ReportCategory2, ReportOperation
 from api.models import Report, CustomUser, Votes, RestPassword, ReportImage, AuthorizedMail, ReportAnnotation, Area, \
-    ReportAnnotationComment, Notifications, Document
+    ReportAnnotationComment, Notifications, Document, Alert
 
 
 class ReportImageSerializer(serializers.ModelSerializer):
@@ -200,8 +200,15 @@ class ReportSerializerHyperLinkSimple(serializers.HyperlinkedModelSerializer):
         fields = ['latitude', 'longitude', 'id', 'annotation']
 
     def get_annotation(self, obj):
+        if obj.annotation is None:
+            return {'status': None}
         return {'status': obj.annotation.status}
 
+
+class AlertSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Alert
+        fields = '__all__'
 
 class RestPasswordSerializer(serializers.Serializer):
     """

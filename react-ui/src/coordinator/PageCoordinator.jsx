@@ -6,7 +6,8 @@ import {useAppDispatch, useAppSelector} from "../app/hooks";
 import ContainerMenuLeft from "./ContainerMenuLeft.jsx";
 import {useReportFilter} from "../hooks/useReportFilter";
 import Dossiers from "./Dossiers.jsx";
-
+import {useAlerts} from "../hooks/useAlerts.js";
+import NotificationBell from "./NotificationBell.jsx";
 
 const PageCoordinator = () => {
 
@@ -16,6 +17,7 @@ const PageCoordinator = () => {
     const user = useAppSelector(state => state.states.user)
 
     const reportFilterHook = useReportFilter(user.coordinator_area, [2, 3, 5])  // RS_CLASSIFIED, "RS_REPORTED_TO_AUTHORITIES, RS_REPORT_IN_PROGRESS
+    const {alerts, unreadCount, markAsRead} = useAlerts();
 
     useEffect(
         () => {
@@ -26,12 +28,21 @@ const PageCoordinator = () => {
 
     return (
         <div className="container-fluid vh-100 w-100 background-coordinator p-4">
+            {/* Navbar */}
+            <nav className="navbar navbar-light bg-white shadow-sm px-4">
+                <span className="navbar-brand mb-0 h1">Coordinateur</span>
+                <div className="d-flex align-items-center">
+                    <NotificationBell
+                        alerts={alerts}
+                        unreadCount={unreadCount}
+                        markAsRead={markAsRead}
+                    />
+                </div>
+            </nav>
+
 
             <div className="row">
-
-
                 <div className="col">
-
                     {/*<div className="tab-content" id="v-pills-tabContent">*/}
                     {
                         {
@@ -58,7 +69,7 @@ const PageCoordinator = () => {
                 </div>
             </div>
         </div>
-    )
+)
 }
 
-export default PageCoordinator
+export default PageCoordinator;

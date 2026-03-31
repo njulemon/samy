@@ -57,9 +57,19 @@ class RestPassword(models.Model):
     key = models.CharField(max_length=100)
 
 
+# Should be renamed notification_policy ??
 class Notifications(models.Model):
     name = models.CharField(max_length=20, unique=True)
 
+class Alert(models.Model):
+    user = models.ForeignKey(to="CustomUser", on_delete=models.CASCADE, related_name='user_alerts')
+    report = models.ForeignKey(to="Report", on_delete=models.CASCADE)
+    message = models.CharField(max_length=200)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ['created_at']
 
 # REPORTS RELATED
 # ----------------------------------------------------------------------------------------------------------------------
@@ -95,7 +105,7 @@ class Report(models.Model):
 
 
 class ReportAnnotation(models.Model):
-    area = models.ForeignKey(to="Area", on_delete=models.SET_NULL, null=True, default=None)
+    area = models.ForeignKey(to="Area", on_delete=models.SET_NULL, null=True, default=None) # This should be in the report ?
     in_charge = models.SmallIntegerField(choices=InCharge.get_model_choices(), default=0, null=True)
     status = models.SmallIntegerField(choices=ReportStatus.get_model_choices(), default=1, null=True)
     comments = models.ManyToManyField(to="ReportAnnotationComment", blank=True)

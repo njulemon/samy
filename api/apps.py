@@ -8,3 +8,4 @@ class ApiConfig(AppConfig):
     def ready(self):
         # Makes sure all signal handlers are connected
         from api import handlers
+        import api.signals
